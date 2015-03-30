@@ -1,0 +1,14 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+
+    <ul>
+        {% for shop in shops %}
+
+            <li>{{ shop.app }}</li>
+
+        {% endfor %}
+
+    </ul>
+
+{% endblock %}

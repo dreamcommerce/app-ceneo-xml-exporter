@@ -1,0 +1,35 @@
+{% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
+
+{% block body %}
+
+
+    <main class="rwd-layout-width rwd-layout-container">
+        <section class="rwd-layout-col-12">
+            <fieldset>
+                <header>Rozszerzona integracja Ceneo</header>
+                <p>Ostatni eksport: <strong>12/34/5678 90:12</strong> (wyeksportowano 2500 produktów)</p>
+                <p><a href="#">generuj XML</a></p>
+
+                <hr>
+
+                <p><input type="text" value="{{ xml_link }}"></p>
+                <p><a href="#">skopiuj link</a></p>
+            </fieldset>
+            <fieldset>
+                <header>Rozszerzona integracja Ceneo</header>
+
+                <p>Liczba: {{ excluded_count }},brak zdefiniowanych wykluczeń produktów, wszystkie produkty zostaną wyeksportowane do Ceneo XML</p>
+                
+                <p><a href="{{ path('ceneo_exclusions') }}">wykluczenia</a></p>
+
+
+            </fieldset>
+            <fieldset>
+                <header>Ustawienia atrybutów Ceneo</header>
+                <p>brak zdefiniowanych atrybutów, <a href="#">zdefiniuj atrybut</a></p>
+            </fieldset>
+
+        </section>
+    </main>
+
+{% endblock %}

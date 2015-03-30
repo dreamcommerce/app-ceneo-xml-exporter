@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+    <entity name="CeneoBundle\Entity\ExcludedProduct" repository-class="CeneoBundle\Entity\ExcludedProductRepository">
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+        
+        <field name="product_id" type="integer"></field>
+        <field name="link" type="string" length="512"></field>
+        <field name="title" type="string" length="512"></field>
+
+        <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop">
+            <cascade/>
+        </many-to-one>
+        
+    </entity>
+</doctrine-mapping>

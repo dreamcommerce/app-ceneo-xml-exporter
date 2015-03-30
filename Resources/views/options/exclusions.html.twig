@@ -1,0 +1,35 @@
+{% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
+
+{% block body %}
+
+
+    <main class="rwd-layout-width rwd-layout-container">
+        <section class="rwd-layout-col-12">
+            <fieldset>
+                <header>Wykluczone produkty</header>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Akcje</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td>{{ p.title }}</td>
+                        <td></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+
+            </fieldset>
+
+        </section>
+    </main>
+
+{% endblock %}
