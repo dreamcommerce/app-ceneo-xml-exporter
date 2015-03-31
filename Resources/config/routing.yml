@@ -9,3 +9,8 @@ ceneo_xml:
 ceneo_exclusions:
     path:     /exclusions
     defaults: { _controller: CeneoBundle:Exclusions:index }
+
+
+ceneo_exclusions_delete:
+    path:     /exclusions/{id}
+    defaults: { _controller: CeneoBundle:Exclusions:delete}

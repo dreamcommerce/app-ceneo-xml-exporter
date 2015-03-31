@@ -19,8 +19,10 @@
                     <tbody>
                     {% for p in products %}
                     <tr>
-                        <td>{{ p.title }}</td>
-                        <td></td>
+                        <td>
+                            <a href="{{ p.link }}" target="_blank">{{ p.title }}</a>
+                        </td>
+                        <td><a href="{{ app_path('ceneo_exclusions_delete', {'id': p.id}) }}">delete</a></td>
                     </tr>
                     {% endfor %}
                     </tbody>

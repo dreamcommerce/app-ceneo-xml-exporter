@@ -29,4 +29,22 @@ class ExcludedProductRepository extends EntityRepository{
         ));
     }
 
+    /**
+     * @param $id
+     * @param ShopInterface $s
+     * @return ExcludedProduct
+     */
+    public function findByProductAndShop($id, ShopInterface $s){
+        $result = $this->findBy(array(
+            'shop'=>$s,
+            'id'=>$id
+        ));
+
+        if($result){
+            $result = $result[0];
+        }
+
+        return $result;
+    }
+
 }
