@@ -5,12 +5,12 @@ namespace CeneoBundle\Controller;
 use CeneoBundle\Entity\ExcludedProductRepository;
 use DreamCommerce\Client;
 use DreamCommerce\Resource\Attribute;
-use DreamCommerce\ShopAppstoreBundle\Controller\FilteredController;
+use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
 use DreamCommerce\ShopAppstoreBundle\Controller\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class OptionsController extends FilteredController
+class OptionsController extends ApplicationController
 {
 
     public function indexAction(){
