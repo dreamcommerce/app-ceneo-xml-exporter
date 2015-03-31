@@ -10,11 +10,13 @@ namespace CeneoBundle\Controller;
 
 
 use CeneoBundle\Entity\ExcludedProductRepository;
+use CeneoBundle\Manager\ExcludedProductManager;
 use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-class ExclusionsController extends ApplicationController{
+class ExclusionsController extends ControllerAbstract{
 
     public function indexAction(){
         /**
@@ -30,28 +32,18 @@ class ExclusionsController extends ApplicationController{
 
     public function deleteAction($id = null){
 
-        /**
-         * @var $excludedProducts ExcludedProductRepository
-         */
-        $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
-        $em = $this->getDoctrine()->getManager();
+        $manager = new ExcludedProductManager(
+            $this->getDoctrine()->getManager()
+        );
 
-        $product = $excludedProducts->findByProductAndShop($id, $this->shop);
+        $products = $manager->getRepository()->findByProductAndShop($id, $this->shop);
 
-        /**
-         * @var $session Session
-         */
-        $session = $this->get('session');
-
-        if($product){
-            $em->remove($product);
-            $em->flush();
-
-            $session->getFlashBag()->add('notice', 'Produkt został skasowany');
+        if($products){
+            $manager->delete($products);
+            $this->addNotice('Produkty zostały skasowane');
         }else{
-            $session->getFlashBag()->all('error', 'Nie znaleziono produktu');
+            $this->addError('Nie znaleziono produktów');
         }
-
 
         return $this->redirect(
             $this->generateAppUrl('ceneo_exclusions')

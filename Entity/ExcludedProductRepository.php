@@ -9,6 +9,7 @@
 namespace CeneoBundle\Entity;
 
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityRepository;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
@@ -32,19 +33,13 @@ class ExcludedProductRepository extends EntityRepository{
     /**
      * @param $id
      * @param ShopInterface $s
-     * @return ExcludedProduct
+     * @return array
      */
     public function findByProductAndShop($id, ShopInterface $s){
-        $result = $this->findBy(array(
+        return $this->findBy(array(
             'shop'=>$s,
             'id'=>$id
         ));
-
-        if($result){
-            $result = $result[0];
-        }
-
-        return $result;
     }
 
 }
