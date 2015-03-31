@@ -8,4 +8,4 @@ ceneo_xml:
 
 ceneo_exclusions:
     path:     /exclusions
-    defaults: { _controller: CeneoBundle:Options:exclusions }
+    defaults: { _controller: CeneoBundle:Exclusions:index }

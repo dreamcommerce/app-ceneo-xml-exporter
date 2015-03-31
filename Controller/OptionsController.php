@@ -34,18 +34,4 @@ class OptionsController extends ApplicationController
         ));
     }
 
-    public function exclusionsAction(){
-
-        /**
-         * @var $excludedProducts ExcludedProductRepository
-         */
-        $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
-        $products = $excludedProducts->findAllByShop($this->shop);
-
-        return $this->render('CeneoBundle::options/exclusions.html.twig', array(
-            'products'=>$products
-        ));
-
-    }
-
 }
