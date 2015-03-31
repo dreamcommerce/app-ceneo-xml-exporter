@@ -25,7 +25,7 @@ class ExcludedProductRepository extends EntityRepository{
 
     public function findAllByShop(ShopInterface $shop){
         return $this->findBy(array(
-            'shop_id'=>$shop
+            'shop'=>$shop
         ));
     }
 

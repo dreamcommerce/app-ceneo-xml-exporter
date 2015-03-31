@@ -40,7 +40,7 @@ class OptionsController extends ApplicationController
          * @var $excludedProducts ExcludedProductRepository
          */
         $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
-        $products = $excludedProducts->findByAllByShop($this->shop);
+        $products = $excludedProducts->findAllByShop($this->shop);
 
         return $this->render('CeneoBundle::options/exclusions.html.twig', array(
             'products'=>$products
