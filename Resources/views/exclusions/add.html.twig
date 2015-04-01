@@ -1,0 +1,37 @@
+{% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
+
+{% block body %}
+
+
+    <main class="rwd-layout-width rwd-layout-container">
+        <section class="rwd-layout-col-12">
+            <fieldset>
+                <header>Wyklucz produkty</header>
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Nazwa</th>
+                        <th>Akcje</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td><!-- todo: checkbox and form --></td>
+                        <td>
+                            <a href="" target="_blank">{{ p.translations.pl_PL.name }} (#{{ p.product_id }})</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+
+            </fieldset>
+
+        </section>
+    </main>
+
+{% endblock %}

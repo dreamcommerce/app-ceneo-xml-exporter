@@ -9,11 +9,9 @@
 namespace CeneoBundle\Entity;
 
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityRepository;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
-class ExcludedProductRepository extends EntityRepository{
+class ExcludedProductRepository extends RepositoryAbstract{
 
     public function getProductsCountByShop(ShopInterface $shop){
         $q = $this->createQueryBuilder('ep');
@@ -40,6 +38,18 @@ class ExcludedProductRepository extends EntityRepository{
             'shop'=>$s,
             'id'=>$id
         ));
+    }
+
+    public function findIdsByProductAndShop($id, ShopInterface $s){
+        $q = $this->createQueryBuilder('ep');
+
+        $q->select('ep.product_id')
+            ->where('ep.shop = :shop_id and ep.product_id in(:product_id)')
+            ->setParameter('shop_id', $s)
+            ->setParameter('product_id', $id);
+
+        $records = $this->getColumnValues($q->getQuery());
+        return $records;
     }
 
 }

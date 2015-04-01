@@ -11,7 +11,12 @@ namespace CeneoBundle\Controller;
 
 use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
+use CeneoBundle\Services\ProductChecker;
+use DreamCommerce\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
+use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
+use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
+use DreamCommerce\ShopAppstoreBundle\Utils\InvalidRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -48,6 +53,22 @@ class ExclusionsController extends ControllerAbstract{
         return $this->redirect(
             $this->generateAppUrl('ceneo_exclusions')
         );
+
+    }
+
+    public function addAction(Request $request){
+
+        $ids = $request->query->get('id');
+        if(empty($ids) or !is_array($ids)){
+            throw new InvalidRequestException();
+        }
+
+        $productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
+        $products = $productChecker->getNotExcluded($ids, $this->shop);
+
+        return $this->render('CeneoBundle::exclusions/add.html.twig', array(
+            'products'=>$products
+        ));
 
     }
 
