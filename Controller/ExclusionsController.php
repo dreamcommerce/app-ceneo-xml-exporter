@@ -63,13 +63,30 @@ class ExclusionsController extends ControllerAbstract{
             throw new InvalidRequestException();
         }
 
-        $productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
-        $products = $productChecker->getNotExcluded($ids, $this->shop);
+        //$productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
+        //$products = $productChecker->getNotExcluded($ids, $this->shop);
+
+        $products = array(
+            array('product_id'=>1)
+        );
+
+        $form = $this->createFormBuilder($products)
+            ->add('products', 'choice', array(
+                'choices'=>$products,
+                'multiple'=>true,
+                'expanded'=>true
+            ))
+            ->getForm();
 
         return $this->render('CeneoBundle::exclusions/add.html.twig', array(
-            'products'=>$products
+            'products'=>$products,
+            'form'=>$form->createView()
         ));
 
+    }
+
+    public function saveAction(){
+        //
     }
 
 }
