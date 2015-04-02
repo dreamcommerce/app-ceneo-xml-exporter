@@ -18,7 +18,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('dream_commerce_shop_appstore');
+        $rootNode = $treeBuilder->root('ceneo');
 
 
         // Here you should define the parameters that are allowed to
