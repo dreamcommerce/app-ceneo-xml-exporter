@@ -9,20 +9,12 @@
 namespace CeneoBundle\Controller;
 
 
-use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
-use DreamCommerce\Resource\Product;
-use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
-use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use DreamCommerce\ShopAppstoreBundle\Utils\InvalidRequestException;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class ExclusionsController extends ControllerAbstract{
 
@@ -132,9 +124,4 @@ class ExclusionsController extends ControllerAbstract{
         ));
 
     }
-
-    public function saveAction(){
-        //
-    }
-
 }
