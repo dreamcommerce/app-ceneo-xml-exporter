@@ -9,7 +9,7 @@
 namespace CeneoBundle\Services;
 
 
-use CeneoBundle\Entity\ExcludedProductRepository;
+use CeneoBundle\Manager\ExcludedProductManager;
 use DreamCommerce\Client;
 use DreamCommerce\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
@@ -19,17 +19,16 @@ use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 class ProductChecker {
 
     /**
-     * @var ExcludedProductRepository
+     * @var ExcludedProductManager
      */
-    protected $excludedProductRepository;
+    protected $excludedProductManager;
     /**
      * @var Client
      */
     protected $client;
 
-    public function __construct(ExcludedProductRepository $excludedProductRepository, Client $client){
-
-        $this->excludedProductRepository = $excludedProductRepository;
+    public function __construct(ExcludedProductManager $excludedProductManager, Client $client){
+        $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
     }
 
@@ -45,7 +44,7 @@ class ProductChecker {
         $productsCollection = new CollectionWrapper($products);
 
         $chosenProducts = $productsCollection->getListOfField('product_id');
-        $alreadyExcluded = $this->excludedProductRepository->findIdsByProductAndShop($chosenProducts, $shop);
+        $alreadyExcluded = $this->excludedProductManager->getRepository()->findIdsByProductAndShop($chosenProducts, $shop);
 
         $result = array();
         foreach($products as $p){
@@ -57,6 +56,12 @@ class ProductChecker {
 
         return new \ArrayObject($result, \ArrayObject::ARRAY_AS_PROPS);
 
+
+    }
+
+    public function getExcluded(ShopInterface $shop){
+
+        return $this->excludedProductManager->getRepository()->findAllByShop($shop);
 
     }
 

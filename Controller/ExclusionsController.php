@@ -27,13 +27,13 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class ExclusionsController extends ControllerAbstract{
 
     public function indexAction(){
-        /**
-         * @var $excludedProducts ExcludedProductRepository
-         */
 
-        //todo: fetching title + link from API (cached)
-        $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
-        $products = $excludedProducts->findAllByShop($this->shop);
+        $em = new ExcludedProductManager(
+            $this->getDoctrine()->getManager()
+        );
+
+        $checker = new ProductChecker($em, $this->client);
+        $products = $checker->getExcluded($this->shop);
 
         return $this->render('CeneoBundle::exclusions/index.html.twig', array(
             'products'=>$products
@@ -68,7 +68,9 @@ class ExclusionsController extends ControllerAbstract{
             throw new InvalidRequestException();
         }
 
-        $productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
+        $em = new ExcludedProductManager($this->getDoctrine()->getManager());
+
+        $productChecker = new ProductChecker($em, $this->client);
         $products = $productChecker->getNotExcluded($ids, $this->shop);
 
         $wrapper = new CollectionWrapper($products);
@@ -92,8 +94,7 @@ class ExclusionsController extends ControllerAbstract{
         $form->handleRequest($request);
 
         if($form->isValid()){
-            $manager = new ExcludedProductManager($this->getDoctrine()->getManager());
-            $manager->addByProductId($form->getData()['products'], $this->shop);
+            $em->addByProductId($form->getData()['products'], $this->shop);
             $this->addNotice('Produkty zostały dodane do ignorowanych');
             return $this->redirect(
                 $this->generateAppUrl('ceneo_exclusions')
