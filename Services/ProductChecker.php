@@ -52,10 +52,10 @@ class ProductChecker {
             if(in_array($p->product_id, $alreadyExcluded)){
                 continue;
             }
-            $result[] = $p;
+            $result[$p->product_id] = $p;
         }
 
-        return new \ArrayObject($result);
+        return new \ArrayObject($result, \ArrayObject::ARRAY_AS_PROPS);
 
 
     }
