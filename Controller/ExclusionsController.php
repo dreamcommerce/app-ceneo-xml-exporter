@@ -77,9 +77,13 @@ class ExclusionsController extends ControllerAbstract{
             'products'=>$wrapper->getListOfField('product_id')
         );
 
+        $valueResolver = function(\ArrayObject $row){
+            return $row->translations->pl_PL->name;
+        };
+
         $form = $this->createFormBuilder($data)
             ->add('products', 'choice', array(
-                'choice_list'=>new CollectionChoiceList($products),
+                'choice_list'=>new CollectionChoiceList($products, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
