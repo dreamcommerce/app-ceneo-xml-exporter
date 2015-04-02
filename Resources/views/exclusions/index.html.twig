@@ -2,6 +2,23 @@
 
 {% block body %}
 
+    {{ form_start(form) }}
+    {{ form_label(form.products) }}
+    {{ form_errors(form.products) }}
+
+    <ul>
+        <!-- todo: widget? -->
+        {% for product in form.products %}
+            <li>
+                {{ form_widget(product) }}
+                {{ form_label(product) }}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {{ form_widget(form.save) }}
+
+    {{ form_end(form) }}
 
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
@@ -20,9 +37,9 @@
                     {% for p in products %}
                     <tr>
                         <td>
-                            <a href="{{ p.link }}" target="_blank">{{ p.title }}</a>
+                            <a href="{ { p.link }}" target="_blank">{{ p.translations.pl_PL.name }}</a>
                         </td>
-                        <td><a href="{{ app_path('ceneo_exclusions_delete', {'id': p.id}) }}">delete</a></td>
+                        <td><a href="{ { app_path('ceneo_exclusions_delete', {'id': p.id}) }}">delete</a></td>
                     </tr>
                     {% endfor %}
                     </tbody>

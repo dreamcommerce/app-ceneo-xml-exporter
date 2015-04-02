@@ -61,7 +61,22 @@ class ProductChecker {
 
     public function getExcluded(ShopInterface $shop){
 
-        return $this->excludedProductManager->getRepository()->findAllByShop($shop);
+        $ids = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
+
+        $resource = new Product($this->client);
+        $fetcher = new Fetcher($resource);
+
+        $resource->filters(array('product_id'=>$ids));
+        $result = $fetcher->fetchAll();
+
+        $wrapper = new CollectionWrapper($result);
+        $foundIds = $wrapper->getListOfField('product_id');
+
+        if($ids!=$foundIds){
+            $this->excludedProductManager->purgeNonExistingProducts($ids, $foundIds, $shop);
+        }
+
+        return $result;
 
     }
 

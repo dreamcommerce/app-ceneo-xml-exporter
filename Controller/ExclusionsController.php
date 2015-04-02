@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 
 class ExclusionsController extends ControllerAbstract{
 
-    public function indexAction(){
+    public function indexAction(Request $request){
 
         $em = new ExcludedProductManager(
             $this->getDoctrine()->getManager()
@@ -35,8 +35,31 @@ class ExclusionsController extends ControllerAbstract{
         $checker = new ProductChecker($em, $this->client);
         $products = $checker->getExcluded($this->shop);
 
+        $valueResolver = function(\ArrayObject $row){
+            return $row->translations->pl_PL->name;
+        };
+
+        $form = $this->createFormBuilder()
+            ->add('products', 'choice', array(
+                'choice_list'=>new CollectionChoiceList($products, $valueResolver),
+                'multiple'=>true,
+                'expanded'=>true
+            ))
+            ->add('save', 'submit')
+            ->getForm();
+        $form->handleRequest($request);
+
+        if($form->isValid()){
+            $em->deleteByProductId($form->getData()['products'], $this->shop);
+            $this->addNotice('Produkty zostały usunięte z ignorowanych');
+            return $this->redirect(
+                $this->generateAppUrl('ceneo_exclusions')
+            );
+        }
+
         return $this->render('CeneoBundle::exclusions/index.html.twig', array(
-            'products'=>$products
+            'products'=>$products,
+            'form'=>$form->createView()
         ));
     }
 

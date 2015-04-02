@@ -64,4 +64,21 @@ class ExcludedProductManager {
 
     }
 
+    public function purgeNonExistingProducts($existing, $found, ShopInterface $shop){
+        $idsToDelete = array_diff($existing, $found);
+        $q = $this->em->createQueryBuilder();
+        $q->delete('CeneoBundle:ExcludedProduct', 'ep')
+            ->where('ep.product_id = :product_id')
+            ->andWhere('ep.shop = :shop')
+            ->setParameter('product_id', $idsToDelete)
+            ->setParameter('shop', $shop);
+
+        $q->getQuery()->execute();
+    }
+
+    public function deleteByProductId($id, ShopInterface $shop){
+        $ids = (array)$id;
+        $this->purgeNonExistingProducts($ids, array(), $shop);
+    }
+
 }
