@@ -14,9 +14,12 @@ use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use DreamCommerce\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
+use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use DreamCommerce\ShopAppstoreBundle\Utils\InvalidRequestException;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ObjectChoiceList;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -27,6 +30,8 @@ class ExclusionsController extends ControllerAbstract{
         /**
          * @var $excludedProducts ExcludedProductRepository
          */
+
+        //todo: fetching title + link from API (cached)
         $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
         $products = $excludedProducts->findAllByShop($this->shop);
 
@@ -63,23 +68,38 @@ class ExclusionsController extends ControllerAbstract{
             throw new InvalidRequestException();
         }
 
-        //$productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
-        //$products = $productChecker->getNotExcluded($ids, $this->shop);
+        $productChecker = new ProductChecker($this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct'), $this->client);
+        $products = $productChecker->getNotExcluded($ids, $this->shop);
 
-        $products = array(
-            array('product_id'=>1)
+        $wrapper = new CollectionWrapper($products);
+
+        $data = array(
+            'products'=>$wrapper->getListOfField('product_id')
         );
 
-        $form = $this->createFormBuilder($products)
+        $form = $this->createFormBuilder($data)
             ->add('products', 'choice', array(
-                'choices'=>$products,
+                'choice_list'=>new CollectionChoiceList($products),
                 'multiple'=>true,
                 'expanded'=>true
             ))
+            ->add('save', 'submit')
             ->getForm();
+        $form->handleRequest($request);
+
+        if($form->isValid()){
+            $manager = new ExcludedProductManager($this->getDoctrine()->getManager());
+            $manager->addByProductId($form->getData()['products'], $this->shop);
+            $this->addNotice('Produkty zostały dodane do ignorowanych');
+            return $this->redirect(
+                $this->generateAppUrl('ceneo_exclusions')
+            );
+        }
+
+        $viewProducts = $wrapper->getArray('product_id');
 
         return $this->render('CeneoBundle::exclusions/add.html.twig', array(
-            'products'=>$products,
+            'products'=>$viewProducts,
             'form'=>$form->createView()
         ));
 
