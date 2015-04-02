@@ -48,7 +48,18 @@ class ExcludedProductRepository extends RepositoryAbstract{
             ->setParameter('shop_id', $s)
             ->setParameter('product_id', $id);
 
-        $records = $this->getColumnValues($q->getQuery());
+        $records = $this->getColumnValues($q->getQuery(), 'product_id');
+        return $records;
+    }
+
+    public function findIdsByShop(ShopInterface $s){
+        // todo: refactor copy-paste
+        $q = $this->createQueryBuilder('ep');
+
+        $q->select('ep.product_id')
+            ->where('ep.shop = :shop_id')
+            ->setParameter('shop_id', $s);
+        $records = $this->getColumnValues($q->getQuery(), 'product_id');
         return $records;
     }
 
