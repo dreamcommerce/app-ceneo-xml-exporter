@@ -45,7 +45,7 @@ class ExclusionsController extends ControllerAbstract{
         $form->handleRequest($request);
 
         if($form->isValid()){
-            if($form->get('delete')->isClicked()){
+            if($form->get('submit')->isClicked()){
                 $em->deleteByProductId($form->getData()['products'], $this->shop);
                 $this->addNotice('Produkty zostały usunięte z ignorowanych');
             }
