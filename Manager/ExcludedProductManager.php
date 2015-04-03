@@ -68,7 +68,7 @@ class ExcludedProductManager {
         $idsToDelete = array_diff($existing, $found);
         $q = $this->em->createQueryBuilder();
         $q->delete('CeneoBundle:ExcludedProduct', 'ep')
-            ->where('ep.product_id = :product_id')
+            ->where('ep.product_id in(:product_id)')
             ->andWhere('ep.shop = :shop')
             ->setParameter('product_id', $idsToDelete)
             ->setParameter('shop', $shop);
