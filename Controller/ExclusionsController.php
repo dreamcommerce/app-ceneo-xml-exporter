@@ -37,7 +37,7 @@ class ExclusionsController extends ControllerAbstract{
                 'multiple'=>true,
                 'expanded'=>true
             ))
-            ->add('delete', 'submit', array(
+            ->add('submit', 'submit', array(
                 'label'=>'Skasuj'
             ))->add('back', 'submit', array('label'=>'Powrót'))
             ->getForm();
@@ -89,7 +89,9 @@ class ExclusionsController extends ControllerAbstract{
                 'multiple'=>true,
                 'expanded'=>true
             ))
-            ->add('save', 'submit')
+            ->add('submit', 'submit', array(
+                'label'=>'Dodaj'
+            ))
             ->getForm();
         $form->handleRequest($request);
 
@@ -97,7 +99,7 @@ class ExclusionsController extends ControllerAbstract{
             $em->addByProductId($form->getData()['products'], $this->shop);
             $this->addNotice('Produkty zostały dodane do ignorowanych');
             return $this->redirect(
-                $this->generateAppUrl('ceneo_exclusions')
+                $this->generateAppUrl('ceneo_options')
             );
         }
 

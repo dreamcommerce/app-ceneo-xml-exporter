@@ -14,7 +14,9 @@
                 {{ form_errors(form.products) }}
                     <div class="edition-form-line">
                         <div class="edition-form-line-label">
-                            Wybierz produkty do usunięcia z listy wykluczonych:
+                            {% block message %}
+                                Wybierz produkty do usunięcia z listy wykluczonych:
+                            {% endblock %}
                         </div>
                         <div class="edition-form-line-field">
                             <ul class="control-more-options additional-inline">
@@ -40,8 +42,10 @@
 
             <fieldset>
                 <div class="edition-form-buttons">
-                    {{ form_widget(form.back, {'attr': {'class': 'button button-bg button-larger save-button confirm'}}) }}
-                    {{ form_widget(form.delete, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
+                    {% if form.back is defined %}
+                        {{ form_widget(form.back, {'attr': {'class': 'button button-bg button-larger save-button confirm'}}) }}
+                    {% endif %}
+                    {{ form_widget(form.submit, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
                 </div>
             </fieldset>
 

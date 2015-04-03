@@ -1,56 +1,5 @@
-{% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
+{% extends 'CeneoBundle::exclusions/index.html.twig' %}
 
-{% block body %}
-
-    {{ form_start(form) }}
-    {{ form_label(form.products) }}
-    {{ form_errors(form.products) }}
-
-    <ul>
-        <!-- todo: widget? -->
-        {% for product in form.products %}
-            <li>
-                {{ form_widget(product) }}
-                <!--{{ products[product.vars.value].translations.pl_PL.name }}-->
-                {{ form_label(product) }}
-            </li>
-        {% endfor %}
-    </ul>
-
-    {{ form_widget(form.save) }}
-
-    {{ form_end(form) }}
-
-
-    <main class="rwd-layout-width rwd-layout-container">
-        <section class="rwd-layout-col-12">
-            <fieldset>
-                <header>Wyklucz produkty</header>
-
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Nazwa</th>
-                        <th>Akcje</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    {% for p in products %}
-                    <tr>
-                        <td><!-- todo: checkbox and form --></td>
-                        <td>
-                            <a href="" target="_blank">{{ p.translations.pl_PL.name }} (#{{ p.product_id }})</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-
-            </fieldset>
-
-        </section>
-    </main>
-
+{% block message %}
+Wybierz produkty do wykluczenia z eksportu:
 {% endblock %}
