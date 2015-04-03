@@ -46,9 +46,11 @@ class GenerateCommand extends ContainerAwareCommand
                 $path = sprintf('%s/web/xml/%s.xml', dirname($this->getContainer()->getParameter('kernel.root_dir')), $shop->getName());
 
                 $generator = new Generator($path, $client, $epManager);
-                $generator->export($shop);
+                $count = $generator->export($shop);
 
-                $output->writeln(sprintf('Shop %s, export: DONE', $shop->getName()));
+                $this->getContainer()->get('ceneo.export_checker')->setStatus($count, $shop);
+
+                $output->writeln(sprintf('Shop %s, export: DONE, products: %d', $shop->getName(), $count));
 
             }catch(\Exception $ex){
                 $output->writeln(sprintf('Shop %s: exception with message "%s"', $shop->getName(), $ex->getMessage()));

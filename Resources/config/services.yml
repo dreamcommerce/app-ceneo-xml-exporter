@@ -1,3 +1,7 @@
 services:
     cache:
         class: Doctrine\Common\Cache\ApcCache
+
+    ceneo.export_checker:
+        class: CeneoBundle\Services\ExportChecker
+        arguments: [@doctrine.orm.entity_manager]

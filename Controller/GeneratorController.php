@@ -43,7 +43,8 @@ class GeneratorController extends Controller{
         $generator = new Generator($path, $client, $excludedProductManager);
 
         set_time_limit(0);
-        $generator->export($shop);
+        $count = $generator->export($shop);
+        $this->get('ceneo.export_checker')->setStatus($count, $shop);
 
         return new Response('', 200, array('X-Accel-Redirect' => $path, 'Content-Type'=>'text/xml'));
 

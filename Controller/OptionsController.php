@@ -3,6 +3,7 @@
 namespace CeneoBundle\Controller;
 
 use CeneoBundle\Entity\ExcludedProductRepository;
+use CeneoBundle\Services\ExportChecker;
 use DreamCommerce\Client;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
@@ -34,11 +35,18 @@ class OptionsController extends ApplicationController
 
         $stockLink = $this->shop->getShopUrl().'admin/stock';
 
+        /**
+         * @var $exportChecker ExportChecker
+         */
+        $exportChecker = $this->get('ceneo.export_checker');
+        $status = $exportChecker->getStatus($this->shop);
+
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,
             'xml_force_link'=>$xmlForceLink,
             'excluded_count'=>$count,
-            'stock_link'=> $stockLink
+            'stock_link'=> $stockLink,
+            'export_status'=>$status
         ));
     }
 

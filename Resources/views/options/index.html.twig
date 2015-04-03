@@ -13,7 +13,11 @@
                         Ostatni eksport:
                     </div>
                     <div class="edition-form-line-field">
-                        <strong>12/34/5678 90:12</strong> (wyeksportowano 2500 produktów)
+                        {% if export_status is not empty %}
+                            <strong>{{ export_status.date|date('Y-m-d @ H:i:s') }}</strong> (wyeksportowano {{ export_status.productsCount }} produktów)
+                        {% else %}
+                            brak eksportu
+                        {% endif %}
                         <button class="button button-important button-bg" type="button" data-url="{{ xml_force_link }}" id="generate-xml">generuj XML</button>
                     </div>
                 </div>
