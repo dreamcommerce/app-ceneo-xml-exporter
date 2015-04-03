@@ -28,9 +28,12 @@ class OptionsController extends ApplicationController
         $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
         $count = $excludedProducts->getProductsCountByShop($this->shop);
 
+        $stockLink = $this->shop->getShopUrl().'admin/stock';
+
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,
-            'excluded_count'=>$count
+            'excluded_count'=>$count,
+            'stock_link'=> $stockLink
         ));
     }
 

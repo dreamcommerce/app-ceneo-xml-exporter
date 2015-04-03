@@ -16,12 +16,15 @@
                 <p><a href="#">skopiuj link</a></p>
             </fieldset>
             <fieldset>
-                <header>Rozszerzona integracja Ceneo</header>
+                <header>Wykluczone produkty</header>
 
-                <p>Liczba: {{ excluded_count }},brak zdefiniowanych wykluczeń produktów, wszystkie produkty zostaną wyeksportowane do Ceneo XML</p>
-                
-                <p><a href="{{ app_path('ceneo_exclusions') }}">wykluczenia</a></p>
+                {% if excluded_count > 0 %}
+                    <p>{{ excluded_count }} produktów nie będzie eksportowane do XML. <a href="{{ app_path('ceneo_exclusions') }}">Przejdź do listy wykluczonych produktów</a></p>
+                {% else %}
+                    <p>Brak zdefiniowanych wykluczeń produktów, wszystkie produkty zostaną wyeksportowane do Ceneo XML</p>
+                {% endif %}
 
+                <p>Na <a href="{{ stock_link }}" target="_top">liście produktów</a> możesz zdefiniować produkty których NIE chcesz eksportować do Ceneo</p>
 
             </fieldset>
             <fieldset>
