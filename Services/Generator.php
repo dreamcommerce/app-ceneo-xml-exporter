@@ -32,6 +32,8 @@ class Generator {
      */
     protected $client;
 
+    protected $count = 0;
+
     function __construct($output, Client $client, ExcludedProductManager $excludedProductManager)
     {
         $this->output = $output;
@@ -66,10 +68,15 @@ class Generator {
             $w->endElement();
         $w->endDocument();
 
+        // may something go wrong, so not directly from collection
+        return $this->count;
     }
 
 
     public function appendProduct($row){
+
+        $this->count++;
+
         $w = $this->resource;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
