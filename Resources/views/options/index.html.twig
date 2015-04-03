@@ -7,13 +7,27 @@
         <section class="rwd-layout-col-12">
             <fieldset>
                 <header>Rozszerzona integracja Ceneo</header>
-                <p>Ostatni eksport: <strong>12/34/5678 90:12</strong> (wyeksportowano 2500 produktów)</p>
-                <p><a href="#">generuj XML</a></p>
 
-                <hr>
+                <div class="edition-form-line">
+                    <div class="edition-form-line-label">
+                        Ostatni eksport:
+                    </div>
+                    <div class="edition-form-line-field">
+                        <strong>12/34/5678 90:12</strong> (wyeksportowano 2500 produktów)
+                        <button class="button button-important button-bg" type="button">generuj XML</button>
+                    </div>
+                </div>
 
-                <p><input type="text" value="{{ xml_link }}"></p>
-                <p><a href="#">skopiuj link</a></p>
+                <div class="edition-form-line">
+                    <div class="edition-form-line-label">
+                        Link do XML:
+                    </div>
+                    <div class="edition-form-line-field">
+                        <input type="text" value="{{ xml_link }}" id="copy-xml-link">
+                        <button class="button button-important button-bg" type="button">skopiuj link do XML</button>
+                    </div>
+                </div>
+
             </fieldset>
             <fieldset>
                 <header>Wykluczone produkty</header>
