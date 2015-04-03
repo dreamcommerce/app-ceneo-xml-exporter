@@ -22,6 +22,10 @@ class OptionsController extends ApplicationController
             'shopId' => $shopId
         ), true);
 
+        $xmlForceLink = $this->get('router')->generate('ceneo_xml_force', array(
+            'shopId' => $shopId
+        ), true);
+
         /**
          * @var $excludedProducts ExcludedProductRepository
          */
@@ -32,6 +36,7 @@ class OptionsController extends ApplicationController
 
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,
+            'xml_force_link'=>$xmlForceLink,
             'excluded_count'=>$count,
             'stock_link'=> $stockLink
         ));

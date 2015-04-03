@@ -14,7 +14,7 @@
                     </div>
                     <div class="edition-form-line-field">
                         <strong>12/34/5678 90:12</strong> (wyeksportowano 2500 produktów)
-                        <button class="button button-important button-bg" type="button">generuj XML</button>
+                        <button class="button button-important button-bg" type="button" data-url="{{ xml_force_link }}" id="generate-xml">generuj XML</button>
                     </div>
                 </div>
 
@@ -54,6 +54,10 @@
         window.onload = function() {
             ZeroClipboard.config({swfPath: "{{ asset('bundles/ceneo/ZeroClipboard/ZeroClipboard.swf') }}"});
             new ZeroClipboard(document.getElementById('copy-xml-button'));
+
+            document.getElementById('generate-xml').onclick = function(e){
+                window.open(this.getAttribute('data-url'));
+            };
         }
     </script>
 

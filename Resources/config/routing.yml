@@ -6,6 +6,11 @@ ceneo_xml:
     path:     /xml/{shopId}.xml
     defaults: { _controller: CeneoBundle:Generator:download }
 
+ceneo_xml_force:
+    # cheat httpd
+    path:     /xml/force/{shopId}.xml
+    defaults: { _controller: CeneoBundle:Generator:download }
+
 ceneo_exclusions:
     path:     /exclusions
     defaults: { _controller: CeneoBundle:Exclusions:index }
