@@ -38,7 +38,14 @@ class ProductChecker {
 
         $fetcher = new Fetcher($resource);
 
-        $resource->filters(array('product_id'=>array('in'=>$ids)));
+        $resource
+            ->order('translation.pl_PL.name ASC')
+            ->filters(array(
+                'product_id'=>array(
+                    'in'=>$ids
+                )
+            ));
+
         $products = $fetcher->fetchAll();
 
         $productsCollection = new CollectionWrapper($products);
@@ -66,7 +73,13 @@ class ProductChecker {
         $resource = new Product($this->client);
         $fetcher = new Fetcher($resource);
 
-        $resource->filters(array('product_id'=>array('in'=>$ids)));
+        $resource
+            ->filters(array(
+                'product_id'=>array(
+                    'in'=>$ids
+                )
+            ))->order('translation.pl_PL.name ASC');
+
         $result = $fetcher->fetchAll();
 
         $wrapper = new CollectionWrapper($result);
