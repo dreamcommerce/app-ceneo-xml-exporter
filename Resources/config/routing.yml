@@ -10,10 +10,6 @@ ceneo_exclusions:
     path:     /exclusions
     defaults: { _controller: CeneoBundle:Exclusions:index }
 
-ceneo_exclusions_delete:
-    path:     /exclusions/delete
-    defaults: { _controller: CeneoBundle:Exclusions:delete}
-
 ceneo_exclusions_add:
     path:     /exclusions/add
     defaults: { _controller: CeneoBundle:Exclusions:add }

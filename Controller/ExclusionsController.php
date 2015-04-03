@@ -55,27 +55,6 @@ class ExclusionsController extends ControllerAbstract{
         ));
     }
 
-    public function deleteAction($id = null){
-
-        $manager = new ExcludedProductManager(
-            $this->getDoctrine()->getManager()
-        );
-
-        $products = $manager->getRepository()->findByProductAndShop($id, $this->shop);
-
-        if($products){
-            $manager->delete($products);
-            $this->addNotice('Produkty zostały skasowane');
-        }else{
-            $this->addError('Nie znaleziono produktów');
-        }
-
-        return $this->redirect(
-            $this->generateAppUrl('ceneo_exclusions')
-        );
-
-    }
-
     public function addAction(Request $request){
 
         $ids = $request->query->get('id');
