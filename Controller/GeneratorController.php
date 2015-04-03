@@ -14,7 +14,6 @@ use CeneoBundle\Services\Generator;
 use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -42,6 +41,8 @@ class GeneratorController extends Controller{
         $client->setAccessToken($shop->getToken()->getAccessToken());
 
         $generator = new Generator($path, $client, $excludedProductManager);
+
+        set_time_limit(0);
         $generator->export($shop);
 
         return new Response('', 200, array('X-Accel-Redirect' => $path, 'Content-Type'=>'text/xml'));
