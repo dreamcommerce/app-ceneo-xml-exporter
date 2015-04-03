@@ -37,15 +37,21 @@ class ExclusionsController extends ControllerAbstract{
                 'multiple'=>true,
                 'expanded'=>true
             ))
-            ->add('save', 'submit')
+            ->add('delete', 'submit', array(
+                'label'=>'Skasuj'
+            ))->add('back', 'submit', array('label'=>'Powrót'))
             ->getForm();
+
         $form->handleRequest($request);
 
         if($form->isValid()){
-            $em->deleteByProductId($form->getData()['products'], $this->shop);
-            $this->addNotice('Produkty zostały usunięte z ignorowanych');
+            if($form->get('delete')->isClicked()){
+                $em->deleteByProductId($form->getData()['products'], $this->shop);
+                $this->addNotice('Produkty zostały usunięte z ignorowanych');
+            }
+
             return $this->redirect(
-                $this->generateAppUrl('ceneo_exclusions')
+                $this->generateAppUrl('ceneo_options')
             );
         }
 

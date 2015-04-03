@@ -2,51 +2,50 @@
 
 {% block body %}
 
-    {{ form_start(form) }}
-    {{ form_label(form.products) }}
-    {{ form_errors(form.products) }}
 
-    <ul>
-        <!-- todo: widget? -->
-        {% for product in form.products %}
-            <li>
-                {{ form_widget(product) }}
-                {{ form_label(product) }}
-            </li>
-        {% endfor %}
-    </ul>
-
-    {{ form_widget(form.save) }}
-
-    {{ form_end(form) }}
 
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
+            {{ form_start(form) }}
             <fieldset>
                 <header>Wykluczone produkty</header>
 
-                <table>
-                    <thead>
-                    <tr>
-                        <th>Nazwa</th>
-                        <th>Akcje</th>
-                    </tr>
-                    </thead>
 
-                    <tbody>
-                    {% for p in products %}
-                    <tr>
-                        <td>
-                            <a href="{ { p.link }}" target="_blank">{{ p.translations.pl_PL.name }}</a>
-                        </td>
-                        <td><a href="{ { app_path('ceneo_exclusions_delete', {'id': p.id}) }}">delete</a></td>
-                    </tr>
+                {{ form_errors(form.products) }}
+                    <div class="edition-form-line">
+                        <div class="edition-form-line-label">
+                            Wybierz produkty do usunięcia z listy wykluczonych:
+                        </div>
+                        <div class="edition-form-line-field">
+                            <ul class="control-more-options additional-inline">
+                        {% for product in form.products %}
+
+	                                    <li><span class="checkbox-wrap">
+	                                        {{ form_widget(product) }}
+                                            <label></label>
+	                                    </span>
+                                        {{ form_label(product) }}
+                                        </li>
+
+
+
                     {% endfor %}
-                    </tbody>
-                </table>
+                            </ul>
+                        </div>
+                    </div>
+
 
 
             </fieldset>
+
+            <fieldset>
+                <div class="edition-form-buttons">
+                    {{ form_widget(form.back, {'attr': {'class': 'button button-bg button-larger save-button confirm'}}) }}
+                    {{ form_widget(form.delete, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
+                </div>
+            </fieldset>
+
+            {{ form_end(form) }}
 
         </section>
     </main>
