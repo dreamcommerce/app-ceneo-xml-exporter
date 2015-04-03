@@ -28,7 +28,7 @@ class ExportChecker {
 
     public function getStatus(ShopInterface $shop){
         $result = $this->em->getRepository('CeneoBundle\Entity\Export')->findByShop($shop);
-        if($result){
+        if(is_array($result)){
             $result = $result[0];
         }
         return $result;
