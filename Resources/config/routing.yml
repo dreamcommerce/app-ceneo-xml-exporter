@@ -3,7 +3,7 @@ ceneo_options:
     defaults: { _controller: CeneoBundle:Options:index }
 
 ceneo_xml:
-    path:     /hash/{shopId}
+    path:     /xml/{shopId}.xml
     defaults: { _controller: CeneoBundle:Generator:download }
 
 ceneo_exclusions:

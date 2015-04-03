@@ -9,28 +9,40 @@
 namespace CeneoBundle\Controller;
 
 
+use CeneoBundle\Manager\ExcludedProductManager;
+use CeneoBundle\Services\Generator;
+use DreamCommerce\Client;
+use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 class GeneratorController extends Controller{
 
     public function downloadAction($shopId){
 
-        // todo: refactor
-        $repository = $this->getDoctrine()->getRepository('BillingBundle\Entity\Shop');
-        $shop = $repository->findOneBy(array('name'=>$shopId));
+        $em = $this->get('doctrine')->getManager();
+        $shopManager = new ShopManager($em, 'BillingBundle\Entity\Shop');
+        $shop = $shopManager->findShopByNameAndApplication($shopId, 'ceneo');
+
+        $excludedProductManager = new ExcludedProductManager($em);
 
         if(!$shop){
             throw new NotFoundHttpException();
         }
 
-        $webDir = $this->get('kernel')->getRootDir() . '/../web';
+        $path = sprintf('%s/web/xml/%s.xml', dirname($this->container->getParameter('kernel.root_dir')), $shopId);
 
-        $path = $webDir . '/exports/' . $shop->getName() . '.xml';
-        if(!file_exists($path)){
-            throw new ServiceUnavailableHttpException();
-        }
+        $config =
+            $this->container->getParameter('dream_commerce_shop_appstore.applications');
+
+        $config = $config['ceneo'];
+        $client = new Client($shop->getShopUrl(), $config['app_id'], $config['app_secret']);
+        $client->setAccessToken($shop->getToken()->getAccessToken());
+
+        $generator = new Generator($path, $client, $excludedProductManager);
+        $generator->export($shop);
 
         return new Response('', 200, array('X-Accel-Redirect' => $path, 'Content-Type'=>'text/xml'));
 
