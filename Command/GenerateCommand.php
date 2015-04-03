@@ -48,7 +48,7 @@ class GenerateCommand extends ContainerAwareCommand
                 $generator = new Generator($path, $client, $epManager);
                 $generator->export($shop);
 
-                $output->writeln(sprintf('Shop %s, export: DONE'));
+                $output->writeln(sprintf('Shop %s, export: DONE', $shop->getName()));
 
             }catch(\Exception $ex){
                 $output->writeln(sprintf('Shop %s: exception with message "%s"', $shop->getName(), $ex->getMessage()));
