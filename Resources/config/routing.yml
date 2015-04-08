@@ -4,7 +4,7 @@ ceneo_options:
 
 ceneo_xml:
     path:     /xml/{shopId}.xml
-    defaults: { _controller: CeneoBundle:Generator:download }
+    defaults: { _controller: CeneoBundle:Generator:dummy }
 
 ceneo_xml_force:
     # cheat httpd

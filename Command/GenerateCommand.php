@@ -43,7 +43,8 @@ class GenerateCommand extends ContainerAwareCommand
             try {
                 $client = $this->getClientByShop($shop);
 
-                $path = sprintf('%s/web/xml/%s.xml', dirname($this->getContainer()->getParameter('kernel.root_dir')), $shop->getName());
+                // todo: configurable path
+                $path = sprintf('%s/web/ceneo/xml/%s.xml', dirname($this->getContainer()->getParameter('kernel.root_dir')), $shop->getName());
 
                 $generator = new Generator($path, $client, $epManager);
                 $count = $generator->export($shop);
