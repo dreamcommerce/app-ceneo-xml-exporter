@@ -50,7 +50,10 @@ class Generator {
         $excluded = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
         $productResource = new Product($this->client);
-        $productResource->filters(array('product_id'=>array('not in'=>$excluded)));
+
+        if($excluded) {
+            $productResource->filters(array('product_id' => array('not in' => $excluded)));
+        }
 
         $w = $this->resource;
 

@@ -34,6 +34,10 @@ class ProductChecker {
 
     public function getNotExcluded($ids, ShopInterface $shop){
 
+        if(empty($ids)){
+            return new \ArrayObject();
+        }
+
         $resource = new Product($this->client);
 
         $fetcher = new Fetcher($resource);
@@ -79,6 +83,10 @@ class ProductChecker {
                     'in'=>$ids
                 )
             ))->order('translation.pl_PL.name ASC');
+
+        if(empty($ids)){
+            return new \ArrayObject();
+        }
 
         $result = $fetcher->fetchAll();
 
