@@ -147,6 +147,12 @@ class Generator {
                 $w->endElement();
             }
 
+            if($row->translations->pl_PL->short_description){
+                $w->startElement('desc');
+                    $w->writeCdata($row->translations->pl_PL->short_description);
+                $w->endElement();
+            }
+
         $w->endElement();
     }
 
