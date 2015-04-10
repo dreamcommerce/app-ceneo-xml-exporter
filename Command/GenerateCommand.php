@@ -96,7 +96,11 @@ class GenerateCommand extends ContainerAwareCommand
             }
         }
 
-        $avg = $time/count($periods);
+        if($periods) {
+            $avg = $time / count($periods);
+        }else{
+            $avg = 0;
+        }
 
         $o->writeln(sprintf('Timings, AVG: %.2fms, MIN: %.2fms, MAX: %.2fms', $avg, $min, $max));
 
