@@ -93,6 +93,8 @@ class Generator {
         $w = $this->resource;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
+            $w->writeAttribute('price', $row->stock->price);
+            $w->writeAttribute('stock', $row->stock->stock);
             $w->startElement('name');
                 $w->writeCdata($row->translations->pl_PL->name);
             $w->endElement();
