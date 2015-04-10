@@ -158,22 +158,23 @@ class Generator {
 
         $targetPath = array();
 
-        $iterator = function($node, $path) use (&$targetPath, $id, &$iterator){
+        $iterator = function($node, $path = array()) use (&$targetPath, $id, &$iterator){
 
             foreach($node as $i){
                 if($i['id']==$id){
                     $path[] = $id;
                     $targetPath = $path;
                     return;
-                }else{
+                }else if(!empty($i['children'])){
                     $path[] = $i['id'];
                     $iterator($i['children'], $path);
+                    array_pop($path);
                 }
             }
 
         };
 
-        $iterator($this->categoriesTree, array());
+        $iterator($this->categoriesTree);
 
         foreach($targetPath as &$n){
             $n = $this->categories[$n]->translations->pl_PL->name;
