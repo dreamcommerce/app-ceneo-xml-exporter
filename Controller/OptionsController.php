@@ -33,7 +33,7 @@ class OptionsController extends ApplicationController
         $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
         $count = $excludedProducts->getProductsCountByShop($this->shop);
 
-        $stockLink = $this->shop->getShopUrl().'admin/stock';
+        $stockLink = $this->shop->getShopUrl().'/admin/stock';
 
         /**
          * @var $exportChecker ExportChecker
