@@ -254,11 +254,19 @@ class Generator {
     public function getAttributes($attributes){
 
         $result = array();
+
+        $counter = 0;
         foreach($attributes as $group){
             foreach($group as $attr=>$v){
                 $name = $this->attributes[$attr]->name;
 
                 $result[$name] = $v;
+
+                $counter++;
+
+                if($counter>=10){
+                    break;
+                }
             }
         }
 
