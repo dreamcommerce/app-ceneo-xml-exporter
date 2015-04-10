@@ -14,9 +14,11 @@ use DreamCommerce\Client;
 use DreamCommerce\Resource\CategoriesTree;
 use DreamCommerce\Resource\Category;
 use DreamCommerce\Resource\Product;
+use DreamCommerce\Resource\ProductImage;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class Generator {
 
@@ -39,8 +41,10 @@ class Generator {
 
     protected $categories;
     protected $categoriesTree;
+    protected $shop;
+    protected $stopwatch = false;
 
-    function __construct($output, Client $client, ExcludedProductManager $excludedProductManager)
+    function __construct($output, Client $client, ExcludedProductManager $excludedProductManager, ShopInterface $shop)
     {
         $this->output = $output;
 
@@ -49,6 +53,11 @@ class Generator {
 
         $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
+        $this->shop = $shop;
+    }
+
+    public function setStopwatch(Stopwatch $s){
+        $this->stopwatch = $s;
     }
 
     public function export(ShopInterface $shop){
@@ -88,7 +97,13 @@ class Generator {
 
         $this->count++;
 
+        if($this->stopwatch){
+            $this->stopwatch->lap('export');
+        }
+
         $categoryPath = $this->getCategoryPath($row->category_id);
+
+        $images = $this->getProductImages($row->product_id);
 
         $w = $this->resource;
         $w->startElement('o');
@@ -101,6 +116,22 @@ class Generator {
             $w->startElement('cat');
                 $w->writeCdata($categoryPath);
             $w->endElement();
+
+            if($images){
+                $w->startElement('imgs');
+                if($images['main']){
+                    $w->startElement('main');
+                        $w->writeAttribute('url', $images['main']);
+                    $w->endElement();
+                }
+                foreach($images['images'] as $i){
+                    $w->startElement('i');
+                        $w->writeAttribute('url', $i);
+                    $w->endElement();
+                }
+                $w->endElement();
+            }
+
         $w->endElement();
     }
 
@@ -153,5 +184,43 @@ class Generator {
 
         return $stringPath;
 
+    }
+
+    public function getProductImages($productId){
+        static $shopUrlBase;
+
+        if(!$shopUrlBase){
+            $shopUrlBase = $this->shop->getShopUrl();
+            if(substr($shopUrlBase, -1)!='/'){
+                $shopUrlBase .= '/';
+            }
+        }
+
+        $imageResource = new ProductImage($this->client);
+        $images = $imageResource->filters(array('product_id'=>$productId))->get();
+
+        $result = array(
+            'main'=>false,
+            'images'=>array()
+        );
+
+        $count = 0;
+        foreach($images as $i){
+            $count++;
+
+            $url = $shopUrlBase.'environment/cache/images/'.$i->unic_name;
+
+            if($i->main){
+                $result['main'] = $url;
+            }else {
+                $result['images'][] = $url;
+            }
+        }
+
+        if(!$count){
+            return array();
+        }
+
+        return $result;
     }
 }

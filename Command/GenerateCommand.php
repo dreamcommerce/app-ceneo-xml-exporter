@@ -10,6 +10,8 @@ use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class GenerateCommand extends ContainerAwareCommand
 {
@@ -36,27 +38,67 @@ class GenerateCommand extends ContainerAwareCommand
 
         $epManager = new ExcludedProductManager($em);
 
+        $timer = new Stopwatch();
+
         /**
          * @var $shop ShopInterface
          */
         foreach($shops as $shop){
             try {
+                $timer->start('shop');
+
                 $client = $this->getClientByShop($shop);
 
                 // todo: configurable path
                 $path = sprintf('%s/web/ceneo/xml/%s.xml', dirname($this->getContainer()->getParameter('kernel.root_dir')), $shop->getName());
 
-                $generator = new Generator($path, $client, $epManager);
+                $generator = new Generator($path, $client, $epManager, $shop);
+                $generator->setStopwatch($timer);
+
+                $timer->start('export');
                 $count = $generator->export($shop);
+                $timer->stop('export');
 
                 $this->getContainer()->get('ceneo.export_checker')->setStatus($count, $shop);
 
                 $output->writeln(sprintf('Shop %s, export: DONE, products: %d', $shop->getName(), $count));
 
+                $timer->stop('shop');
             }catch(\Exception $ex){
                 $output->writeln(sprintf('Shop %s: exception with message "%s"', $shop->getName(), $ex->getMessage()));
             }
         }
+
+        $shops = $timer->getEvent('shop');
+        $exports = $timer->getEvent('export');
+
+        $this->printStats('Shop export time', $shops, $output);
+        $this->printStats('Products export time', $exports, $output);
+
+    }
+
+    protected function printStats($name, StopwatchEvent $e, OutputInterface $o){
+        $o->writeln('Stats: '.$name);
+        $o->writeln(sprintf('Max memory consumed: %s bytes', number_format($e->getMemory(), 0, '.', ' ')));
+
+        $time = 0;
+        $periods = $e->getPeriods();
+        $min = getrandmax();
+        $max = 0;
+        foreach($periods as $p){
+            $lap = $p->getDuration();
+            $time += $lap;
+            if($min>$lap){
+                $min = $lap;
+            }
+            if($max<$lap){
+                $max = $lap;
+            }
+        }
+
+        $avg = $time/count($periods);
+
+        $o->writeln(sprintf('Timings, AVG: %.2fms, MIN: %.2fms, MAX: %.2fms', $avg, $min, $max));
 
     }
 

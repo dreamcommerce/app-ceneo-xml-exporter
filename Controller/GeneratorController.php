@@ -44,7 +44,7 @@ class GeneratorController extends Controller{
         $client->setAccessToken($shop->getToken()->getAccessToken());
 
         $excludedProductManager = new ExcludedProductManager($em);
-        $generator = new Generator($path, $client, $excludedProductManager);
+        $generator = new Generator($path, $client, $excludedProductManager, $shop);
 
         set_time_limit(0);
         $count = $generator->export($shop);
