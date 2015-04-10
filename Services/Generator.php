@@ -11,6 +11,7 @@ namespace CeneoBundle\Services;
 
 use CeneoBundle\Manager\ExcludedProductManager;
 use DreamCommerce\Client;
+use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\CategoriesTree;
 use DreamCommerce\Resource\Category;
 use DreamCommerce\Resource\Product;
@@ -43,6 +44,7 @@ class Generator {
     protected $categoriesTree;
     protected $shop;
     protected $stopwatch = false;
+    protected $attributes;
 
     function __construct($output, Client $client, ExcludedProductManager $excludedProductManager, ShopInterface $shop)
     {
@@ -75,6 +77,7 @@ class Generator {
         $fetcher = new Fetcher($productResource);
 
         $this->loadCategories();
+        $this->loadAttributes();
 
         $w->startDocument();
             $w->startElementNs('xsi', 'offers', 'http://www.w3.org/2001/XMLSchema');
@@ -104,6 +107,7 @@ class Generator {
         $categoryPath = $this->getCategoryPath($row->category_id);
 
         $images = $this->getProductImages($row->product_id);
+        $attributes = $this->getAttributes($row->attributes);
 
         $w = $this->resource;
         $w->startElement('o');
@@ -129,6 +133,17 @@ class Generator {
                         $w->writeAttribute('url', $i);
                     $w->endElement();
                 }
+                $w->endElement();
+            }
+
+            if($attributes){
+                $w->startElement('attrs');
+                    foreach($attributes as $k=>$v){
+                        $w->startElement('a');
+                            $w->writeAttribute('name', $k);
+                            $w->writeCdata($v);
+                        $w->endElement();
+                    }
                 $w->endElement();
             }
 
@@ -223,5 +238,31 @@ class Generator {
         }
 
         return $result;
+    }
+
+    public function loadAttributes(){
+        $resource = new Attribute($this->client);
+        $fetcher = new Fetcher($resource);
+
+        $list = $fetcher->fetchAll();
+
+        $wrapper = new CollectionWrapper($list);
+
+        $this->attributes = $wrapper->getArray('attribute_id');
+    }
+
+    public function getAttributes($attributes){
+
+        $result = array();
+        foreach($attributes as $group){
+            foreach($group as $attr=>$v){
+                $name = $this->attributes[$attr]->name;
+
+                $result[$name] = $v;
+            }
+        }
+
+        return $result;
+
     }
 }
