@@ -13,9 +13,7 @@ use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\Generator;
 use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
-use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GeneratorController extends Controller{
@@ -30,7 +28,7 @@ class GeneratorController extends Controller{
             throw new NotFoundHttpException();
         }
 
-        $path = sprintf('%s/web/ceneo/xml/%s.xml', dirname($this->container->getParameter('kernel.root_dir')), $shopId);
+        $path = sprintf('%s/%s.xml', dirname($this->container->getParameter('xml_dir')), $shopId);
 
         $urlPath = $this->generateUrl('ceneo_xml', array(
             'shopId'=>$shopId

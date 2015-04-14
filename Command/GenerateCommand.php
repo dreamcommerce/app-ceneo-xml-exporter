@@ -49,8 +49,7 @@ class GenerateCommand extends ContainerAwareCommand
 
                 $client = $this->getClientByShop($shop);
 
-                // todo: configurable path
-                $path = sprintf('%s/web/ceneo/xml/%s.xml', dirname($this->getContainer()->getParameter('kernel.root_dir')), $shop->getName());
+                $path = sprintf('%s/%s.xml', dirname($this->getContainer()->getParameter('xml_dir')), $shop->getName());
 
                 $generator = new Generator($path, $client, $epManager, $shop);
                 $generator->setStopwatch($timer);
