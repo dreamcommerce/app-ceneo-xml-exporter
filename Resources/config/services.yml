@@ -1,3 +1,6 @@
+parameters:
+    xml_dir: %kernel.root_dir%/web/ceneo/xml
+
 services:
     cache:
         class: Doctrine\Common\Cache\ApcCache
@@ -5,3 +8,9 @@ services:
     ceneo.export_checker:
         class: CeneoBundle\Services\ExportChecker
         arguments: [@doctrine.orm.entity_manager]
+
+    ceneo.appstore_listener:
+        class: CeneoBundle\EventListener\AppstoreListener
+        arguments: [%ceneo.xml_dir%]
+        tags:
+            - { name: kernel.event_listener, event: dream_commerce_shop_appstore.uninstall, method: onUninstall }
