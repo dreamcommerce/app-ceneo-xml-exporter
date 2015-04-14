@@ -114,6 +114,8 @@ class Generator {
             $w->writeAttribute('id', $row->product_id);
             $w->writeAttribute('price', $row->stock->price);
             $w->writeAttribute('stock', $row->stock->stock);
+            $w->writeAttribute('url', $row->translations->pl_PL->permalink);
+
             $w->startElement('name');
                 $w->writeCdata($row->translations->pl_PL->name);
             $w->endElement();
