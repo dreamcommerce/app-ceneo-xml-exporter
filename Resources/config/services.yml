@@ -11,6 +11,6 @@ services:
 
     ceneo.appstore_listener:
         class: CeneoBundle\EventListener\AppstoreListener
-        arguments: [%ceneo.xml_dir%]
+        arguments: [%xml_dir%]
         tags:
             - { name: kernel.event_listener, event: dream_commerce_shop_appstore.uninstall, method: onUninstall }
