@@ -9,7 +9,7 @@
 namespace CeneoBundle\Controller;
 
 
-use CeneoBundle\Manager\ExcludedProductManager;
+use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Services\ProductChecker;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
@@ -20,7 +20,7 @@ class ExclusionsController extends ControllerAbstract{
 
     public function indexAction(Request $request){
 
-        $em = new ExcludedProductManager(
+        $em = new AttributeGroupMappingManager(
             $this->getDoctrine()->getManager()
         );
 
@@ -31,9 +31,13 @@ class ExclusionsController extends ControllerAbstract{
             return $row->translations->pl_PL->name;
         };
 
+        $keyResolver = function(\ArrayObject $row){
+            return $row->product_id;
+        };
+
         $form = $this->createFormBuilder()
             ->add('products', 'choice', array(
-                'choice_list'=>new CollectionChoiceList($products, $valueResolver),
+                'choice_list'=>new CollectionChoiceList($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
@@ -68,7 +72,7 @@ class ExclusionsController extends ControllerAbstract{
             throw new InvalidRequestException();
         }
 
-        $em = new ExcludedProductManager($this->getDoctrine()->getManager());
+        $em = new AttributeGroupMappingManager($this->getDoctrine()->getManager());
 
         $productChecker = new ProductChecker($em, $this->client);
         $products = $productChecker->getNotExcluded($ids, $this->shop);
@@ -83,9 +87,13 @@ class ExclusionsController extends ControllerAbstract{
             return $row->translations->pl_PL->name;
         };
 
+        $keyResolver = function(\ArrayObject $row){
+            return $row->product_id;
+        };
+
         $form = $this->createFormBuilder($data)
             ->add('products', 'choice', array(
-                'choice_list'=>new CollectionChoiceList($products, $valueResolver),
+                'choice_list'=>new CollectionChoiceList($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
