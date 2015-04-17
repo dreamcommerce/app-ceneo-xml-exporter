@@ -9,6 +9,9 @@
 namespace CeneoBundle\Services;
 
 
+use CeneoBundle\Entity\AttributeGroupMapping;
+use CeneoBundle\Entity\AttributeMapping;
+use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use DreamCommerce\Client;
 use DreamCommerce\Resource\Attribute;
@@ -46,7 +49,15 @@ class Generator {
     protected $stopwatch = false;
     protected $attributes;
 
-    function __construct($output, Client $client, ExcludedProductManager $excludedProductManager, ShopInterface $shop)
+    protected $groups;
+
+    protected $products;
+    /**
+     * @var AttributeGroupMappingManager
+     */
+    private $attributeGroupMappingManager;
+
+    function __construct($output, Client $client, ExcludedProductManager $excludedProductManager, ShopInterface $shop, AttributeGroupMappingManager $attributeGroupMappingManager)
     {
         $this->output = $output;
 
@@ -56,14 +67,33 @@ class Generator {
         $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
         $this->shop = $shop;
+        $this->attributeGroupMappingManager = $attributeGroupMappingManager;
     }
 
     public function setStopwatch(Stopwatch $s){
         $this->stopwatch = $s;
     }
 
-    public function export(ShopInterface $shop){
+    protected function fetchMappedAttributeGroups(){
+        $repository = $this->attributeGroupMappingManager->getRepository();
 
+        return $repository->findAllByShop($this->shop);
+    }
+
+    protected function getGroupToId($collection){
+        $result = [];
+
+        /**
+         * @var $i AttributeGroupMapping
+         */
+        foreach($collection as $i){
+            $result[$i->getShopAttributeGroupId()] = $i;
+        }
+
+        return $result;
+    }
+
+    protected function fetchProducts(ShopInterface $shop){
         $excluded = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
         $productResource = new Product($this->client);
@@ -72,22 +102,57 @@ class Generator {
             $productResource->filters(array('product_id' => array('not in' => $excluded)));
         }
 
-        $w = $this->resource;
+        $result = array();
 
         $fetcher = new Fetcher($productResource);
+        $groups = $this->groups = $this->getGroupToId(
+            $this->fetchMappedAttributeGroups()
+        );
+
+        $fetcher->walk(function($row) use (&$result, $groups){
+
+            $group = 'other';
+
+            foreach($row->attributes as $attributeGroup=>$attributes){
+
+                if(isset($groups[$attributeGroup])){
+                    $group = $groups[$attributeGroup]->getCeneoGroup();
+                    break;
+                }
+            }
+            $result[$group][] = $row;
+        });
+
+        return $result;
+    }
+
+    public function export(ShopInterface $shop){
+
+        $w = $this->resource;
 
         $this->loadCategories();
         $this->loadAttributes();
 
+        $products = $this->fetchProducts($shop);
+        $products = array_filter($products, function($el){
+            return count($el)>0;
+        });
+
         $w->startDocument();
             $w->startElementNs('xsi', 'offers', 'http://www.w3.org/2001/XMLSchema');
             $w->writeAttribute('version', 1);
-                $w->startElement('group');
-                    $w->writeAttribute('name', 'other');
-                    $fetcher->walk(function($row){
-                        $this->appendProduct($row);
-                    });
-                $w->endElement();
+
+                foreach($products as $group=>$product){
+                    $w->startElement('group');
+                    $w->writeAttribute('name', $group);
+
+                    foreach($product as $p) {
+                        $this->appendProduct($p);
+                    }
+
+                    $w->endElement();
+                }
+
             $w->endElement();
         $w->endDocument();
 
@@ -264,16 +329,38 @@ class Generator {
         $result = array();
 
         $counter = 0;
-        foreach($attributes as $group){
-            foreach($group as $attr=>$v){
-                $name = $this->attributes[$attr]->name;
+        foreach($attributes as $id=>$group){
 
-                $result[$name] = $v;
+            if(count($group)==0){
+                continue;
+            }
 
-                $counter++;
+            if(isset($this->groups[$id])){
+                $data = $this->groups[$id];
 
-                if($counter>=10){
-                    break;
+                /**
+                 * @var $data AttributeGroupMapping
+                 */
+                foreach($data->getAttributes() as $i){
+                    /**
+                     * @var $i AttributeMapping
+                     */
+                    $result[$i->getCeneoField()] = $group[$i->getShopAttributeId()];
+                }
+
+                break;
+
+            }else {
+                foreach ($group as $attr => $v) {
+                    $name = $this->attributes[$attr]->name;
+
+                    $result[$name] = $v;
+
+                    $counter++;
+
+                    if ($counter >= 10) {
+                        break;
+                    }
                 }
             }
         }

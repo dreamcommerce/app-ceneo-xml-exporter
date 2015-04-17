@@ -2,6 +2,7 @@
 
 namespace CeneoBundle\Command;
 
+use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\Generator;
 use DreamCommerce\Client;
@@ -38,6 +39,8 @@ class GenerateCommand extends ContainerAwareCommand
 
         $epManager = new ExcludedProductManager($em);
 
+        $attributeGroupMappingManager = new AttributeGroupMappingManager($em);
+
         $timer = new Stopwatch();
 
         /**
@@ -49,9 +52,9 @@ class GenerateCommand extends ContainerAwareCommand
 
                 $client = $this->getClientByShop($shop);
 
-                $path = sprintf('%s/%s.xml', dirname($this->getContainer()->getParameter('xml_dir')), $shop->getName());
+                $path = sprintf('%s/%s.xml', $this->getContainer()->getParameter('xml_dir'), $shop->getName());
 
-                $generator = new Generator($path, $client, $epManager, $shop);
+                $generator = new Generator($path, $client, $epManager, $shop, $attributeGroupMappingManager);
                 $generator->setStopwatch($timer);
 
                 $timer->start('export');

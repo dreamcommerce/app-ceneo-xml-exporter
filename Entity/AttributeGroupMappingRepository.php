@@ -41,4 +41,16 @@ class AttributeGroupMappingRepository extends RepositoryAbstract{
 
     }
 
+    public function findByShop(ShopInterface $shop){
+        return $this->findOneBy(array(
+            'shop'=>$shop
+        ));
+    }
+
+    public function findAllByShop(ShopInterface $shop){
+        return $this->findBy(array(
+            'shop'=>$shop
+        ));
+    }
+
 }

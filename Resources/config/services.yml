@@ -1,5 +1,5 @@
 parameters:
-    xml_dir: %kernel.root_dir%/web/ceneo/xml
+    xml_dir: %kernel.root_dir%/../web/ceneo/xml
 
 services:
     cache:

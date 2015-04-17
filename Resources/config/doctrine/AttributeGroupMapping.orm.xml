@@ -14,7 +14,7 @@
             <cascade/>
         </many-to-one>
 
-        <one-to-many target-entity="CeneoBundle\Entity\AttributeMapping" mapped-by="id" field="attributes">
+        <one-to-many target-entity="CeneoBundle\Entity\AttributeMapping" field="attributes" mapped-by="attributeGroup">
             <cascade />
         </one-to-many>
 

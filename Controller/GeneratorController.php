@@ -9,6 +9,7 @@
 namespace CeneoBundle\Controller;
 
 
+use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\Generator;
 use DreamCommerce\Client;
@@ -28,7 +29,7 @@ class GeneratorController extends Controller{
             throw new NotFoundHttpException();
         }
 
-        $path = sprintf('%s/%s.xml', dirname($this->container->getParameter('xml_dir')), $shopId);
+        $path = sprintf('%s/%s.xml', $this->container->getParameter('xml_dir'), $shopId);
 
         $urlPath = $this->generateUrl('ceneo_xml', array(
             'shopId'=>$shopId
@@ -41,8 +42,10 @@ class GeneratorController extends Controller{
         $client = new Client($shop->getShopUrl(), $config['app_id'], $config['app_secret']);
         $client->setAccessToken($shop->getToken()->getAccessToken());
 
+        $attributeGroupMappingManager = new AttributeGroupMappingManager($this->getDoctrine()->getManager());
+
         $excludedProductManager = new ExcludedProductManager($em);
-        $generator = new Generator($path, $client, $excludedProductManager, $shop);
+        $generator = new Generator($path, $client, $excludedProductManager, $shop, $attributeGroupMappingManager);
 
         set_time_limit(0);
         $count = $generator->export($shop);
