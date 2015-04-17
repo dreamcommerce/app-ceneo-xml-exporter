@@ -22,3 +22,11 @@ ceneo_exclusions:
 ceneo_exclusions_add:
     path:     /exclusions/add
     defaults: { _controller: CeneoBundle:Exclusions:add }
+
+ceneo_mappings:
+    path:     /mappings
+    defaults: { _controller: CeneoBundle:Mappings:index }
+
+ceneo_mappings_group:
+    path:     /mappings/{group}
+    defaults: { _controller: CeneoBundle:Mappings:group }
