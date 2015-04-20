@@ -15,13 +15,28 @@
                     </div>
                     <div class="edition-form-line-field">
                         {{ form_start(g) }}
-                        {{ form_widget(g) }}
+                        {{ form_widget(g.group) }}
+                        {{ form_widget(g.save, {'attr': {'class': 'button button-bg button-small button-important save-button confirm'}}) }}
                         {{ form_end(g) }}
                     </div>
                 </div>
                 {% endfor %}
 
             </fieldset>
+
+            <fieldset>
+                <div class="edition-form-buttons">
+                    <button type="submit" id="back-button" class="button button-bg button-larger save-button confirm" data-url="{{ app_path('ceneo_options') }}">Powrót</button>
+                </div>
+            </fieldset>
+
+            <script>
+                events.push(function(){
+                    document.getElementById('back-button').onclick = function(){
+                        window.location.assign(this.getAttribute('data-url'));
+                    }
+                })
+            </script>
 
         </section>
     </main>

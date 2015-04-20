@@ -61,12 +61,13 @@ class MappingsController extends ControllerAbstract{
 
             if($f->isValid()){
                 $mapping = $mapper->saveMapping($this->shop, $groupId, $f->getData()['group']);
-                $this->addNotice('Grupa została przypisana');
 
                 if($mapping){
                     return $this->redirect(
                         $this->generateAppUrl('ceneo_mappings_group', array('group'=>$mapping))
                     );
+                }else{
+                    $this->addNotice('Grupa została przypisana');
                 }
             }
         }
@@ -84,7 +85,6 @@ class MappingsController extends ControllerAbstract{
 
     public function groupAction(Request $request, $group){
 
-        //todo:group name
 
         /**
          * @var $attributeGroup AttributeGroupMapping
@@ -99,6 +99,11 @@ class MappingsController extends ControllerAbstract{
         $attributeResource = new Attribute($this->client);
         $attributes = $attributeResource->filters(array('attribute_group_id'=>$attributeGroup->getShopAttributeGroupId()))->order('name')->get();
 
+        $attributeGroupResource = new AttributeGroup($this->client);
+        $result = $attributeGroupResource->get($attributeGroup->getShopAttributeGroupId());
+
+        $title = $result['name'];
+
         $attributeMappingManager = new AttributeMappingManager($this->getDoctrine()->getManager());
         $data = $attributeMappingManager->getRepository()->findForForm($attributeGroup);
 
@@ -110,7 +115,7 @@ class MappingsController extends ControllerAbstract{
 
             $attributeMappingManager->saveMapping($attributeGroup, $mappings);
 
-            $this->addNotice('Attribute mapping saved');
+            $this->addNotice('Mapowanie atrybutów zostało zapisane');
 
             return $this->redirect(
                 $this->generateAppUrl('ceneo_mappings')
@@ -118,7 +123,8 @@ class MappingsController extends ControllerAbstract{
         }
 
         return $this->render('CeneoBundle:mappings:group.html.twig', array(
-            'form'=>$form->createView()
+            'form'=>$form->createView(),
+            'title'=>$title
         ));
     }
 

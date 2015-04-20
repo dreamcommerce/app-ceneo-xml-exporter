@@ -6,30 +6,39 @@
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
             <fieldset>
-                <header>Mapowanie atrybutów: GRUPA</header>
+                <header>Mapowanie atrybutów: {{ title }}</header>
 
                 {{ form_start(form) }}
-                {{ form_widget(form) }}
-                {{ form_end(form) }}
+                {% for k,v in form if (k!="_token" and k!="save") %}
 
                 <div class="edition-form-line">
                     <div class="edition-form-line-label">
-                        pole:
+                        {{ form_label(v) }}
                     </div>
                     <div class="edition-form-line-field">
-                        widget
+                        {{ form_widget(v) }}
                     </div>
                 </div>
+
+                {% endfor %}
 
             </fieldset>
             <fieldset>
                 <div class="edition-form-buttons">
-                    {% if form.back is defined %}
-                        {{ form_widget(form.back, {'attr': {'class': 'button button-bg button-larger save-button confirm'}}) }}
-                    {% endif %}
+                    <button type="submit" id="back-button" class="button button-bg button-larger save-button confirm" data-url="{{ app_path('ceneo_options') }}">Powrót</button>
                     {{ form_widget(form.save, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
                 </div>
             </fieldset>
+
+            {{ form_end(form) }}
+
+            <script>
+                events.push(function(){
+                    document.getElementById('back-button').onclick = function(){
+                        window.location.assign(this.getAttribute('data-url'));
+                    }
+                })
+            </script>
 
         </section>
     </main>

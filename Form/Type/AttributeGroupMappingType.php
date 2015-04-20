@@ -23,9 +23,12 @@ class AttributeGroupMappingType extends AbstractType{
 
         $builder
             ->add('group', 'choice', array(
-                'choices'=>array_combine($choices, $choices)
+                'choices'=>array_combine($choices, $choices),
+                'label'=>false
             ))
-            ->add('save', 'submit');
+            ->add('save', 'submit', array(
+                'label'=>'Mapuj'
+            ));
     }
 
     public function getName()
