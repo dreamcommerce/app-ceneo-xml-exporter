@@ -9,7 +9,9 @@
 namespace CeneoBundle\Controller;
 
 
+use CeneoBundle\Entity\ExcludedProduct;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
+use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
@@ -72,7 +74,7 @@ class ExclusionsController extends ControllerAbstract{
             throw new InvalidRequestException();
         }
 
-        $em = new AttributeGroupMappingManager($this->getDoctrine()->getManager());
+        $em = new ExcludedProductManager($this->getDoctrine()->getManager());
 
         $productChecker = new ProductChecker($em, $this->client);
         $products = $productChecker->getNotExcluded($ids, $this->shop);
