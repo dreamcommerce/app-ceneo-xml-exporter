@@ -44,7 +44,7 @@ class AttributeGroupMappingManager {
         $groupMapping = $this->getRepository()->findByShopAndAttributeGroupId($shop, $attributeGroupId);
 
         // "others" doesn't need any mappings in database
-        if($groupMapping && $ceneoGroup=='others'){
+        if($groupMapping && $ceneoGroup=='other'){
             $this->em->remove($groupMapping);
             $this->em->flush();
             return;
