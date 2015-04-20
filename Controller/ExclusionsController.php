@@ -23,7 +23,7 @@ class ExclusionsController extends ControllerAbstract{
 
     public function indexAction(Request $request){
 
-        $em = new AttributeGroupMappingManager(
+        $em = new ExcludedProductManager(
             $this->getDoctrine()->getManager()
         );
 
