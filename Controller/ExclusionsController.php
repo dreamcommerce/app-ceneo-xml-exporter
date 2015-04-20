@@ -13,6 +13,7 @@ use CeneoBundle\Entity\ExcludedProduct;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
+use CeneoBundle\Services\ProductResolver;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\InvalidRequestException;
@@ -76,8 +77,11 @@ class ExclusionsController extends ControllerAbstract{
 
         $em = new ExcludedProductManager($this->getDoctrine()->getManager());
 
+        $productResolver = new ProductResolver($this->client);
+        $productsIdentifiers = $productResolver->getProductIdFromStock($ids);
+
         $productChecker = new ProductChecker($em, $this->client);
-        $products = $productChecker->getNotExcluded($ids, $this->shop);
+        $products = $productChecker->getNotExcluded($productsIdentifiers, $this->shop);
 
         $wrapper = new CollectionWrapper($products);
 
