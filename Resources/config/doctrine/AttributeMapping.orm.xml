@@ -11,7 +11,7 @@
         <field name="ceneoField" type="string" column="ceneo_field"/>
 
         <many-to-one target-entity="CeneoBundle\Entity\AttributeGroupMapping" field="attributeGroup" inversed-by="attributes">
-            <join-column name="attribute_group_id" referenced-column-name="id"/>
+            <join-column name="attribute_group_id" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
     </entity>
 </doctrine-mapping>
