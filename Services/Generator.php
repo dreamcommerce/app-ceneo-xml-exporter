@@ -297,7 +297,7 @@ class Generator {
         foreach($images as $i){
             $count++;
 
-            $url = $shopUrlBase.'environment/cache/images/'.$i->unic_name;
+            $url = $shopUrlBase.'userdata/gfx/'.$i->unic_name.'.jpg';
 
             if($i->main){
                 $result['main'] = $url;
