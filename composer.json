@@ -22,7 +22,6 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "dreamcommerce/shop-appstore-lib": "0.1.5",
-        "guzzle/guzzle": "~3.9@dev",
         "dreamcommerce/shop-appstore-bundle": "*"
     },
     "require-dev": {
