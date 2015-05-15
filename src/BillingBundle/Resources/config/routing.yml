@@ -1,0 +1,3 @@
+billing_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: BillingBundle:Default:index }
