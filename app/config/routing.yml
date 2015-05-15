@@ -1,0 +1,7 @@
+root:
+    resource: "@DreamCommerceShopAppstoreBundle/Resources/config/routing.yml"
+
+ceneo:
+    resource: "@CeneoBundle/Resources/config/routing.yml"
+    prefix:   /ceneo
+
