@@ -70,7 +70,7 @@ class ExclusionsController extends ControllerAbstract{
 
     public function addAction(Request $request){
 
-        $ids = $request->query->get('id');
+        $ids = (array)$request->query->get('id');
         if(empty($ids) or !is_array($ids)){
             throw new InvalidRequestException();
         }
