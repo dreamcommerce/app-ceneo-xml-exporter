@@ -7,12 +7,11 @@
             <generator strategy="AUTO"/>
         </id>
         
-        <field name="product_id" type="integer"></field>
-        <field name="link" type="string" length="512"></field>
-        <field name="title" type="string" length="512"></field>
+        <field name="product_id" type="integer"/>
+        <field name="link" type="string" length="512"/>
+        <field name="title" type="string" length="512"/>
 
-        <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop">
-            <cascade/>
+        <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop" >
         </many-to-one>
         
     </entity>
