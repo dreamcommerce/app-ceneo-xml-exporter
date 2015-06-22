@@ -59,8 +59,13 @@
             ZeroClipboard.config({swfPath: "{{ asset('bundles/ceneo/ZeroClipboard/ZeroClipboard.swf') }}"});
             new ZeroClipboard(document.getElementById('copy-xml-button'));
 
-            document.getElementById('generate-xml').onclick = function(e){
-                window.open(this.getAttribute('data-url'));
+            document.getElementById('generate-xml').onclick = function(){
+                var win = window.open(this.getAttribute('data-url'));
+                win[win.addEventListener ? 'addEventListener' : 'attachEvent'](
+                    (win.attachEvent ? 'on' : '') + 'load', function(){
+                        self.location.reload();
+                    }, false
+                );
             };
         }
     </script>
