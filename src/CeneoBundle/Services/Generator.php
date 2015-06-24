@@ -139,7 +139,7 @@ class Generator {
         });
 
         $w->startDocument();
-            $w->startElementNs('xsi', 'offers', 'http://www.w3.org/2001/XMLSchema');
+            $w->startElement('offers');
             $w->writeAttribute('version', 1);
 
                 foreach($products as $group=>$product){
