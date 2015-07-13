@@ -6,48 +6,49 @@
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
             <fieldset>
-                <header>Rozszerzona integracja Ceneo</header>
+                <header>{{ 'app.title'|trans }}</header>
 
                 <div class="edition-form-line">
                     <div class="edition-form-line-label">
-                        Ostatni eksport:
+                        {{ 'export.status'|trans }}:
                     </div>
                     <div class="edition-form-line-field">
                         {% if export_status is not empty %}
-                            <strong>{{ export_status.date|date('Y-m-d @ H:i:s') }}</strong> (wyeksportowano {{ export_status.productsCount }} produktów)
+                            <strong>{{ export_status.date|date('Y-m-d @ H:i:s') }}</strong> ({{ 'export.status.count'|trans({'%count%': export_status.productsCount}) }})
                         {% else %}
-                            brak eksportu
+                            {{ 'export.none'|trans }}
                         {% endif %}
-                        <button class="button button-important button-bg" type="button" data-url="{{ xml_force_link }}" id="generate-xml">generuj XML</button>
+                        <button class="button button-important button-bg" type="button" data-url="{{ xml_force_link }}" id="generate-xml">{{ 'xml.generate'|trans }}</button>
                     </div>
                 </div>
 
                 <div class="edition-form-line">
                     <div class="edition-form-line-label">
-                        Link do XML:
+                        {{ 'xml.link'|trans }}:
                     </div>
                     <div class="edition-form-line-field">
                         <input type="text" value="{{ xml_link }}" id="copy-xml-link">
-                        <button class="button button-important button-bg" id="copy-xml-button" type="button" data-clipboard-text="{{ xml_link }}">skopiuj link do XML</button>
+                        <button class="button button-important button-bg" id="copy-xml-button" type="button" data-clipboard-text="{{ xml_link }}">{{ 'xml.link.copy'|trans }}</button>
                     </div>
                 </div>
 
             </fieldset>
             <fieldset>
-                <header>Wykluczone produkty</header>
+                <header>{{ 'excluded.products'|trans }}</header>
 
                 {% if excluded_count > 0 %}
-                    <p>{{ excluded_count }} produktów nie będzie eksportowane do XML. <a href="{{ app_path('ceneo_exclusions') }}">Przejdź do listy wykluczonych produktów</a></p>
+                    <p>{{ 'excluded.products.count'|trans({'%count%': excluded_count}) }}. <a href="{{ app_path('ceneo_exclusions') }}">{{ 'excluded.products.manage'|trans }}</a></p>
                 {% else %}
-                    <p>Brak zdefiniowanych wykluczeń produktów, wszystkie produkty zostaną wyeksportowane do Ceneo XML</p>
+                    <p>{{ 'excluded.products.empty'|trans }}</p>
                 {% endif %}
 
-                <p>Na <a href="{{ stock_link }}" target="_top">liście produktów</a> możesz zdefiniować produkty których NIE chcesz eksportować do Ceneo</p>
+                <p>{{ 'excluded.products.tip'|trans({'%link%': '<a href="' ~ stock_link ~ '" target="_top">' ~ ('stock.link'|trans) ~ '</a>'})|raw }}
+                    </p>
 
             </fieldset>
             <fieldset>
-                <header>Mapowanie atrybutów Ceneo</header>
-                <p>Przejdź do <a href="{{ app_path('ceneo_mappings') }}">mapowania grup atrybutów</a></p>
+                <header>{{ 'attributes.mapping'|trans }}</header>
+                <p>{{ 'go.to'|trans({'%link%': '<a href="' ~app_path("ceneo_mappings") ~ '">' ~ ('go.to.mapping'|trans) ~ '</a>'}) | raw }}</p>
             </fieldset>
 
         </section>

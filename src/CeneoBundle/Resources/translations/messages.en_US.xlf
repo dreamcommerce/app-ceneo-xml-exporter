@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?><xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file datatype="plaintext" original="file.ext" source-language="en" target-language="en_US">
+        <body>
+            <trans-unit id="1">
+                <source>app.title</source>
+                <target state="translated">Extended Ceneo integration</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>export.status</source>
+                <target state="translated">Latest export</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>export.status.count</source>
+                <target state="translated">%count% products exported</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>export.none</source>
+                <target state="translated">no export</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>xml.generate</source>
+                <target state="translated">Generate XML</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>xml.link</source>
+                <target state="translated">XML link</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>xml.link.copy</source>
+                <target state="translated">copy XML link</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>excluded.products.count</source>
+                <target state="translated">%count% products will be skipped</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>excluded.products.manage</source>
+                <target state="translated">Go to the excluded products list</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>excluded.products.empty</source>
+                <target state="translated">No excluded products defined, all will be exported to the Ceneo XML</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>excluded.products.tip</source>
+                <target state="translated">On the %link% you can specify products you do NOT export for Ceneo</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>stock.link</source>
+                <target state="translated">products list</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>go.to</source>
+                <target state="translated">Go to %link%</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>attributes.mapping</source>
+                <target state="translated">Ceneo attributes mapping</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>go.to.mapping</source>
+                <target state="translated">attributes mapping</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>excluded.products</source>
+                <target state="translated">Excluded products</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>attributes.mapping.title</source>
+                <target state="translated">Attributes mapping: %title%</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>action.back</source>
+                <target state="translated">back</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>action.save</source>
+                <target state="translated">save</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>action.map</source>
+                <target state="translated">map</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>exlusions.add.tip</source>
+                <target state="translated">Choose products to exclude</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>exclusions.remove.tip</source>
+                <target state="translated">Choose products to remove from exclusions list</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

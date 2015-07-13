@@ -8,14 +8,14 @@
         <section class="rwd-layout-col-12">
             {{ form_start(form) }}
             <fieldset>
-                <header>Wykluczone produkty</header>
+                <header>{{ 'excluded.products'|trans }}</header>
 
 
                 {{ form_errors(form.products) }}
                     <div class="edition-form-line">
                         <div class="edition-form-line-label">
                             {% block message %}
-                                Wybierz produkty do usunięcia z listy wykluczonych:
+                                {{ 'exclusions.remove.tip'|trans }}:
                             {% endblock %}
                         </div>
                         <div class="edition-form-line-field">
