@@ -6,7 +6,7 @@
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
             <fieldset>
-                <header>Mapowanie atrybutów: {{ title }}</header>
+                <header>{{ 'attributes.mapping.title'|trans({'%title%': title}) }}</header>
 
                 {{ form_start(form) }}
                 {% for k,v in form if (k!="_token" and k!="save") %}
@@ -25,7 +25,7 @@
             </fieldset>
             <fieldset>
                 <div class="edition-form-buttons">
-                    <button type="submit" id="back-button" class="button button-bg button-larger save-button confirm" data-url="{{ app_path('ceneo_options') }}">Powrót</button>
+                    <button type="submit" id="back-button" class="button button-bg button-larger save-button confirm" data-url="{{ app_path('ceneo_options') }}">{{ 'action.back'|trans }}</button>
                     {{ form_widget(form.save, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
                 </div>
             </fieldset>

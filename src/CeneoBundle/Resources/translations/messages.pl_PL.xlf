@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>app.title</source>
+                <target>Rozszerzona integracja Ceneo</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>export.status</source>
+                <target>Ostatni eksport</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>export.status.count</source>
+                <target>wyeksportowano %count% produktów</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>export.none</source>
+                <target>brak eksportu</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>xml.generate</source>
+                <target>Generuj XML</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>xml.link</source>
+                <target>Link do XML</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>xml.link.copy</source>
+                <target>skopiuj link do XML</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>excluded.products.count</source>
+                <target>%count% produktów nie będzie eksportowanych do XML</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>excluded.products.manage</source>
+                <target>Przejdź do listy wykluczonych produktów</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>excluded.products.empty</source>
+                <target>Brak zdefiniowanych wykluczeń produktów, wszystkie produkty zostaną wyeksportowane do Ceneo XML</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>excluded.products.tip</source>
+                <target>Na %link% możesz zdefiniować produkty których NIE chcesz eksportować do Ceneo</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>stock.link</source>
+                <target>liście produktów</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>go.to</source>
+                <target>Przejdź do %link%</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>attributes.mapping</source>
+                <target>Mapowanie atrybutów Ceneo</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>go.to.mapping</source>
+                <target>mapowania atrybutów</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>excluded.products</source>
+                <target>Wykluczone produkty</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>attributes.mapping.title</source>
+                <target>Mapowanie atrybutów: %title%</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>action.back</source>
+                <target>powrót</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>action.save</source>
+                <target>zapisz</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>action.map</source>
+                <target>mapuj</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>exlusions.add.tip</source>
+                <target>Wybierz produkty do wykluczenia z eksportu</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>exclusions.remove.tip</source>
+                <target>Wybierz produkty do usunięcia z listy wykluczonych</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

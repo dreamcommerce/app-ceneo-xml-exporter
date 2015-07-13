@@ -27,7 +27,7 @@ class AttributeGroupMappingType extends AbstractType{
                 'label'=>false
             ))
             ->add('save', 'submit', array(
-                'label'=>'Mapuj'
+                'label'=>'action.map'
             ));
     }
 
