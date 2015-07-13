@@ -41,7 +41,7 @@ class CeneoType extends AbstractType{
         }
 
         $builder->add('save', 'submit', array(
-            'label'=>'zapisz'
+            'label'=>'action.save'
         ));
     }
 
