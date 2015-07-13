@@ -1,8 +1,8 @@
 {% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
 
+{% form_theme form 'CeneoBundle::form_fields.html.twig' %}
+
 {% block body %}
-
-
 
     <main class="rwd-layout-width rwd-layout-container">
         <section class="rwd-layout-col-12">
@@ -12,6 +12,7 @@
 
 
                 {{ form_errors(form.products) }}
+
                     <div class="edition-form-line">
                         <div class="edition-form-line-label">
                             {% block message %}
