@@ -43,10 +43,12 @@ class GenerateCommand extends ContainerAwareCommand
 
         $timer = new Stopwatch();
 
+        $hasShops = false;
         /**
          * @var $shop ShopInterface
          */
         foreach($shops as $shop){
+
             try {
                 $timer->start('shop');
 
@@ -69,13 +71,19 @@ class GenerateCommand extends ContainerAwareCommand
             }catch(\Exception $ex){
                 $output->writeln(sprintf('Shop %s: exception with message "%s"', $shop->getName(), $ex->getMessage()));
             }
+
+            if(!$hasShops){
+                $hasShops = true;
+            }
         }
 
-        $shops = $timer->getEvent('shop');
-        $exports = $timer->getEvent('export');
+        if($hasShops) {
+            $shops = $timer->getEvent('shop');
+            $exports = $timer->getEvent('export');
 
-        $this->printStats('Shop export time', $shops, $output);
-        $this->printStats('Products export time', $exports, $output);
+            $this->printStats('Shop export time', $shops, $output);
+            $this->printStats('Products export time', $exports, $output);
+        }
 
     }
 
