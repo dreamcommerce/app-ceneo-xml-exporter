@@ -83,7 +83,7 @@
                 <target>mapuj</target>
             </trans-unit>
             <trans-unit id="21">
-                <source>exlusions.add.tip</source>
+                <source>exclusions.add.tip</source>
                 <target>Wybierz produkty do wykluczenia z eksportu</target>
             </trans-unit>
             <trans-unit id="22">
