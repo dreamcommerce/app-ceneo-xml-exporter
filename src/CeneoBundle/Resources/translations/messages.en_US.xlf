@@ -82,7 +82,7 @@
                 <target state="translated">map</target>
             </trans-unit>
             <trans-unit id="21">
-                <source>exlusions.add.tip</source>
+                <source>exclusions.add.tip</source>
                 <target state="translated">Choose products to exclude</target>
             </trans-unit>
             <trans-unit id="22">
