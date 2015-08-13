@@ -27,8 +27,7 @@
                         {{ 'xml.link'|trans }}:
                     </div>
                     <div class="edition-form-line-field">
-                        <input type="text" value="{{ xml_link }}" id="copy-xml-link">
-                        <button class="button button-important button-bg" id="copy-xml-button" type="button" data-clipboard-text="{{ xml_link }}">{{ 'xml.link.copy'|trans }}</button>
+                        <input type="text" value="{{ xml_link }}">
                     </div>
                 </div>
 
@@ -53,22 +52,5 @@
 
         </section>
     </main>
-
-    <script src="{{ asset('bundles/ceneo/ZeroClipboard/ZeroClipboard.min.js') }}"></script>
-    <script>
-        window.onload = function() {
-            ZeroClipboard.config({swfPath: "{{ asset('bundles/ceneo/ZeroClipboard/ZeroClipboard.swf') }}"});
-            new ZeroClipboard(document.getElementById('copy-xml-button'));
-
-            document.getElementById('generate-xml').onclick = function(){
-                var win = window.open(this.getAttribute('data-url'));
-                win[win.addEventListener ? 'addEventListener' : 'attachEvent'](
-                    (win.attachEvent ? 'on' : '') + 'load', function(){
-                        self.location.reload();
-                    }, false
-                );
-            };
-        }
-    </script>
 
 {% endblock %}

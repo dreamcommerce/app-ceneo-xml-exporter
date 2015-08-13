@@ -25,10 +25,6 @@
                 <source>xml.link</source>
                 <target state="translated">XML link</target>
             </trans-unit>
-            <trans-unit id="7">
-                <source>xml.link.copy</source>
-                <target state="translated">copy XML link</target>
-            </trans-unit>
             <trans-unit id="8">
                 <source>excluded.products.count</source>
                 <target state="translated">%count% products will be skipped</target>
