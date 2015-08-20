@@ -4,14 +4,8 @@ namespace CeneoBundle\Controller;
 
 use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Services\ExportChecker;
-use DreamCommerce\Client;
-use DreamCommerce\Resource\Attribute;
-use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
-use DreamCommerce\ShopAppstoreBundle\Controller\ShopInterface;
-use DreamCommerce\ShopAppstoreBundle\Model\ShopManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
-class OptionsController extends ApplicationController
+class OptionsController extends ControllerAbstract
 {
 
     public function indexAction(){

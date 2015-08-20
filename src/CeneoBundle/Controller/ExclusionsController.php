@@ -9,8 +9,6 @@
 namespace CeneoBundle\Controller;
 
 
-use CeneoBundle\Entity\ExcludedProduct;
-use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
@@ -82,6 +80,11 @@ class ExclusionsController extends ControllerAbstract{
 
         $productChecker = new ProductChecker($em, $this->client);
         $products = $productChecker->getNotExcluded($productsIdentifiers, $this->shop);
+
+        if(!count($products)){
+            $this->addNotice('Wszystkie wybrane produkty zostały już zignorowane');
+            return $this->redirect($this->generateAppUrl('ceneo_options'));
+        }
 
         $wrapper = new CollectionWrapper($products);
 
