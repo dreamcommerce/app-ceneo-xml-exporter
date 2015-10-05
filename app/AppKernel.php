@@ -36,8 +36,12 @@ class AppKernel extends Kernel
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
     }
 
-    /*public function getCacheDir()
+    public function getCacheDir()
     {
-        return '/run/symfony/'.$this->environment.'/cache';
-    }*/
+        if(file_exists('/tmp/.')) {
+            return '/tmp/symfony/ceneo-' . $this->environment . '/cache';
+        }else{
+            return parent::getCacheDir();
+        }
+    }
 }

@@ -3,5 +3,5 @@ root:
 
 ceneo:
     resource: "@CeneoBundle/Resources/config/routing.yml"
-    prefix:   /ceneo
+    prefix:   /
 

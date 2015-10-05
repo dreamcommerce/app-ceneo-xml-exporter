@@ -10,7 +10,7 @@
     },
     "require": {
         "php": ">=5.3.3",
-        "symfony/symfony": "2.6.*",
+        "symfony/symfony": "~2.7",
         "doctrine/orm": "~2.2,>=2.2.3,<2.5",
         "doctrine/dbal": "<2.5",
         "doctrine/doctrine-bundle": "~1.2",
@@ -21,8 +21,8 @@
         "sensio/distribution-bundle": "~3.0,>=3.0.12",
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
-        "dreamcommerce/shop-appstore-lib": "0.1.5",
-        "dreamcommerce/shop-appstore-bundle": "*"
+        "doctrine/doctrine-cache-bundle": "~1.0",
+        "dreamcommerce/shop-appstore-lib": "0.2.*"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
@@ -64,12 +64,5 @@
             "type" :"git",
             "url": "../shop-appstore-bundle"
         }
-    ],
-    "minimum-stability": "dev",
-    "repositories": [
-      {
-        "type": "vcs",
-        "url": "git@github.com:dreamcommerce/appstore-bundle.git"
-      }
     ]
 }
