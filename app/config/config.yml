@@ -5,7 +5,7 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallbacks: ["%locale%"] }
+    translator:      { fallbacks: [%locale%] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -80,9 +80,10 @@ swiftmailer:
 
 dream_commerce_shop_appstore:
     routes:
-        unpaid: ~ #dream_commerce_shop_appstore.unpaid
-        unsubscribed: ~ #dream_commerce_shop_appstore.unsubscribed
-        not_installed: ~ #dream_commerce_shop_appstore.not_installed
+        #unpaid: ~ #dream_commerce_shop_appstore.unpaid
+        #unsubscribed: ~ #dream_commerce_shop_appstore.unsubscribed
+        #not_installed: ~ #dream_commerce_shop_appstore.not_installed
+        #reinstall: ~ #dream_commerce_shop_appstore.reinstall
     applications:
         ceneo:
             app_id:     "f273cb6cc14b67700b44b77b97f7b61c"
