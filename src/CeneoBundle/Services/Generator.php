@@ -17,6 +17,7 @@ use DreamCommerce\Client;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\CategoriesTree;
 use DreamCommerce\Resource\Category;
+use DreamCommerce\Resource\Delivery;
 use DreamCommerce\Resource\Product;
 use DreamCommerce\Resource\ProductImage;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
@@ -180,6 +181,9 @@ class Generator {
             $w->writeAttribute('price', $row->stock->price);
             $w->writeAttribute('stock', $row->stock->stock);
             $w->writeAttribute('url', $row->translations->pl_PL->permalink);
+            $w->writeAttribute('weight', $row->stock->weight);
+            $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id));
+            $w->writeAttribute('set', 0);
 
             $w->startElement('name');
                 $w->writeCdata($row->translations->pl_PL->name);
@@ -214,9 +218,9 @@ class Generator {
                 $w->endElement();
             }
 
-            if($row->translations->pl_PL->short_description){
+            if($row->translations->pl_PL->description){
                 $w->startElement('desc');
-                    $w->writeCdata($row->translations->pl_PL->short_description);
+                    $w->writeCdata($row->translations->pl_PL->description);
                 $w->endElement();
             }
 
@@ -366,6 +370,45 @@ class Generator {
         }
 
         return $result;
+
+    }
+
+    protected function getDaysForDeliveryId($deliveryId){
+
+        static $deliveries;
+        if(!$deliveries){
+            $deliveriesResource = new Delivery($this->client);
+            $list = $deliveriesResource->get();
+
+            $wrapper = new CollectionWrapper($list);
+            $deliveries = $wrapper->getArray('delivery_id');
+        }
+
+        if(!isset($deliveries[$deliveryId])){
+            return 99;
+        }else{
+
+            $delivery = $deliveries[$deliveryId];
+            $days = $delivery->days;
+
+            if($days>14){
+                return 99;
+            }
+
+            if($days>7){
+                return 14;
+            }
+
+            if($days>3){
+                return 7;
+            }
+
+            if($days>1){
+                return 3;
+            }
+
+            return 1;
+        }
 
     }
 }
