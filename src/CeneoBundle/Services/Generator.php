@@ -9,160 +9,274 @@
 namespace CeneoBundle\Services;
 
 
-use CeneoBundle\Entity\AttributeGroupMapping;
-use CeneoBundle\Entity\AttributeMapping;
-use CeneoBundle\Manager\AttributeGroupMappingManager;
-use CeneoBundle\Manager\ExcludedProductManager;
+use CeneoBundle\Entity\AttributeGroupMappingRepository;
+use CeneoBundle\Entity\ExcludedProductRepository;
+use CeneoBundle\Model\CeneoGroup;
+use CeneoBundle\Services\Fetchers\Attributes;
+use CeneoBundle\Services\Fetchers\Categories;
+use CeneoBundle\Services\Fetchers\Deliveries;
+use CeneoBundle\Services\Fetchers\ProductImages;
+use CeneoBundle\Services\Fetchers\Products;
+use Doctrine\Common\Cache\Cache;
 use DreamCommerce\Client;
-use DreamCommerce\Resource\Attribute;
-use DreamCommerce\Resource\CategoriesTree;
-use DreamCommerce\Resource\Category;
-use DreamCommerce\Resource\Delivery;
-use DreamCommerce\Resource\Product;
-use DreamCommerce\Resource\ProductImage;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
-use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class Generator {
 
-    protected $output;
+    /**
+     * directory where files are being prepared
+     * @var string
+     */
+    protected $tempDirectory;
 
     /**
-     * @var \XMLWriter
+     * excluded products repository
+     * @var ExcludedProductRepository
      */
-    protected $resource;
-    /**
-     * @var ExcludedProductManager
-     */
-    protected $excludedProductManager;
+    protected $excludedProductRepository;
+
     /**
      * @var Client
      */
     protected $client;
 
+    /**
+     * processed products count
+     * @var int
+     */
     protected $count = 0;
 
-    protected $categories;
-    protected $categoriesTree;
-    protected $shop;
-    protected $stopwatch = false;
-    protected $attributes;
-
-    protected $groups;
-
-    protected $products;
     /**
-     * @var AttributeGroupMappingManager
+     * stopwatch component for statistics
+     * @var bool|Stopwatch
      */
-    private $attributeGroupMappingManager;
+    protected $stopwatch = false;
 
-    function __construct($output, Client $client, ExcludedProductManager $excludedProductManager, ShopInterface $shop, AttributeGroupMappingManager $attributeGroupMappingManager)
+    /**
+     * product groups stats
+     * @var array
+     */
+    protected $counters = [];
+
+    /**
+     * array group=>path to particular file
+     * @var array
+     */
+    protected $paths = [];
+    /**
+     * array with \XmlWriter for groups
+     * @var array
+     */
+    protected $writers = [];
+    /**
+     * @var AttributeGroupMappingRepository
+     */
+    protected $attributeGroupMappingRepository;
+    /**
+     * cache for shop objects
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
+     * @param $tempDirectory
+     * @param Client $client
+     * @param Cache $cache
+     * @param ExcludedProductRepository $excludedProductRepository
+     * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
+     */
+    function __construct(
+        $tempDirectory,
+        Client $client,
+        Cache $cache,
+        ExcludedProductRepository $excludedProductRepository,
+        AttributeGroupMappingRepository $attributeGroupMappingRepository
+    )
     {
-        $this->output = $output;
+        $this->tempDirectory = $tempDirectory;
 
-        $this->resource = new \XMLWriter();
-        $this->resource->openUri($output);
-
-        $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
-        $this->shop = $shop;
-        $this->attributeGroupMappingManager = $attributeGroupMappingManager;
+        $this->excludedProductRepository = $excludedProductRepository;
+        $this->attributeGroupMappingRepository = $attributeGroupMappingRepository;
+
+        $this->cache = $cache;
     }
 
+    /**
+     * clear mappings groups files
+     */
+    protected function clearTemporary(){
+        foreach($this->paths as $group=>$path){
+            /**
+             * @var $item \XmlWriter
+             */
+            $this->writers[$group] = null;
+            unset($this->writers[$group]);
+            unlink($path);
+        }
+
+        $this->paths = [];
+        $this->counters = [];
+    }
+
+    /**
+     * initialize XmlWriter array and fill up paths
+     */
+    protected function initializeWriters(){
+        $groups = array_keys(CeneoGroup::$groups);
+
+        $uniq = uniqid('', true);
+
+        foreach($groups as $g){
+            $path = sprintf('%s/%s_%s', $this->tempDirectory, $uniq, $g);
+
+            $writer = new \XMLWriter();
+            $writer->openUri($path);
+            $writer->setIndent(true);
+            $writer->startDocument();
+                $writer->startElement('group');
+                $writer->writeAttribute('name', $g);
+
+            $this->writers[$g] = $writer;
+            $this->paths[$g] = $path;
+            $this->counters[$g] = 0;
+        }
+
+    }
+
+    /**
+     * take care of writers markup ending
+     */
+    protected function endWriters(){
+        /**
+         * @var $w \XmlWriter
+         */
+        foreach($this->writers as $w){
+            $w->endElement();
+            $w->endDocument();
+        }
+    }
+
+    /**
+     * merge groups files into destination one
+     * @param string $output
+     */
+    protected function mergeFiles($output){
+
+        $dst = fopen($output, 'w');
+
+        fwrite($dst, '<'.'?xml version="1.0" encoding="UTF-8"?'.'><offers>');
+
+        foreach($this->paths as $group=>$path){
+
+            if($this->counters[$group]==0){
+                continue;
+            }
+
+            $src = new \SplFileObject($path);
+            $skip = true;
+
+            foreach($src as $r){
+                // skip xml prologue
+                if($skip){
+                    $skip = false;
+                    continue;
+                }
+
+                fwrite($dst, $r);
+            }
+
+            $src = null;
+        }
+
+        fwrite($dst, '</offers>');
+
+        fclose($dst);
+
+    }
+
+    /**
+     * determine group for product using fetcher
+     * @param $product
+     * @param ShopInterface $shop
+     * @return string
+     */
+    protected function determineGroupForProduct($product, ShopInterface $shop){
+        static $fetcher;
+        if(!$fetcher){
+            // todo: hardcoded 100
+            $fetcher = new Attributes(100, $this->cache);
+            // todo: cache
+            $fetcher->setMappings($this->attributeGroupMappingRepository, $shop);
+            $fetcher->init($this->client, $shop);
+        }
+
+        return $fetcher->determineGroupForProduct($product);
+    }
+
+    /**
+     * enable stopwatch
+     * @param Stopwatch $s
+     */
     public function setStopwatch(Stopwatch $s){
         $this->stopwatch = $s;
     }
 
-    protected function fetchMappedAttributeGroups(){
-        $repository = $this->attributeGroupMappingManager->getRepository();
-
-        return $repository->findAllByShop($this->shop);
-    }
-
-    protected function getGroupToId($collection){
-        $result = [];
-
-        /**
-         * @var $i AttributeGroupMapping
-         */
-        foreach($collection as $i){
-            $result[$i->getShopAttributeGroupId()] = $i;
-        }
-
-        return $result;
-    }
-
+    /**
+     * fetch products from shop
+     * @param ShopInterface $shop
+     * @return Fetcher\ResourceListIterator
+     */
     protected function fetchProducts(ShopInterface $shop){
-        $excluded = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
-        $productResource = new Product($this->client);
+        // todo: 100 is hardcoded
+        $fetcher = new Products(100, $this->cache);
+        $fetcher->init($this->client, $shop);
 
-        if($excluded) {
-            $productResource->filters(array('product_id' => array('not in' => $excluded)));
-        }
-
-        $result = array();
-
-        $fetcher = new Fetcher($productResource);
-        $groups = $this->groups = $this->getGroupToId(
-            $this->fetchMappedAttributeGroups()
+        $products = $fetcher->getWithoutExcluded(
+            $shop, $this->excludedProductRepository
         );
 
-        $fetcher->walk(function($row) use (&$result, $groups){
-
-            $group = 'other';
-
-            foreach($row->attributes as $attributeGroup=>$attributes){
-
-                if(isset($groups[$attributeGroup])){
-                    $group = $groups[$attributeGroup]->getCeneoGroup();
-                    break;
-                }
-            }
-            $result[$group][] = $row;
-        });
-
-        return $result;
+        return $products;
     }
 
-    public function export(ShopInterface $shop){
+    /**
+     * do proper export
+     * @param ShopInterface $shop
+     * @param $output
+     * @return int
+     */
+    public function export(ShopInterface $shop, $output){
 
-        $w = $this->resource;
-
-        $this->loadCategories();
-        $this->loadAttributes();
+        $this->initializeWriters();
 
         $products = $this->fetchProducts($shop);
-        $products = array_filter($products, function($el){
-            return count($el)>0;
-        });
 
-        $w->startDocument();
-            $w->startElement('offers');
-            $w->writeAttribute('version', 1);
+        foreach($products as $product){
+            $group = $this->determineGroupForProduct($product, $shop);
+            $this->counters[$group]++;
+            $this->appendProduct($this->writers[$group], $product, $shop);
+        }
 
-                foreach($products as $group=>$product){
-                    $w->startElement('group');
-                    $w->writeAttribute('name', $group);
+        $this->endWriters();
 
-                    foreach($product as $p) {
-                        $this->appendProduct($p);
-                    }
+        $this->mergeFiles($output);
 
-                    $w->endElement();
-                }
-
-            $w->endElement();
-        $w->endDocument();
+        $this->clearTemporary();
 
         // may something go wrong, so not directly from collection
         return $this->count;
     }
 
-
-    public function appendProduct($row){
+    /**
+     * append particular product to specified writer
+     * @param \XmlWriter $writer
+     * @param $row
+     * @param ShopInterface $shop
+     */
+    protected function appendProduct(\XmlWriter $writer, $row, ShopInterface $shop){
 
         $this->count++;
 
@@ -170,19 +284,19 @@ class Generator {
             $this->stopwatch->lap('export');
         }
 
-        $categoryPath = $this->getCategoryPath($row->category_id);
+        $categoryPath = $this->getCategoryPath($row->category_id, $shop);
 
-        $images = $this->getProductImages($row->product_id);
-        $attributes = $this->getAttributes($row->attributes);
+        $images = $this->getProductImages($row->product_id, $shop);
+        $attributes = $this->getAttributes($row->attributes, $shop);
 
-        $w = $this->resource;
+        $w = $writer;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
             $w->writeAttribute('price', $row->stock->price);
             $w->writeAttribute('stock', $row->stock->stock);
             $w->writeAttribute('url', $row->translations->pl_PL->permalink);
             $w->writeAttribute('weight', $row->stock->weight);
-            $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id));
+            $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id, $shop));
             $w->writeAttribute('set', 0);
 
             $w->startElement('name');
@@ -227,188 +341,48 @@ class Generator {
         $w->endElement();
     }
 
-    protected function loadCategories(){
-        $categoriesTreeResource = new CategoriesTree($this->client);
-        $categoriesResource = new Category($this->client);
+    // todo: fetcher factory?
+    protected function getCategoryPath($id, ShopInterface $shop){
+        static $fetcher;
+        if(!$fetcher){
+            //todo: hardcoded ttl
+            $fetcher = new Categories(100, $this->cache);
+            $fetcher->init($this->client, $shop);
+        }
 
-        $this->categoriesTree = $categoriesTreeResource->get();
-
-        $fetcher = new Fetcher($categoriesResource);
-        $categories = $fetcher->fetchAll();
-        $wrapper = new CollectionWrapper($categories);
-
-        $this->categories = $wrapper->getArray('category_id');
+        return $fetcher->getCategoryTree($id);
     }
 
-    protected function getCategoryPath($id){
+    protected function getProductImages($productId, ShopInterface $shop){
+        //todo: ttl
+        $fetcher = new ProductImages(100, $this->cache);
+        $fetcher->init($this->client, $shop);
 
-        static $cache;
-
-        if(isset($cache[$id])){
-            return $cache[$id];
-        }
-
-        $targetPath = array();
-
-        $iterator = function($node, $path = array()) use (&$targetPath, $id, &$iterator){
-
-            foreach($node as $i){
-                if($i['id']==$id){
-                    $path[] = $id;
-                    $targetPath = $path;
-                    return;
-                }else if(!empty($i['children'])){
-                    $path[] = $i['id'];
-                    $iterator($i['children'], $path);
-                    array_pop($path);
-                }
-            }
-
-        };
-
-        $iterator($this->categoriesTree);
-
-        foreach($targetPath as &$n){
-            $n = $this->categories[$n]->translations->pl_PL->name;
-        }
-
-        $stringPath = implode('/', $targetPath);
-        $cache[$id] = $stringPath;
-
-        return $stringPath;
-
+        return $fetcher->getByProductId($productId);
     }
 
-    public function getProductImages($productId){
-        static $shopUrlBase;
-
-        if(!$shopUrlBase){
-            $shopUrlBase = $this->shop->getShopUrl();
-            if(substr($shopUrlBase, -1)!='/'){
-                $shopUrlBase .= '/';
-            }
+    protected function getDaysForDeliveryId($deliveryId, ShopInterface $shop){
+        static $fetcher;
+        if(!$fetcher){
+            //todo: hardcoded 100
+            $fetcher = new Deliveries(100, $this->cache);
+            $fetcher->init($this->client, $shop);
         }
 
-        $imageResource = new ProductImage($this->client);
-        $images = $imageResource->filters(array('product_id'=>$productId))->get();
-
-        $result = array(
-            'main'=>false,
-            'images'=>array()
-        );
-
-        $count = 0;
-        foreach($images as $i){
-            $count++;
-
-            $url = $shopUrlBase.'userdata/gfx/'.$i->unic_name.'.jpg';
-
-            if($i->main){
-                $result['main'] = $url;
-            }else {
-                $result['images'][] = $url;
-            }
-        }
-
-        if(!$count){
-            return array();
-        }
-
-        return $result;
+        return $fetcher->getDaysForDeliveryId($deliveryId);
     }
 
-    public function loadAttributes(){
-        $resource = new Attribute($this->client);
-        $fetcher = new Fetcher($resource);
-
-        $list = $fetcher->fetchAll();
-
-        $wrapper = new CollectionWrapper($list);
-
-        $this->attributes = $wrapper->getArray('attribute_id');
-    }
-
-    public function getAttributes($attributes){
-
-        $result = array();
-
-        $counter = 0;
-        foreach($attributes as $id=>$group){
-
-            if(count($group)==0){
-                continue;
-            }
-
-            if(isset($this->groups[$id])){
-                $data = $this->groups[$id];
-
-                /**
-                 * @var $data AttributeGroupMapping
-                 */
-                foreach($data->getAttributes() as $i){
-                    /**
-                     * @var $i AttributeMapping
-                     */
-                    $result[$i->getCeneoField()] = $group[$i->getShopAttributeId()];
-                }
-
-                break;
-
-            }else {
-                foreach ($group as $attr => $v) {
-                    $name = $this->attributes[$attr]->name;
-
-                    $result[$name] = $v;
-
-                    $counter++;
-
-                    if ($counter >= 10) {
-                        break;
-                    }
-                }
-            }
+    public function getAttributes($attributes, ShopInterface $shop){
+        static $fetcher;
+        if(!$fetcher){
+            // todo: hardcoded 100
+            $fetcher = new Attributes(100, $this->cache);
+            // todo caching
+            $fetcher->setMappings($this->attributeGroupMappingRepository, $shop);
+            $fetcher->init($this->client, $shop);
         }
 
-        return $result;
-
+        return $fetcher->getAttributes($attributes);
     }
 
-    protected function getDaysForDeliveryId($deliveryId){
-
-        static $deliveries;
-        if(!$deliveries){
-            $deliveriesResource = new Delivery($this->client);
-            $list = $deliveriesResource->get();
-
-            $wrapper = new CollectionWrapper($list);
-            $deliveries = $wrapper->getArray('delivery_id');
-        }
-
-        if(!isset($deliveries[$deliveryId])){
-            return 99;
-        }else{
-
-            $delivery = $deliveries[$deliveryId];
-            $days = $delivery->days;
-
-            if($days>14){
-                return 99;
-            }
-
-            if($days>7){
-                return 14;
-            }
-
-            if($days>3){
-                return 7;
-            }
-
-            if($days>1){
-                return 3;
-            }
-
-            return 1;
-        }
-
-    }
 }
