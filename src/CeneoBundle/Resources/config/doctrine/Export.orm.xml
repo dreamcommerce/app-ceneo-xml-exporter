@@ -7,8 +7,9 @@
             <generator strategy="AUTO"/>
         </id>
         
-        <field name="date" type="datetime"/>
-        <field name="productsCount" type="integer" column="products_count"/>
+        <field name="date" type="datetime" nullable="true"/>
+        <field name="productsCount" type="integer" column="products_count" nullable="true"/>
+        <field name="inProgress" type="boolean"/>
 
         <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop">
         </many-to-one>

@@ -52,18 +52,23 @@ class GenerateCommand extends ContainerAwareCommand
             try {
                 $timer->start('shop');
 
-                $client = $this->getClientByShop($shop);
+                $client = $this->getContainer()->get('dream_commerce_shop_appstore.ceneo')->getClient();
 
                 $path = sprintf('%s/%s.xml', $this->getContainer()->getParameter('xml_dir'), $shop->getName());
 
-                $generator = new Generator($path, $client, $epManager, $shop, $attributeGroupMappingManager);
+                $generator = new Generator(
+                    $this->getContainer()->getParameter('kernel.cache_dir'),
+                    $this->getContainer()->get('cache'),
+                    $epManager->getRepository(),
+                    $attributeGroupMappingManager->getRepository()
+                );
                 $generator->setStopwatch($timer);
 
                 $timer->start('export');
-                $count = $generator->export($shop);
+                $count = $generator->export($client, $shop, $path);
                 $timer->stop('export');
 
-                $this->getContainer()->get('ceneo.export_checker')->setStatus($count, $shop);
+                $this->getContainer()->get('ceneo.export_status')->markDone($shop, $count);
 
                 $output->writeln(sprintf('Shop %s, export: DONE, products: %d', $shop->getName(), $count));
 
@@ -78,55 +83,13 @@ class GenerateCommand extends ContainerAwareCommand
         }
 
         if($hasShops) {
-            $shops = $timer->getEvent('shop');
-            $exports = $timer->getEvent('export');
-
-            $this->printStats('Shop export time', $shops, $output);
-            $this->printStats('Products export time', $exports, $output);
-        }
-
-    }
-
-    protected function printStats($name, StopwatchEvent $e, OutputInterface $o){
-        $o->writeln('Stats: '.$name);
-        $o->writeln(sprintf('Max memory consumed: %s bytes', number_format($e->getMemory(), 0, '.', ' ')));
-
-        $time = 0;
-        $periods = $e->getPeriods();
-        $min = getrandmax();
-        $max = 0;
-        foreach($periods as $p){
-            $lap = $p->getDuration();
-            $time += $lap;
-            if($min>$lap){
-                $min = $lap;
-            }
-            if($max<$lap){
-                $max = $lap;
+            $exportStatus = $this->getContainer()->get('ceneo.export_status');
+            $data = $exportStatus->getExportStats($timer);
+            foreach($data as $type=>$stats){
+                $output->writeln(sprintf('%s: %s', $type, $stats));
             }
         }
 
-        if($periods) {
-            $avg = $time / count($periods);
-        }else{
-            $avg = 0;
-        }
-
-        $o->writeln(sprintf('Timings, AVG: %.2fms, MIN: %.2fms, MAX: %.2fms', $avg, $min, $max));
-
     }
 
-    protected function getClientByShop(ShopInterface $shop){
-        $tokens = $shop->getToken();
-
-        $config =
-            $this->getContainer()->getParameter('dream_commerce_shop_appstore.applications');
-
-        $config = $config['ceneo'];
-
-        $client = new Client($shop->getShopUrl(), $config['app_id'], $config['app_secret']);
-        $client->setAccessToken($tokens->getAccessToken());
-
-        return $client;
-    }
 }

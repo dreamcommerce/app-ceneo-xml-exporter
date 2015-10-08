@@ -38,11 +38,6 @@ class Generator {
     protected $excludedProductRepository;
 
     /**
-     * @var Client
-     */
-    protected $client;
-
-    /**
      * processed products count
      * @var int
      */
@@ -79,17 +74,19 @@ class Generator {
      * @var Cache
      */
     protected $cache;
+    /**
+     * @var null|Client
+     */
+    protected $client;
 
     /**
      * @param $tempDirectory
-     * @param Client $client
      * @param Cache $cache
      * @param ExcludedProductRepository $excludedProductRepository
      * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
      */
     function __construct(
         $tempDirectory,
-        Client $client,
         Cache $cache,
         ExcludedProductRepository $excludedProductRepository,
         AttributeGroupMappingRepository $attributeGroupMappingRepository
@@ -97,7 +94,6 @@ class Generator {
     {
         $this->tempDirectory = $tempDirectory;
 
-        $this->client = $client;
         $this->excludedProductRepository = $excludedProductRepository;
         $this->attributeGroupMappingRepository = $attributeGroupMappingRepository;
 
@@ -225,6 +221,15 @@ class Generator {
     }
 
     /**
+     * get stopwatch instance
+     * @return bool|Stopwatch
+     */
+    public function getStopwatch()
+    {
+        return $this->stopwatch;
+    }
+
+    /**
      * fetch products from shop
      * @param ShopInterface $shop
      * @return Fetcher\ResourceListIterator
@@ -244,13 +249,20 @@ class Generator {
 
     /**
      * do proper export
+     * @param Client $client
      * @param ShopInterface $shop
      * @param $output
      * @return int
      */
-    public function export(ShopInterface $shop, $output){
+    public function export(Client $client, ShopInterface $shop, $output){
+
+        if($this->stopwatch){
+            $this->stopwatch->start('export');
+        }
 
         $this->initializeWriters();
+
+        $this->client = $client;
 
         $products = $this->fetchProducts($shop);
 
@@ -265,6 +277,10 @@ class Generator {
         $this->mergeFiles($output);
 
         $this->clearTemporary();
+
+        if($this->stopwatch){
+            $this->stopwatch->stop('export');
+        }
 
         // may something go wrong, so not directly from collection
         return $this->count;

@@ -89,3 +89,77 @@ dream_commerce_shop_appstore:
             app_id:     "f273cb6cc14b67700b44b77b97f7b61c"
             app_secret: "9e02ea09f0ee39e6323125fb6c6523dd8e3a3d50"
             appstore_secret: "7f2c9be9f03f724fbb23237ae7092e96a961c94d"
+
+doctrine_cache:
+    providers:
+        gearman_cache:
+            type: file_system
+            namespace: doctrine_cache.ns.gearman
+
+gearman:
+   # Bundles will parsed searching workers
+   bundles:
+      # Name of bundle
+      CeneoBundle:
+
+         # Bundle name
+         name: CeneoBundle
+
+         # Bundle search can be enabled or disabled
+         active: true
+
+         # If any include is defined, Only these namespaces will be parsed
+         # Otherwise, full Bundle will be parsed
+         include:
+            - Worker
+
+         # Namespaces this Bundle will ignore when parsing
+         ignore:
+            - DependencyInjection
+            - Resources
+
+   # default values
+   # All these values will be used if are not overwritten in Workers or jobs
+   defaults:
+
+      # Default method related with all jobs
+      # do // deprecated as of pecl/gearman 1.0.0. Use doNormal
+      # doNormal
+      # doBackground
+      # doHigh
+      # doHighBackground
+      # doLow
+      # doLowBackground
+      method: doNormal
+
+      # Default number of executions before job dies.
+      # If annotations defined, will be overwritten
+      # If empty, 0 is defined by default
+      iterations: 150
+
+      # execute callbacks after operations using Kernel events
+      callbacks: true
+
+      # Prefix in all jobs
+      # If empty name will not be modified
+      # Useful for rename jobs in different environments
+      job_prefix: null
+
+      # Autogenerate unique key in jobs/tasks if not set
+      # This key is unique given a Job name and a payload serialized
+      generate_unique_key: true
+
+      # Prepend namespace when callableName is built
+      # By default this variable is set as true
+      workers_name_prepend_namespace: true
+
+   # Server list where workers and clients will connect to
+   # Each server must contain host and port
+   # If annotations defined, will be full overwritten
+   #
+   # If servers empty, simple localhost server is defined by default
+   # If port empty, 4730 is defined by default
+   servers:
+      localhost:
+         host: 127.0.0.1
+         port: 4730
