@@ -26,6 +26,10 @@ class Export {
      * @var integer
      */
     protected $productsCount;
+    /**
+     * @var boolean
+     */
+    protected $inProgress;
 
     /**
      * @return mixed
@@ -81,6 +85,22 @@ class Export {
     public function setProductsCount($productsCount)
     {
         $this->productsCount = $productsCount;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isInProgress()
+    {
+        return $this->inProgress;
+    }
+
+    /**
+     * @param boolean $inProgress
+     */
+    public function setInProgress($inProgress)
+    {
+        $this->inProgress = $inProgress;
     }
 
 }

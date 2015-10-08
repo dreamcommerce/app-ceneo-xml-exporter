@@ -3,7 +3,7 @@
 namespace CeneoBundle\Controller;
 
 use CeneoBundle\Entity\ExcludedProductRepository;
-use CeneoBundle\Services\ExportChecker;
+use CeneoBundle\Services\ExportStatus;
 
 class OptionsController extends ControllerAbstract
 {
@@ -30,10 +30,10 @@ class OptionsController extends ControllerAbstract
         $stockLink = $this->shop->getShopUrl().'/admin/stock';
 
         /**
-         * @var $exportChecker ExportChecker
+         * @var $exportStatus ExportStatus
          */
-        $exportChecker = $this->get('ceneo.export_checker');
-        $status = $exportChecker->getStatus($this->shop);
+        $exportStatus = $this->get('ceneo.export_status');
+        $status = $exportStatus->getStatus($this->shop);
 
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,

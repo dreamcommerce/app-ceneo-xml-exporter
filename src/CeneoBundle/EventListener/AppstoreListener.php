@@ -2,7 +2,9 @@
 namespace CeneoBundle\EventListener;
 
 
+use CeneoBundle\Services\ExportStatus;
 use Doctrine\ORM\EntityManager;
+use DreamCommerce\ShopAppstoreBundle\Event\Appstore\InstallEvent;
 use DreamCommerce\ShopAppstoreBundle\Event\Appstore\UninstallEvent;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
@@ -13,10 +15,15 @@ class AppstoreListener {
      * @var EntityManager
      */
     protected $manager;
+    /**
+     * @var ExportStatus
+     */
+    private $exportStatus;
 
-    public function __construct($xmlDir, EntityManager $manager){
+    public function __construct($xmlDir, EntityManager $manager, ExportStatus $exportStatus){
         $this->xmlDir = $xmlDir;
         $this->manager = $manager;
+        $this->exportStatus = $exportStatus;
     }
 
     public function onUninstall(UninstallEvent $event){
@@ -27,6 +34,18 @@ class AppstoreListener {
         $this->removeGeneratedXml($shopHash);
         $this->removePurgedEntities($shopHash);
 
+    }
+
+    public function onInstall(InstallEvent $event){
+        $params = $event->getPayload();
+        $shopHash = $params['shop'];
+
+        /**
+         * @var $shop ShopInterface
+         */
+        $shop = $this->manager->getRepository('CeneoBundle:Shop')->findOneBy(['name'=>$shopHash]);
+
+        $this->exportStatus->initialize($shop);
     }
 
     protected function removePurgedEntities($hash){
