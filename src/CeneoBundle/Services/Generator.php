@@ -78,6 +78,10 @@ class Generator {
      * @var null|Client
      */
     protected $client;
+    /**
+     * @var ExportStatus
+     */
+    protected $exportStatus;
 
     /**
      * @param $tempDirectory
@@ -89,7 +93,8 @@ class Generator {
         $tempDirectory,
         Cache $cache,
         ExcludedProductRepository $excludedProductRepository,
-        AttributeGroupMappingRepository $attributeGroupMappingRepository
+        AttributeGroupMappingRepository $attributeGroupMappingRepository,
+        ExportStatus $exportStatus
     )
     {
         $this->tempDirectory = $tempDirectory;
@@ -98,6 +103,7 @@ class Generator {
         $this->attributeGroupMappingRepository = $attributeGroupMappingRepository;
 
         $this->cache = $cache;
+        $this->exportStatus = $exportStatus;
     }
 
     /**
@@ -260,6 +266,9 @@ class Generator {
             $this->stopwatch->start('export');
         }
 
+        $this->count = 0;
+        $this->exportStatus->markInProgress($shop);
+
         $this->initializeWriters();
 
         $this->client = $client;
@@ -277,6 +286,8 @@ class Generator {
         $this->mergeFiles($output);
 
         $this->clearTemporary();
+
+        $this->exportStatus->markDone($shop, $this->count);
 
         if($this->stopwatch){
             $this->stopwatch->stop('export');

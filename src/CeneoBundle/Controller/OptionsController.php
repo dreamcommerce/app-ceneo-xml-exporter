@@ -13,13 +13,23 @@ class OptionsController extends ControllerAbstract
 
         $shopId = $this->shop->getName();
 
-        $xmlLink = $this->get('router')->generate('ceneo_xml', array(
-            'shopId' => $shopId
-        ), true);
+        /**
+         * @var $exportStatus ExportStatus
+         */
+        $exportStatus = $this->get('ceneo.export_status');
 
-        $xmlForceLink = $this->get('router')->generate('ceneo_xml_force', array(
-            'shopId' => $shopId
-        ), true);
+        if($exportStatus->exportExists($this->shop)) {
+            $xmlLink = $this->get('router')->generate('ceneo_xml', array(
+                'shopId' => $shopId
+            ), true);
+        }else{
+            $xmlLink = false;
+        }
+
+        $status = $exportStatus->getStatus($this->shop);
+
+        $enqueueLink = $this->generateAppUrl('ceneo_enqueue');
+        $statusLink = $this->generateAppUrl('ceneo_status_check');
 
         /**
          * @var $excludedProducts ExcludedProductRepository
@@ -29,15 +39,10 @@ class OptionsController extends ControllerAbstract
 
         $stockLink = $this->shop->getShopUrl().'/admin/stock';
 
-        /**
-         * @var $exportStatus ExportStatus
-         */
-        $exportStatus = $this->get('ceneo.export_status');
-        $status = $exportStatus->getStatus($this->shop);
-
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,
-            'xml_force_link'=>$xmlForceLink,
+            'enqueue_link'=>$enqueueLink,
+            'status_link'=>$statusLink,
             'excluded_count'=>$count,
             'stock_link'=> $stockLink,
             'export_status'=>$status

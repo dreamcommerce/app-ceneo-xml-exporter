@@ -10,11 +10,6 @@ ceneo_xml:
     path:     /xml/{shopId}.xml
     defaults: { _controller: CeneoBundle:Generator:dummy }
 
-ceneo_xml_force:
-    # cheat httpd
-    path:     /xml/force/{shopId}.xml
-    defaults: { _controller: CeneoBundle:Generator:download }
-
 ceneo_exclusions:
     path:     /exclusions
     defaults: { _controller: CeneoBundle:Exclusions:index }
@@ -30,3 +25,11 @@ ceneo_mappings:
 ceneo_mappings_group:
     path:     /mappings/{group}
     defaults: { _controller: CeneoBundle:Mappings:group }
+
+ceneo_status_check:
+    path:     /status_check
+    defaults: { _controller: CeneoBundle:Generator:checkStatus }
+
+ceneo_enqueue:
+    path:     /enqueue
+    defaults: { _controller: CeneoBundle:Generator:enqueue }

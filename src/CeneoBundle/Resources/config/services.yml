@@ -8,11 +8,11 @@ services:
 
     ceneo.export_status:
         class: CeneoBundle\Services\ExportStatus
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: [%xml_dir%, @doctrine.orm.entity_manager]
 
     ceneo.appstore_listener:
         class: CeneoBundle\EventListener\AppstoreListener
-        arguments: [%xml_dir%, @doctrine.orm.entity_manager]
+        arguments: [%xml_dir%, @doctrine.orm.entity_manager, @ceneo.export_status]
         tags:
             - { name: kernel.event_listener, event: dream_commerce_shop_appstore.uninstall, method: onUninstall, priority: 1 }
 
@@ -38,9 +38,13 @@ services:
         arguments:
             - CeneoBundle\Entity\ExcludedProduct
 
+    ceneo.queue_manager:
+        class: CeneoBundle\Services\QueueManager
+        arguments: [@gearman]
+
     ceneo.generator:
         class: CeneoBundle\Services\Generator
-        arguments: [%xml_dir%, @cache, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository]
+        arguments: [%xml_dir%, @cache, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository, @ceneo.export_status]
         calls:
             - [setStopwatch, [@debug.stopwatch]]
 

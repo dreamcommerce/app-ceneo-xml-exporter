@@ -90,6 +90,18 @@
                 <source>exclusions.remove.tip</source>
                 <target>Wybierz produkty do usunięcia z listy wykluczonych</target>
             </trans-unit>
+            <trans-unit id="23">
+                <source>job.in_progress</source>
+                <target>Generowanie XML w toku, proszę czekać...</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>no_export</source>
+                <target>Brak wyeksportowanego pliku</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>job.scheduled</source>
+                <target>Zadanie zostało dodane do kolejki, proszę czekać...</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

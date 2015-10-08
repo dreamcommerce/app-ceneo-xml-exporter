@@ -20,3 +20,4 @@ parameters:
     secret:            ThisTokenIsNotSoSecretChangeIt
 
     categories_ttl:    600
+    status_check_ttl:  100
