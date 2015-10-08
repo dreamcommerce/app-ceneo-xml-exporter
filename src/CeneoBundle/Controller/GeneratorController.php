@@ -9,54 +9,64 @@
 namespace CeneoBundle\Controller;
 
 
-use CeneoBundle\Manager\AttributeGroupMappingManager;
-use CeneoBundle\Manager\ExcludedProductManager;
-use CeneoBundle\Services\Generator;
-use DreamCommerce\Client;
-use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use BillingBundle\Entity\Shop;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class GeneratorController extends Controller{
+class GeneratorController extends ControllerAbstract{
 
-    public function downloadAction($shopId){
+    public function enqueueAction(Request $request){
 
-        $em = $this->get('doctrine')->getManager();
-        $shopManager = new ShopManager($em, 'BillingBundle\Entity\Shop');
-        $shop = $shopManager->findShopByNameAndApplication($shopId, 'ceneo');
+        $this->filterAjaxCall($request);
+
+        /**
+         * @var $shop Shop
+         */
+        $shop = $this->shop;
 
         if(!$shop){
             throw new NotFoundHttpException();
         }
 
-        $path = sprintf('%s/%s.xml', $this->container->getParameter('xml_dir'), $shopId);
+        $response = [
+            'ok'=>false
+        ];
 
-        $urlPath = $this->generateUrl('ceneo_xml', array(
-            'shopId'=>$shopId
-        ));
+        $status = $this->get('ceneo.export_status')->getStatus($shop)->isInProgress();
+        if($status){
+            $response['error'] = 'in_progress';
+        }else{
+            $manager = $this->get('ceneo.queue_manager');
+            $manager->enqueue($shop);
+            $response['ok'] = true;
+        }
 
-        $config =
-            $this->container->getParameter('dream_commerce_shop_appstore.applications');
+        return new JsonResponse($response);
+    }
 
-        $config = $config['ceneo'];
-        $client = new Client($shop->getShopUrl(), $config['app_id'], $config['app_secret']);
-        $client->setAccessToken($shop->getToken()->getAccessToken());
+    public function checkStatusAction(Request $request){
 
-        $attributeGroupMappingManager = new AttributeGroupMappingManager($this->getDoctrine()->getManager());
+        $this->filterAjaxCall($request);
 
-        $excludedProductManager = new ExcludedProductManager($em);
-        $generator = new Generator($path, $client, $excludedProductManager, $shop, $attributeGroupMappingManager);
+        $export = $this->get('ceneo.export_status')->getStatus($this->shop);
+        $status = $export->isInProgress();
+        if(!$status) {
+            $xmlLink = $this->get('router')->generate('ceneo_xml', array(
+                'shopId' => $this->shop->getName()
+            ), true);
+        }else{
+            $xmlLink = false;
+        }
 
-        set_time_limit(0);
-        $count = $generator->export($shop);
-        $this->get('ceneo.export_checker')->setStatus($count, $shop);
-
-        return $this->redirect($urlPath);
+        return new JsonResponse(['inProgress'=>$status, 'url'=>$xmlLink]);
 
     }
 
     public function dummyAction(){
         throw new NotFoundHttpException();
     }
+
+
 
 }

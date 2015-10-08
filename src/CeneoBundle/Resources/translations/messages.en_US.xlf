@@ -85,6 +85,18 @@
                 <source>exclusions.remove.tip</source>
                 <target state="translated">Choose products to remove from exclusions list</target>
             </trans-unit>
+            <trans-unit id="23">
+                <source>job.in_progress</source>
+                <target>XML generating in progress, please wait...</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>no_export</source>
+                <target>No export file, so far</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>job.scheduled</source>
+                <target>Job has been scheduled, please wait...</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

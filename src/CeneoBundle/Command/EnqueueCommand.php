@@ -37,18 +37,13 @@ class EnqueueCommand extends ContainerAwareCommand
             sprintf('Found %d shops', count($shopList))
         );
 
-        $output->writeln('Marking shops as busy...');
-
-        $epManager->markAllInProgress($shopList);
-
-        $gearman = $this->getContainer()->get('gearman');
+        $queueManager = $this->getContainer()->get('ceneo.queue_manager');
 
         $output->writeln('Scheduling shops...');
 
         foreach($shopList as $exportId){
-            $gearman->doBackgroundJob('CeneoBundleWorkerGeneratorWorker~process', serialize(
-                $exportId
-            ));
+
+            $queueManager->enqueue($exportId);
 
             $output->writeln(
                 sprintf('Shop ID#%d scheduled', $exportId)

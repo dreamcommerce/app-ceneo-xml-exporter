@@ -10,6 +10,7 @@ namespace CeneoBundle\Controller;
 
 
 use DreamCommerce\ShopAppstoreBundle\Controller\ApplicationController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class ControllerAbstract extends ApplicationController{
@@ -28,6 +29,17 @@ class ControllerAbstract extends ApplicationController{
          */
         $session = $this->get('session');
         $session->getFlashBag()->add('notice', $notice);
+    }
+
+    /**
+     * @param Request $request
+     * @throws \HttpMalformedHeadersException
+     */
+    protected function filterAjaxCall(Request $request)
+    {
+        if (!$request->isXmlHttpRequest()) {
+            throw new \HttpMalformedHeadersException();
+        }
     }
 
 

@@ -20,13 +20,20 @@ class ExportStatus {
     /**
      * @var EntityManager
      */
-    private $em;
+    protected $em;
+    /**
+     * xml target directory
+     * @var string
+     */
+    protected $xmlDir;
 
     /**
+     * @param string $xmlDir
      * @param EntityManager $em
      */
-    public function __construct(EntityManager $em){
+    public function __construct($xmlDir, EntityManager $em){
         $this->em = $em;
+        $this->xmlDir = $xmlDir;
     }
 
     /**
@@ -148,6 +155,17 @@ class ExportStatus {
         }
 
         return sprintf('MEM: %sB, AVG: %.2fms, MIN: %.2fms, MAX: %.2fms', $mem, $avg, $min, $max);
+    }
+
+    /**
+     * checks whether exported file is available for download
+     * @param ShopInterface $shop
+     * @return bool
+     */
+    public function exportExists(ShopInterface $shop){
+        return file_exists(
+            sprintf('%s/%s.xml', $this->xmlDir, $shop->getName())
+        );
     }
 
 }

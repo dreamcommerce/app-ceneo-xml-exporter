@@ -204,7 +204,6 @@ class GeneratorWorker implements GearmanOutputAwareInterface
             sprintf('Shop done, exported products: %d', $count)
         );
 
-        $this->exportStatus->markDone($shop, $count);
         $stopwatch->stop('shop');
 
         $stats = $this->exportStatus->getLastExportStats($stopwatch);
