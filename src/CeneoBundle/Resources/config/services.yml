@@ -15,6 +15,7 @@ services:
         arguments: [%xml_dir%, @doctrine.orm.entity_manager, @ceneo.export_status]
         tags:
             - { name: kernel.event_listener, event: dream_commerce_shop_appstore.uninstall, method: onUninstall, priority: 1 }
+            - { name: kernel.event_listener, event: dream_commerce_shop_appstore.install, method: onInstall, priority: -1 }
 
     ceneo.fetchers_categories:
         class: CeneoBundle\Services\Fetchers\Categories
