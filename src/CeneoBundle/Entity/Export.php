@@ -25,11 +25,11 @@ class Export {
     /**
      * @var integer
      */
-    protected $productsCount;
+    protected $productsCount = 0;
     /**
      * @var boolean
      */
-    protected $inProgress;
+    protected $inProgress = false;
 
     /**
      * @return mixed
