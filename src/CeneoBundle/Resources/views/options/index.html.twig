@@ -100,7 +100,7 @@
                 });
 
                 $progress.addClass('in-progress');
-                runChecker();
+                setTimeout(runChecker, 10000);
             });
 
             if($progress.hasClass('in-progress')){
