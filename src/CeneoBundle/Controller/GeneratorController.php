@@ -39,6 +39,9 @@ class GeneratorController extends ControllerAbstract{
         }else{
             $manager = $this->get('ceneo.queue_manager');
             $manager->enqueue($shop);
+
+            $this->get('ceneo.export_status')->markInProgress($this->shop);
+
             $response['ok'] = true;
         }
 
