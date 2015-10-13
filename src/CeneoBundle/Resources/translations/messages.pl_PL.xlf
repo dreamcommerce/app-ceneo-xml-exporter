@@ -12,7 +12,7 @@
             </trans-unit>
             <trans-unit id="3">
                 <source>export.status.count</source>
-                <target>wyeksportowano %count% produktów w ciągu %count%s</target>
+                <target>wyeksportowano %count% produktów w ciągu %seconds%s</target>
             </trans-unit>
             <trans-unit id="4">
                 <source>export.none</source>
