@@ -10,6 +10,7 @@
         <field name="date" type="datetime" nullable="true"/>
         <field name="productsCount" type="integer" column="products_count" nullable="true"/>
         <field name="inProgress" type="boolean"/>
+        <field name="seconds" type="integer"/>
 
         <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop">
         </many-to-one>

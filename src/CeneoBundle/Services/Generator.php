@@ -287,14 +287,22 @@ class Generator {
 
         $this->clearTemporary();
 
-        $this->exportStatus->markDone($shop, $this->count);
+        $seconds = 0;
 
         if($this->stopwatch){
             $this->stopwatch->stop('export');
+            $seconds = $this->getSecondsForLastShop($this->stopwatch);
         }
+
+        $this->exportStatus->markDone($shop, $this->count, $seconds);
 
         // may something go wrong, so not directly from collection
         return $this->count;
+    }
+
+    protected function getSecondsForLastShop(Stopwatch $stopwatch){
+        $e = $stopwatch->getEvent('export');
+        return intval($e->getDuration()/1000);
     }
 
     /**

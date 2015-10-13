@@ -80,15 +80,17 @@ class ExportStatus {
      * mark export as done and specify how much products have been exported
      * @param ShopInterface $shop
      * @param int $count
+     * @param int $seconds
      * @return Export|null
      */
-    public function markDone(ShopInterface $shop, $count = 0)
+    public function markDone(ShopInterface $shop, $count = 0, $seconds = 0)
     {
         $status = $this->getStatus($shop);
 
         $status->setInProgress(false);
         $status->setProductsCount($count);
         $status->setDate(new \DateTime());
+        $status->setSeconds($seconds);
 
         $this->em->persist($status);
         $this->em->flush();
