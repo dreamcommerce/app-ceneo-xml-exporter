@@ -11,7 +11,7 @@
             </trans-unit>
             <trans-unit id="3">
                 <source>export.status.count</source>
-                <target state="translated">%count% products exported</target>
+                <target state="translated">%count% products exported in %seconds% seconds</target>
             </trans-unit>
             <trans-unit id="4">
                 <source>export.none</source>
