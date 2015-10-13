@@ -22,6 +22,7 @@ use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Stopwatch\StopwatchPeriod;
 
 class Generator {
 
@@ -263,6 +264,7 @@ class Generator {
     public function export(Client $client, ShopInterface $shop, $output){
 
         if($this->stopwatch){
+            $this->stopwatch->start('shop');
             $this->stopwatch->start('export');
         }
 
@@ -290,6 +292,7 @@ class Generator {
         $seconds = 0;
 
         if($this->stopwatch){
+            $this->stopwatch->stop('shop');
             $this->stopwatch->stop('export');
             $seconds = $this->getSecondsForLastShop($this->stopwatch);
         }
@@ -300,9 +303,19 @@ class Generator {
         return $this->count;
     }
 
+    /**
+     * get seconds the shop has consumed to perform an export
+     * @param Stopwatch $stopwatch
+     * @return int
+     */
     protected function getSecondsForLastShop(Stopwatch $stopwatch){
-        $e = $stopwatch->getEvent('export');
-        return intval($e->getDuration()/1000);
+        $e = $stopwatch->getEvent('shop');
+        $periods = $e->getPeriods();
+        /**
+         * @var $last StopwatchPeriod
+         */
+        $last = end($periods);
+        return intval($last->getDuration()/1000);
     }
 
     /**

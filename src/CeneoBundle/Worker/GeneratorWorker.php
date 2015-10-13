@@ -188,7 +188,6 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      */
     protected function generateForShop(ShopInterface $shop){
         $stopwatch = $this->generator->getStopwatch();
-        $stopwatch->start('shop');
 
         $client = $this->application->getClient($shop);
 
@@ -203,9 +202,6 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $this->output->writeln(
             sprintf('Shop done, exported products: %d', $count)
         );
-
-        $stopwatch->stop('shop');
-
         $stats = $this->exportStatus->getLastExportStats($stopwatch);
         $this->output->writeln(sprintf('export stats: %s', $stats));
     }

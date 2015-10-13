@@ -48,8 +48,6 @@ class GenerateCommand extends ContainerAwareCommand
         foreach($shops as $shop){
 
             try {
-                $timer->start('shop');
-
                 $client = $this->getContainer()->get('dream_commerce_shop_appstore.ceneo')->getClient();
 
                 $path = sprintf('%s/%s.xml', $this->getContainer()->getParameter('xml_dir'), $shop->getName());
@@ -62,16 +60,12 @@ class GenerateCommand extends ContainerAwareCommand
                     $this->getContainer()->get('ceneo.export_status')
                 );
                 $generator->setStopwatch($timer);
-
-                $timer->start('export');
                 $count = $generator->export($client, $shop, $path);
-                $timer->stop('export');
 
                 $this->getContainer()->get('ceneo.export_status')->markDone($shop, $count);
 
                 $output->writeln(sprintf('Shop %s, export: DONE, products: %d', $shop->getName(), $count));
 
-                $timer->stop('shop');
             }catch(\Exception $ex){
                 $output->writeln(sprintf('Shop %s: exception with message "%s"', $shop->getName(), $ex->getMessage()));
             }
