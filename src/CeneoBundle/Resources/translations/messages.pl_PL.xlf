@@ -102,6 +102,10 @@
                 <source>job.scheduled</source>
                 <target>Zadanie zostało dodane do kolejki, proszę czekać...</target>
             </trans-unit>
+            <trans-unit id="26">
+                <source>exporting</source>
+                <target>eksportowanie...</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

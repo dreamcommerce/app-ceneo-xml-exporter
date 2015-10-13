@@ -34,7 +34,11 @@
                         {% if xml_link is empty %}
                             <input type="text" id="xml-link" value="{{ 'no_export'|trans }}" readonly="readonly">
                         {% else %}
-                            <input type="text" id="xml-link" value="{{ xml_link }}" readonly="readonly">
+                            {% if export_status.inProgress %}
+                                <input type="text" id="xml-link" value="{{ 'exporting'|trans }}" readonly="readonly">
+                            {% else %}
+                                <input type="text" id="xml-link" value="{{ xml_link }}" readonly="readonly">
+                            {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -70,13 +74,14 @@
 
             var $progress = $('#in-progress');
 
+            var $xmlLink = $('#xml-link');
+
             var runChecker = function(){
                 $.getJSON('{{ status_link|raw }}').then(function(data){
                     if(data.inProgress){
                         setTimeout(runChecker, 10000);
                     }else{
-                        $('#xml-link').val(data.url);
-                        $progress.removeClass('in-progress');
+                        self.location.reload();
                     }
                 })
             };

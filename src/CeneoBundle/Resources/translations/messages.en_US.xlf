@@ -97,6 +97,10 @@
                 <source>job.scheduled</source>
                 <target>Job has been scheduled, please wait...</target>
             </trans-unit>
+            <trans-unit id="26">
+                <source>exporting</source>
+                <target>exporting...</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

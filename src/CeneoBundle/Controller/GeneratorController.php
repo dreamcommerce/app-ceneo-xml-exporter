@@ -54,15 +54,18 @@ class GeneratorController extends ControllerAbstract{
 
         $export = $this->get('ceneo.export_status')->getStatus($this->shop);
         $status = $export->isInProgress();
+
+        $response = [
+            'inProgress'=>$status
+        ];
+
         if(!$status) {
-            $xmlLink = $this->get('router')->generate('ceneo_xml', array(
+            $response['url'] = $this->get('router')->generate('ceneo_xml', array(
                 'shopId' => $this->shop->getName()
             ), true);
-        }else{
-            $xmlLink = false;
         }
 
-        return new JsonResponse(['inProgress'=>$status, 'url'=>$xmlLink]);
+        return new JsonResponse($response);
 
     }
 
