@@ -5,14 +5,12 @@ namespace CeneoBundle\Command;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\Generator;
-use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Stopwatch\Stopwatch;
-use Symfony\Component\Stopwatch\StopwatchEvent;
 
 class GenerateCommand extends ContainerAwareCommand
 {
@@ -60,7 +58,8 @@ class GenerateCommand extends ContainerAwareCommand
                     $this->getContainer()->getParameter('kernel.cache_dir'),
                     $this->getContainer()->get('cache'),
                     $epManager->getRepository(),
-                    $attributeGroupMappingManager->getRepository()
+                    $attributeGroupMappingManager->getRepository(),
+                    $this->getContainer()->get('ceneo.export_status')
                 );
                 $generator->setStopwatch($timer);
 
