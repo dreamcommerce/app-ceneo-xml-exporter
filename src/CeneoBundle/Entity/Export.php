@@ -30,6 +30,10 @@ class Export {
      * @var boolean
      */
     protected $inProgress = false;
+    /**
+     * @var int
+     */
+    protected $seconds = 0;
 
     /**
      * @return mixed
@@ -101,6 +105,22 @@ class Export {
     public function setInProgress($inProgress)
     {
         $this->inProgress = $inProgress;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSeconds()
+    {
+        return $this->seconds;
+    }
+
+    /**
+     * @param int $seconds
+     */
+    public function setSeconds($seconds)
+    {
+        $this->seconds = $seconds;
     }
 
 }
