@@ -18,7 +18,7 @@ class ProductImages extends FetcherAbstract
 
     }
 
-    public function getByProductId($productId){
+    public function getImages($images){
         static $shopUrlBase;
 
         if(!$shopUrlBase){
@@ -28,13 +28,9 @@ class ProductImages extends FetcherAbstract
             }
         }
 
-        $imageResource = new ProductImage($this->client);
-        $images = $imageResource->filters(array('product_id'=>$productId))->get();
-
-        $result = array(
-            'main'=>false,
-            'images'=>array()
-        );
+        $result = [
+            'images'=>[]
+        ];
 
         $count = 0;
         foreach($images as $i){
