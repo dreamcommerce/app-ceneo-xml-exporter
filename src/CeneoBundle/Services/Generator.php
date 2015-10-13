@@ -313,7 +313,7 @@ class Generator {
 
         $categoryPath = $this->getCategoryPath($row->category_id, $shop);
 
-        $images = $this->getProductImages($row->product_id, $shop);
+        $images = $this->getProductImages($row->ProductImage, $shop);
         $attributes = $this->getAttributes($row->attributes, $shop);
 
         $w = $writer;
@@ -334,6 +334,7 @@ class Generator {
             $w->endElement();
 
             if($images){
+
                 $w->startElement('imgs');
                 if($images['main']){
                     $w->startElement('main');
@@ -380,12 +381,12 @@ class Generator {
         return $fetcher->getCategoryTree($id);
     }
 
-    protected function getProductImages($productId, ShopInterface $shop){
+    protected function getProductImages($images, ShopInterface $shop){
         //todo: ttl
         $fetcher = new ProductImages(100, $this->cache);
         $fetcher->init($this->client, $shop);
 
-        return $fetcher->getByProductId($productId);
+        return $fetcher->getImages($images);
     }
 
     protected function getDaysForDeliveryId($deliveryId, ShopInterface $shop){
