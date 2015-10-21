@@ -66,11 +66,21 @@ class ExportStatus {
     /**
      * marks export as being processed
      * @param ShopInterface $shop
+     * @param int $exported
+     * @param int $count
+     * @param int $eta
      */
-    public function markInProgress(ShopInterface $shop){
+    public function markInProgress(ShopInterface $shop, $exported = null, $count = null, $eta = 0){
         $status = $this->getStatus($shop);
 
         $status->setInProgress(true);
+        if($exported!==null) {
+            $status->setExported($exported);
+        }
+        if($count!==null) {
+            $status->setProductsCount($count);
+        }
+        $status->setEta($eta);
 
         $this->em->persist($status);
         $this->em->flush();
@@ -79,16 +89,14 @@ class ExportStatus {
     /**
      * mark export as done and specify how much products have been exported
      * @param ShopInterface $shop
-     * @param int $count
      * @param int $seconds
      * @return Export|null
      */
-    public function markDone(ShopInterface $shop, $count = 0, $seconds = 0)
+    public function markDone(ShopInterface $shop,$seconds = 0)
     {
         $status = $this->getStatus($shop);
 
         $status->setInProgress(false);
-        $status->setProductsCount($count);
         $status->setDate(new \DateTime());
         $status->setSeconds($seconds);
 
