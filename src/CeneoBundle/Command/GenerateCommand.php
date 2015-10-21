@@ -48,7 +48,7 @@ class GenerateCommand extends ContainerAwareCommand
         foreach($shops as $shop){
 
             try {
-                $client = $this->getContainer()->get('dream_commerce_shop_appstore.ceneo')->getClient();
+                $client = $this->getContainer()->get('dream_commerce_shop_appstore.ceneo')->getClient($shop);
 
                 $path = sprintf('%s/%s.xml', $this->getContainer()->getParameter('xml_dir'), $shop->getName());
 
