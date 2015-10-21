@@ -25,7 +25,7 @@ class Export {
     /**
      * @var integer
      */
-    protected $productsCount = 0;
+    protected $exported = 0;
     /**
      * @var boolean
      */
@@ -34,6 +34,16 @@ class Export {
      * @var int
      */
     protected $seconds = 0;
+
+    /**
+     * @var int
+     */
+    protected $productsCount = 0;
+
+    /**
+     * @var int
+     */
+    protected $eta = 0;
 
     /**
      * @return mixed
@@ -121,6 +131,38 @@ class Export {
     public function setSeconds($seconds)
     {
         $this->seconds = $seconds;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExported()
+    {
+        return $this->exported;
+    }
+
+    /**
+     * @param int $exported
+     */
+    public function setExported($exported)
+    {
+        $this->exported = $exported;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEta()
+    {
+        return $this->eta;
+    }
+
+    /**
+     * @param int $eta
+     */
+    public function setEta($eta)
+    {
+        $this->eta = $eta;
     }
 
 }

@@ -26,6 +26,8 @@ use Symfony\Component\Stopwatch\StopwatchPeriod;
 
 class Generator {
 
+    const PROGRESS_RESOLUTION = 50;
+
     /**
      * directory where files are being prepared
      * @var string
@@ -37,12 +39,6 @@ class Generator {
      * @var ExcludedProductRepository
      */
     protected $excludedProductRepository;
-
-    /**
-     * processed products count
-     * @var int
-     */
-    protected $count = 0;
 
     /**
      * stopwatch component for statistics
@@ -85,10 +81,17 @@ class Generator {
     protected $exportStatus;
 
     /**
+     * products count to export
+     * @var int
+     */
+    protected $productsCount = 0;
+
+    /**
      * @param $tempDirectory
      * @param Cache $cache
      * @param ExcludedProductRepository $excludedProductRepository
      * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
+     * @param ExportStatus $exportStatus
      */
     function __construct(
         $tempDirectory,
@@ -268,19 +271,34 @@ class Generator {
             $this->stopwatch->start('export');
         }
 
-        $this->count = 0;
-        $this->exportStatus->markInProgress($shop);
-
         $this->initializeWriters();
 
         $this->client = $client;
 
         $products = $this->fetchProducts($shop);
+        $this->productsCount = count($products);
 
+        $this->exportStatus->markInProgress($shop, 0, $this->productsCount);
+
+        $calculator = new EtaCalculator();
+
+        $counter = 0;
         foreach($products as $product){
+
+            $counter++;
+
             $group = $this->determineGroupForProduct($product, $shop);
             $this->counters[$group]++;
             $this->appendProduct($this->writers[$group], $product, $shop);
+
+            if($counter % self::PROGRESS_RESOLUTION == 0){
+                if($this->stopwatch) {
+                    $eta = $calculator->getEtaSeconds($this->stopwatch->getEvent('export'), $this->productsCount - $counter);
+                }else{
+                    $eta = 0;
+                }
+                $this->exportStatus->markInProgress($shop, $counter, $this->productsCount, $eta);
+            }
         }
 
         $this->endWriters();
@@ -297,10 +315,10 @@ class Generator {
             $seconds = $this->getSecondsForLastShop($this->stopwatch);
         }
 
-        $this->exportStatus->markDone($shop, $this->count, $seconds);
+        $this->exportStatus->markDone($shop, $seconds);
 
         // may something go wrong, so not directly from collection
-        return $this->count;
+        return $counter;
     }
 
     /**
@@ -326,8 +344,6 @@ class Generator {
      */
     protected function appendProduct(\XmlWriter $writer, $row, ShopInterface $shop){
 
-        $this->count++;
-
         if($this->stopwatch){
             $this->stopwatch->lap('export');
         }
@@ -340,7 +356,7 @@ class Generator {
         $w = $writer;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
-            $w->writeAttribute('price', $row->stock->price);
+            $w->writeAttribute('price', $row->stock->comp_promo_price);
             $w->writeAttribute('stock', $row->stock->stock);
             $w->writeAttribute('url', $row->translations->pl_PL->permalink);
             $w->writeAttribute('weight', $row->stock->weight);
@@ -432,6 +448,22 @@ class Generator {
         }
 
         return $fetcher->getAttributes($attributes);
+    }
+
+    /**
+     * @return int
+     */
+    public function getProductsCount()
+    {
+        return $this->productsCount;
+    }
+
+    protected function getEta(Stopwatch $stopwatch = null){
+        if(!$stopwatch){
+            return null;
+        }
+
+
     }
 
 }

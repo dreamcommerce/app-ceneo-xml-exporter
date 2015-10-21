@@ -76,11 +76,59 @@
 
             var $xmlLink = $('#xml-link');
 
+            var showProgress = function() {
+                app.progressBar({
+                    onFinishAlert: '{{ 'finished'|trans }}',
+                    title: '{{ 'importing'|trans}}'
+                });
+            };
+
+            /**
+             * format seconds to H:i:s format string
+             * @link http://stackoverflow.com/questions/6312993/javascript-seconds-to-time-string-with-format-hhmmss
+             * @param time {Number}
+             * @returns {string}
+             */
+            var secondsToTimeString = function(time){
+                var sec_num = parseInt(time, 10); // don't forget the second param
+                var hours   = Math.floor(sec_num / 3600);
+                var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+                var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+                if (hours   < 10) {hours   = "0"+hours;}
+                if (minutes < 10) {minutes = "0"+minutes;}
+                if (seconds < 10) {seconds = "0"+seconds;}
+                return hours+':'+minutes+':'+seconds;
+            };
+
+
             var runChecker = function(){
                 $.getJSON('{{ status_link|raw }}').then(function(data){
+
+                    if(data.exported) {
+
+                        app.progressBar.setStep({
+                            value: (data.exported / data.productsCount) * 100,
+                            msg: data.exported +
+                            '/' +
+                            data.productsCount +
+                            ', ETA: ' +
+                            secondsToTimeString(data.eta)
+                        });
+                    }else{
+                        app.progressBar.setStep({
+                            value: 0,
+                            msg: '{{ 'queue'|trans }}'
+                        });
+                    }
+
+
                     if(data.inProgress){
                         setTimeout(runChecker, 10000);
                     }else{
+                        app.progressBar.setStep({
+                            value: 100
+                        });
                         self.location.reload();
                     }
                 })
@@ -96,6 +144,7 @@
                         });
 
                     }else{
+                        showProgress();
                         app.flashMessage({
                             msg : '{{ 'job.scheduled'|trans }}',
                             type : 'notice'
@@ -108,9 +157,12 @@
                 setTimeout(runChecker, 10000);
             });
 
-            if($progress.hasClass('in-progress')){
-                runChecker();
-            }
+            {% if export_status.inProgress %}
+                events.push(function(){
+                    showProgress();
+                    runChecker();
+                });
+            {% endif %}
         });
 
     </script>

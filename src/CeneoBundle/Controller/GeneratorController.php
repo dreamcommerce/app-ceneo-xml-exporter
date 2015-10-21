@@ -40,7 +40,7 @@ class GeneratorController extends ControllerAbstract{
             $manager = $this->get('ceneo.queue_manager');
             $manager->enqueue($shop);
 
-            $this->get('ceneo.export_status')->markInProgress($this->shop);
+            $this->get('ceneo.export_status')->markInProgress($this->shop, 0);
 
             $response['ok'] = true;
         }
@@ -56,7 +56,10 @@ class GeneratorController extends ControllerAbstract{
         $status = $export->isInProgress();
 
         $response = [
-            'inProgress'=>$status
+            'inProgress'=>$status,
+            'productsCount'=>$export->getProductsCount(),
+            'exported'=>$export->getExported(),
+            'eta'=>$export->getEta()
         ];
 
         if(!$status) {

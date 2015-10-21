@@ -9,6 +9,8 @@
         
         <field name="date" type="datetime" nullable="true"/>
         <field name="productsCount" type="integer" column="products_count" nullable="true"/>
+        <field name="exported" type="integer" column="exported" nullable="true"/>
+        <field name="eta" type="integer" column="eta" nullable="true"/>
         <field name="inProgress" type="boolean"/>
         <field name="seconds" type="integer"/>
 
