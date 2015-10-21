@@ -22,8 +22,8 @@
         "sensio/framework-extra-bundle": "~3.0,>=3.0.2",
         "incenteev/composer-parameter-handler": "~2.0",
         "doctrine/doctrine-cache-bundle": "~1.0",
-        "dreamcommerce/shop-appstore-lib": "0.2.*",
-        "mmoreram/gearman-bundle": "~3.0"
+        "mmoreram/gearman-bundle": "~3.0",
+        "dreamcommerce/shop-appstore-bundle": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
@@ -60,10 +60,10 @@
             "file": "app/config/parameters.yml"
         }
     },
-    "repositories": [
-        {
-            "type" :"git",
-            "url": "../shop-appstore-bundle"
-        }
-    ]
+  "repositories": [
+      {
+          "type":"vcs",
+          "url": "https://github.com/dreamcommerce/appstore-bundle"
+      }
+  ]
 }
