@@ -110,6 +110,14 @@
                 <source>queue</source>
                 <target>Oczekiwanie w kolejce...</target>
             </trans-unit>
+            <trans-unit id="28">
+                <source>finished</source>
+                <target>Eksport zakończony</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>exporting</source>
+                <target>Eksportowanie...</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
