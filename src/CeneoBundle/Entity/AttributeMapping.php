@@ -45,22 +45,6 @@ class AttributeMapping {
     /**
      * @return mixed
      */
-    public function getAttributeGroupId()
-    {
-        return $this->attributeGroupId;
-    }
-
-    /**
-     * @param mixed $attributeGroupId
-     */
-    public function setAttributeGroupId($attributeGroupId)
-    {
-        $this->attributeGroupId = $attributeGroupId;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getCeneoField()
     {
         return $this->ceneoField;
