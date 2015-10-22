@@ -3,9 +3,6 @@
 
 namespace CeneoBundle\Services\Fetchers;
 
-
-use DreamCommerce\Resource\ProductImage;
-
 class ProductImages extends FetcherAbstract
 {
 

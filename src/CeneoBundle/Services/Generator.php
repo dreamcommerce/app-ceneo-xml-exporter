@@ -87,6 +87,24 @@ class Generator {
     protected $productsCount = 0;
 
     /**
+     * @var Categories
+     */
+    protected $categoriesFetcher;
+
+    /**
+     * @var ProductImages
+     */
+    protected $productImagesFetcher;
+    /**
+     * @var Deliveries
+     */
+    protected $deliveriesFetcher;
+    /**
+     * @var Attributes
+     */
+    protected $attributesFetcher;
+
+    /**
      * @param $tempDirectory
      * @param Cache $cache
      * @param ExcludedProductRepository $excludedProductRepository
@@ -275,6 +293,8 @@ class Generator {
 
         $this->client = $client;
 
+        $this->initializeFetchers($shop);
+
         $products = $this->fetchProducts($shop);
         $this->productsCount = count($products);
 
@@ -406,48 +426,37 @@ class Generator {
         $w->endElement();
     }
 
-    // todo: fetcher factory?
-    protected function getCategoryPath($id, ShopInterface $shop){
-        static $fetcher;
-        if(!$fetcher){
-            //todo: hardcoded ttl
-            $fetcher = new Categories(100, $this->cache);
-            $fetcher->init($this->client, $shop);
-        }
+    protected function initializeFetchers(ShopInterface $shop){
+        $this->categoriesFetcher = new Categories(100, $this->cache);
+        $this->categoriesFetcher->init($this->client, $shop);
 
-        return $fetcher->getCategoryTree($id);
+        $this->productImagesFetcher = new ProductImages(100, $this->cache);
+        $this->productImagesFetcher->init($this->client, $shop);
+
+        $this->deliveriesFetcher = new Deliveries(100, $this->cache);
+        $this->deliveriesFetcher->init($this->client, $shop);
+
+        $this->attributesFetcher = new Attributes(100, $this->cache);
+        $this->attributesFetcher->init($this->client, $shop);
+        $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
+        $this->attributesFetcher->init($this->client, $shop);
+
     }
 
-    protected function getProductImages($images, ShopInterface $shop){
-        //todo: ttl
-        $fetcher = new ProductImages(100, $this->cache);
-        $fetcher->init($this->client, $shop);
-
-        return $fetcher->getImages($images);
+    protected function getCategoryPath($id){
+        return $this->categoriesFetcher->getCategoryTree($id);
     }
 
-    protected function getDaysForDeliveryId($deliveryId, ShopInterface $shop){
-        static $fetcher;
-        if(!$fetcher){
-            //todo: hardcoded 100
-            $fetcher = new Deliveries(100, $this->cache);
-            $fetcher->init($this->client, $shop);
-        }
-
-        return $fetcher->getDaysForDeliveryId($deliveryId);
+    protected function getProductImages($images){
+        return $this->productImagesFetcher->getImages($images);
     }
 
-    public function getAttributes($attributes, ShopInterface $shop){
-        static $fetcher;
-        if(!$fetcher){
-            // todo: hardcoded 100
-            $fetcher = new Attributes(100, $this->cache);
-            // todo caching
-            $fetcher->setMappings($this->attributeGroupMappingRepository, $shop);
-            $fetcher->init($this->client, $shop);
-        }
+    protected function getDaysForDeliveryId($deliveryId){
+        return $this->deliveriesFetcher->getDaysForDeliveryId($deliveryId);
+    }
 
-        return $fetcher->getAttributes($attributes);
+    public function getAttributes($attributes){
+        return $this->attributesFetcher->getAttributes($attributes);
     }
 
     /**

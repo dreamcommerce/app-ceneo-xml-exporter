@@ -14,15 +14,6 @@ class Deliveries extends FetcherAbstract
 
     protected function fetch(){
 
-        $deliveries = $this->cache->fetch(
-            $this->getCacheKey('deliveries')
-        );
-
-        if($deliveries){
-            $this->deliveries = $deliveries;
-            return;
-        }
-
         $deliveriesResource = new Delivery($this->client);
         $list = $deliveriesResource->get();
 
@@ -30,9 +21,6 @@ class Deliveries extends FetcherAbstract
         $deliveries = $wrapper->getArray('delivery_id');
 
         $this->deliveries = $deliveries;
-        $this->cache->save(
-            $this->getCacheKey('deliveries'), $deliveries
-        );
     }
 
     public function getDaysForDeliveryId($deliveryId){

@@ -34,14 +34,6 @@ class Attributes extends FetcherAbstract
      */
     protected function fetch()
     {
-        $attributes = $this->cache->fetch(
-            $this->getCacheKey('attributes')
-        );
-
-        if($attributes){
-            return;
-        }
-
         $resource = new Attribute($this->client);
         $fetcher = new Fetcher($resource);
 
@@ -53,9 +45,6 @@ class Attributes extends FetcherAbstract
 
         $this->attributes = $attributes;
 
-        $this->cache->save(
-            $this->getCacheKey('attributes'), $attributes
-        );
     }
 
     public function determineGroupForProduct($product){
