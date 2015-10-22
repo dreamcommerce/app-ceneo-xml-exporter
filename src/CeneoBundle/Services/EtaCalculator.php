@@ -10,6 +10,11 @@ class EtaCalculator
 {
 
     /**
+     * minimal time should be used for per product calculation
+     */
+    const MIN_TIME_MS = 10;
+
+    /**
      * @var int
      */
     private $samples;
@@ -29,14 +34,20 @@ class EtaCalculator
             return 0;
         }
 
-        $sum = 0;
+        $avg = 0;
         foreach($ending as $e){
-            $sum += $e->getDuration();
+            $duration = $e->getDuration();
+            if($duration<self::MIN_TIME_MS){
+                $duration = self::MIN_TIME_MS;
+            }
+            $avg += $duration;
         }
 
-        $avg = (int)(($sum/1000)/count($ending));
+        $avg = $avg/count($ending);
 
-        return $avg*$count;
+        $time = (int)(($avg*$count)/1000);
+
+        return $time;
 
     }
 

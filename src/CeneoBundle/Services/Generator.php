@@ -280,7 +280,7 @@ class Generator {
 
         $this->exportStatus->markInProgress($shop, 0, $this->productsCount);
 
-        $calculator = new EtaCalculator();
+        $calculator = new EtaCalculator(100);
 
         $counter = 0;
         foreach($products as $product){
