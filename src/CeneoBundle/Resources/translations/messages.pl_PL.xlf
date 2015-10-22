@@ -118,6 +118,10 @@
                 <source>exporting</source>
                 <target>Eksportowanie...</target>
             </trans-unit>
+            <trans-unit id="30">
+                <source>select.all</source>
+                <target>zaznacz/odznacz wszystko</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

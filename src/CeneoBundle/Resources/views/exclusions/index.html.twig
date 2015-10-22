@@ -18,26 +18,24 @@
                             {% block message %}
                                 {{ 'exclusions.remove.tip'|trans }}:
                             {% endblock %}
+                            <br>
+                            <a href="#" class="select-all">{{ 'select.all'|trans }}</a>
                         </div>
                         <div class="edition-form-line-field">
-                            <ul class="control-more-options additional-inline">
-                        {% for product in form.products %}
+                            <ul class="control-more-options additional-inline list">
+                            {% for product in form.products %}
 
-	                                    <li><span class="checkbox-wrap">
-	                                        {{ form_widget(product) }}
-                                            {{ form_label(product, ' ') }}
-	                                    </span>
-                                        {{ form_label(product) }}
-                                        </li>
+                            <li><span class="checkbox-wrap">
+                                {{ form_widget(product) }}
+                                {{ form_label(product, ' ') }}
+                            </span>
+                            {{ form_label(product) }}
+                            </li>
 
-
-
-                    {% endfor %}
+                            {% endfor %}
                             </ul>
                         </div>
                     </div>
-
-
 
             </fieldset>
 
@@ -54,5 +52,25 @@
 
         </section>
     </main>
+
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+        $(function(){
+            $('a.select-all').click(function(e){
+                e.preventDefault();
+
+                var $checkboxes = $('ul.list input:checkbox');
+                var $checked = $checkboxes.filter(':checked');
+
+                var status = true;
+                if($checkboxes.length==$checked.length){
+                    status = false;
+                }
+
+                $checkboxes.prop('checked', status).change();
+
+            });
+        });
+    </script>
 
 {% endblock %}

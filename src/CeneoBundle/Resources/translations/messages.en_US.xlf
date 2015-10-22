@@ -113,6 +113,10 @@
                 <source>exporting</source>
                 <target>Exporting...</target>
             </trans-unit>
+            <trans-unit id="30">
+                <source>select.all</source>
+                <target>select all/none</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
