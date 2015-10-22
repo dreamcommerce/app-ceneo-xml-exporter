@@ -17,17 +17,6 @@ class Categories extends FetcherAbstract
 
     protected function fetch(){
 
-        $this->tree = $this->cache->fetch(
-            $this->getCacheKey('categories_tree')
-        );
-        $this->categories = $this->cache->fetch(
-            $this->getCacheKey('categories')
-        );
-
-        if($this->tree && $this->categories){
-            return;
-        }
-
         $categoriesTreeResource = new CategoriesTree($this->client);
         $categoriesResource = new Category($this->client);
 
@@ -39,12 +28,6 @@ class Categories extends FetcherAbstract
 
         $this->categories = $wrapper->getArray('category_id');
 
-        $this->cache->save(
-            $this->getCacheKey('categories_tree'), $this->tree
-        );
-        $this->cache->save(
-            $this->getCacheKey('categories'), $this->categories
-        );
     }
 
     public function getCategoryTree($id){
