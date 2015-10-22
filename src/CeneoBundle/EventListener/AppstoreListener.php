@@ -87,7 +87,7 @@ class AppstoreListener {
     protected function removeGeneratedXml($shopHash)
     {
         $path = sprintf('%s/%s.xml', $this->xmlDir, basename($shopHash));
-        @unlink($path);
+        file_exists($path) && unlink($path);
     }
 
 }
