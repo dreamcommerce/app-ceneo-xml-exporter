@@ -59,6 +59,10 @@ class AppstoreListener {
                     'name'=>$hash
                 ]);
 
+        if(!$shopInstance){
+            return;
+        }
+
         $this->removeCollectionByShop('CeneoBundle\Entity\Export', $shopInstance);
         $this->removeCollectionByShop('CeneoBundle\Entity\ExcludedProduct', $shopInstance);
         $this->removeCollectionByShop('CeneoBundle\Entity\AttributeGroupMapping', $shopInstance);
