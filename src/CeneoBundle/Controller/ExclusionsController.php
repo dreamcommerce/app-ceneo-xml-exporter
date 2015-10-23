@@ -107,7 +107,7 @@ class ExclusionsController extends ControllerAbstract{
                 'expanded'=>true
             ))
             ->add('submit', 'submit', array(
-                'label'=>'Dodaj'
+                'label'=>'action.exclude'
             ))
             ->getForm();
         $form->handleRequest($request);
