@@ -117,6 +117,10 @@
                 <source>select.all</source>
                 <target>select all/none</target>
             </trans-unit>
+            <trans-unit id="31">
+                <source>action.exclude</source>
+                <target>Exclude</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>
