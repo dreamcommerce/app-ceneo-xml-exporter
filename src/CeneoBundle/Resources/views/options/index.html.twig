@@ -30,15 +30,17 @@
                         {{ 'xml.link'|trans }}:
                     </div>
                     <div class="edition-form-line-field">
+                        <textarea id="xml-link" readonly="readonly" rows="1" cols="50" class="input focusselect">{% spaceless %}
                         {% if xml_link is empty %}
-                            <input type="text" id="xml-link" value="{{ 'no_export'|trans }}" readonly="readonly">
+                            {{ 'no_export'|trans }}
                         {% else %}
                             {% if export_status.inProgress %}
-                                <input type="text" id="xml-link" value="{{ 'exporting'|trans }}" readonly="readonly">
+                                {{ 'exporting'|trans }}
                             {% else %}
-                                <input type="text" id="xml-link" value="{{ xml_link }}" readonly="readonly">
+                                {{ xml_link }}
                             {% endif %}
                         {% endif %}
+                        {% endspaceless %}</textarea>
                         <span class="indicator {% if export_status.inProgress %}in-progress{% endif %}">
                             <button class="button button-important button-bg" type="button" data-url="{{ enqueue_link|raw }}" id="generate-xml">{{ 'xml.generate'|trans }}</button>
                         </span>
@@ -159,6 +161,10 @@
                 setTimeout(runChecker, 10000);
             });
 
+            $xmlLink.click(function(){
+                $(this).select();
+            });
+
             {% if export_status.inProgress %}
                 events.push(function(){
                     showProgress();
@@ -183,10 +189,6 @@
 
         .indicator.in-progress button{
             display: none;
-        }
-
-        #xml-link{
-            width: 75%;
         }
     </style>
 
