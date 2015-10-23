@@ -222,25 +222,6 @@ class Generator {
     }
 
     /**
-     * determine group for product using fetcher
-     * @param $product
-     * @param ShopInterface $shop
-     * @return string
-     */
-    protected function determineGroupForProduct($product, ShopInterface $shop){
-        static $fetcher;
-        if(!$fetcher){
-            // todo: hardcoded 100
-            $fetcher = new Attributes(100, $this->cache);
-            // todo: cache
-            $fetcher->setMappings($this->attributeGroupMappingRepository, $shop);
-            $fetcher->init($this->client, $shop);
-        }
-
-        return $fetcher->determineGroupForProduct($product);
-    }
-
-    /**
      * enable stopwatch
      * @param Stopwatch $s
      */
@@ -441,6 +422,16 @@ class Generator {
         $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
         $this->attributesFetcher->init($this->client, $shop);
 
+    }
+
+    /**
+     * determine group for product using fetcher
+     * @param $product
+     * @param ShopInterface $shop
+     * @return string
+     */
+    protected function determineGroupForProduct($product, ShopInterface $shop){
+        return $this->attributesFetcher->determineGroupForProduct($product);
     }
 
     protected function getCategoryPath($id){
