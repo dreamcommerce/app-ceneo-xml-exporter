@@ -19,9 +19,8 @@
                             {{ 'export.none'|trans }}
                         {% endif %}
 
-                        <span id="in-progress" class="{% if export_status.inProgress %}in-progress{% endif %}">
+                        <span class="indicator {% if export_status.inProgress %}in-progress{% endif %}">
                             <span>{{ 'job.in_progress'|trans }}</span>
-                            <button class="button button-important button-bg" type="button" data-url="{{ enqueue_link|raw }}" id="generate-xml">{{ 'xml.generate'|trans }}</button>
                         </span>
                     </div>
                 </div>
@@ -40,6 +39,9 @@
                                 <input type="text" id="xml-link" value="{{ xml_link }}" readonly="readonly">
                             {% endif %}
                         {% endif %}
+                        <span class="indicator {% if export_status.inProgress %}in-progress{% endif %}">
+                            <button class="button button-important button-bg" type="button" data-url="{{ enqueue_link|raw }}" id="generate-xml">{{ 'xml.generate'|trans }}</button>
+                        </span>
                     </div>
                 </div>
 
@@ -72,7 +74,7 @@
 
             var $button = $('#generate-xml');
 
-            var $progress = $('#in-progress');
+            var $progress = $('.indicator');
 
             var $xmlLink = $('#xml-link');
 
@@ -168,19 +170,23 @@
     </script>
 
     <style>
-        #in-progress span{
+        .indicator span{
             display: none;
             color: #696969;
             font-style: italic;
             padding-left: 1em;
         }
 
-        #in-progress.in-progress span{
+        .indicator.in-progress span{
             display: inline-block;
         }
 
-        #in-progress.in-progress button{
+        .indicator.in-progress button{
             display: none;
+        }
+
+        #xml-link{
+            width: 75%;
         }
     </style>
 
