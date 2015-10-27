@@ -276,36 +276,52 @@ class Generator {
 
         $this->initializeFetchers($shop);
 
-        $products = $this->fetchProducts($shop);
-        $this->productsCount = count($products);
 
-        $this->exportStatus->markInProgress($shop, 0, $this->productsCount);
+        $success = false;
 
-        $calculator = new EtaCalculator(100);
+        try {
 
-        $counter = 0;
-        foreach($products as $product){
+            $products = $this->fetchProducts($shop);
+            $this->productsCount = count($products);
 
-            $counter++;
+            $this->exportStatus->markInProgress($shop, 0, $this->productsCount);
 
-            $group = $this->determineGroupForProduct($product, $shop);
-            $this->counters[$group]++;
-            $this->appendProduct($this->writers[$group], $product, $shop);
+            $calculator = new EtaCalculator(100);
 
-            if($counter % self::PROGRESS_RESOLUTION == 0){
-                if($this->stopwatch) {
-                    $eta = $calculator->getEtaSeconds($this->stopwatch->getEvent('export'), $this->productsCount - $counter);
-                }else{
-                    $eta = 0;
+            $counter = 0;
+            foreach ($products as $product) {
+
+                $counter++;
+
+                $group = $this->determineGroupForProduct($product, $shop);
+                $this->counters[$group]++;
+                $this->appendProduct($this->writers[$group], $product, $shop);
+
+                if ($counter % self::PROGRESS_RESOLUTION == 0) {
+                    if ($this->stopwatch) {
+                        $eta = $calculator->getEtaSeconds($this->stopwatch->getEvent('export'), $this->productsCount - $counter);
+                    } else {
+                        $eta = 0;
+                    }
+                    $this->exportStatus->markInProgress($shop, $counter, $this->productsCount, $eta);
                 }
-                $this->exportStatus->markInProgress($shop, $counter, $this->productsCount, $eta);
             }
+
+
+            $success = true;
+
+        }catch (\Exception $ex){
+            // let the process continue
         }
 
+        // close handles
         $this->endWriters();
 
-        $this->mergeFiles($output);
+        if($success) {
+            $this->mergeFiles($output);
+        }
 
+        // clear what's should not mess up
         $this->clearTemporary();
 
         $seconds = 0;
