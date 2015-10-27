@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "322222778ce7028461357dfb9a9cd216",
+    "hash": "26d6be654f347ba1e3bfd700b8085ee4",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -908,6 +908,51 @@
             ],
             "description": "SDK for Dreamcommerce based shops REST-API",
             "time": "2015-10-26 11:06:21"
+        },
+        {
+            "name": "facile-it/doctrine-mysql-come-back",
+            "version": "v1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/facile-it/doctrine-mysql-come-back.git",
+                "reference": "7eb62aeb83b6c3fd430044caff364f90dafee43d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/facile-it/doctrine-mysql-come-back/zipball/7eb62aeb83b6c3fd430044caff364f90dafee43d",
+                "reference": "7eb62aeb83b6c3fd430044caff364f90dafee43d",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": ">=2.3,<2.6-dev"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Facile\\DoctrineMySQLComeBack\\Doctrine\\DBAL\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache License Version 2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Luca Bo",
+                    "email": "luca.boeri@facile.it"
+                }
+            ],
+            "description": "Auto reconnect on Doctrine MySql has gone away exceptions on doctrine/dbal",
+            "keywords": [
+                "Connection",
+                "doctrine",
+                "exception",
+                "has gone away",
+                "mysql",
+                "reconnect",
+                "refresh"
+            ],
+            "time": "2015-04-02 15:20:10"
         },
         {
             "name": "incenteev/composer-parameter-handler",
