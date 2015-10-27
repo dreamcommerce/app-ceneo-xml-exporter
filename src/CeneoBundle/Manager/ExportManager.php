@@ -46,10 +46,12 @@ class ExportManager {
 
     /**
      * @param array $ids shop identifiers
+     * @param bool $inProgress
      */
-    public function markAllInProgress($ids){
+    public function markAllInProgress($ids, $inProgress = true){
         $q = $this->em
-            ->createQuery('UPDATE CeneoBundle:Export e SET e.inProgress=true WHERE IDENTITY(e.shop) in (:ids)')
+            ->createQuery('UPDATE CeneoBundle:Export e SET e.inProgress=:in_progress WHERE IDENTITY(e.shop) in (:ids)')
+            ->setParameter('in_progress', $inProgress)
             ->setParameter('ids', $ids);
         $q->execute();
     }
