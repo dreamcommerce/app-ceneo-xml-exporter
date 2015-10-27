@@ -278,6 +278,7 @@ class Generator {
 
 
         $success = false;
+        $counter = 0;
 
         try {
 
@@ -288,7 +289,6 @@ class Generator {
 
             $calculator = new EtaCalculator(100);
 
-            $counter = 0;
             foreach ($products as $product) {
 
                 $counter++;
