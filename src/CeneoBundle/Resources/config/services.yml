@@ -57,3 +57,22 @@ services:
             - @ceneo.generator
             - @ceneo.export_status
             - @doctrine.orm.entity_manager
+
+    ceneo.excluded_product_manager:
+        class: CeneoBundle\Manager\ExcludedProductManager
+        arguments: [@doctrine.orm.entity_manager]
+
+    ceneo.attribute_group_mapping_manager:
+        class: CeneoBundle\Manager\AttributeGroupMappingManager
+        arguments: [@doctrine.orm.entity_manager]
+
+    ceneo.attribute_mapping_manager:
+        class: CeneoBundle\Manager\AttributeMappingManager
+        arguments: [@doctrine.orm.entity_manager]
+
+    ceneo.orphans_purger:
+        class: CeneoBundle\Services\OrphansPurger
+        arguments:
+            - @ceneo.excluded_product_manager
+            - @ceneo.attribute_mapping_manager
+            - @ceneo.attribute_group_mapping_manager

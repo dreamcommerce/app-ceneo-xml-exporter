@@ -19,10 +19,19 @@ class Attributes extends FetcherAbstract
     protected $mappings = [];
 
     public function setMappings(AttributeGroupMappingRepository $attributeGroupMappingRepository, ShopInterface $shop){
+
         $mappings = $attributeGroupMappingRepository->findAllByShop($shop);
+
+        $ids = [];
         /**
          * @var $m AttributeGroupMapping
          */
+        foreach($mappings as $m){
+            $ids[] = $m->getShopAttributeGroupId();
+        }
+
+        $this->orphansPurger->purgeAttributeGroups($ids, $this->client, $this->shop);
+
         foreach($mappings as $m){
             $this->mappings[$m->getShopAttributeGroupId()] = $m;
         }
@@ -44,6 +53,8 @@ class Attributes extends FetcherAbstract
         $attributes = $wrapper->getArray('attribute_id');
 
         $this->attributes = $attributes;
+
+        $this->orphansPurger->purgeAttributes($attributes, $this->client, $this->shop);
 
     }
 

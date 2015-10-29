@@ -25,7 +25,7 @@ class ExclusionsController extends ControllerAbstract{
             $this->getDoctrine()->getManager()
         );
 
-        $checker = new ProductChecker($em, $this->client);
+        $checker = new ProductChecker($em, $this->client, $this->get('ceneo.orphans_purger'));
         $products = $checker->getExcluded($this->shop);
 
         $valueResolver = function(\ArrayObject $row){
@@ -78,7 +78,7 @@ class ExclusionsController extends ControllerAbstract{
         $productResolver = new ProductResolver($this->client);
         $productsIdentifiers = $productResolver->getProductIdFromStock($ids);
 
-        $productChecker = new ProductChecker($em, $this->client);
+        $productChecker = new ProductChecker($em, $this->client, $this->get('ceneo.orphans_purger'));
         $products = $productChecker->getNotExcluded($productsIdentifiers, $this->shop);
 
         if(!count($products)){
