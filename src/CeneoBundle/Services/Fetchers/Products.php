@@ -52,6 +52,7 @@ class Products extends FetcherAbstract
             $excluded = $repository->findIdsByShop($shop);
 
             if ($excluded) {
+                $this->orphansPurger->purgeExcluded($excluded, $this->client, $this->shop);
                 $productResource->filters(array('product_id' => array('not in' => $excluded)));
             }
         }

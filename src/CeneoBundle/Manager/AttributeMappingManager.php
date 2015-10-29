@@ -76,4 +76,17 @@ class AttributeMappingManager {
         $this->em->flush();
     }
 
+    public function deleteByAttributeId($id, ShopInterface $shop)
+    {
+        $id = (array)$id;
+        $q = $this->em->createQueryBuilder();
+        $q->delete('CeneoBundle:AttributeMapping', 'agm')
+            ->where('agm.shop_attribute_id in(:attribute_id)')
+            ->andWhere('ep.shop = :shop')
+            ->setParameter('attribute_id', $id)
+            ->setParameter('shop', $shop);
+
+        $q->getQuery()->execute();
+    }
+
 }

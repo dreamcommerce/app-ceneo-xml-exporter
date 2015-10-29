@@ -26,10 +26,15 @@ class ProductChecker {
      * @var Client
      */
     protected $client;
+    /**
+     * @var OrphansPurger
+     */
+    protected $orphansPurger;
 
-    public function __construct(ExcludedProductManager $excludedProductManager, Client $client){
+    public function __construct(ExcludedProductManager $excludedProductManager, Client $client, OrphansPurger $orphansPurger){
         $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
+        $this->orphansPurger = $orphansPurger;
     }
 
     public function getNotExcluded($ids, ShopInterface $shop){
@@ -74,28 +79,7 @@ class ProductChecker {
 
         $ids = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
-        $resource = new Product($this->client);
-        $fetcher = new Fetcher($resource);
-
-        $resource
-            ->filters(array(
-                'product_id'=>array(
-                    'in'=>$ids
-                )
-            ))->order('translation.pl_PL.name ASC');
-
-        if(empty($ids)){
-            return new \ArrayObject();
-        }
-
-        $result = $fetcher->fetchAll();
-
-        $wrapper = new CollectionWrapper($result);
-        $foundIds = $wrapper->getListOfField('product_id');
-
-        if($ids!=$foundIds){
-            $this->excludedProductManager->purgeNonExistingProducts($ids, $foundIds, $shop);
-        }
+        $result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
 
         return $result;
 

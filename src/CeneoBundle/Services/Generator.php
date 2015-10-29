@@ -17,7 +17,6 @@ use CeneoBundle\Services\Fetchers\Categories;
 use CeneoBundle\Services\Fetchers\Deliveries;
 use CeneoBundle\Services\Fetchers\ProductImages;
 use CeneoBundle\Services\Fetchers\Products;
-use Doctrine\Common\Cache\Cache;
 use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
@@ -67,11 +66,6 @@ class Generator {
      */
     protected $attributeGroupMappingRepository;
     /**
-     * cache for shop objects
-     * @var Cache
-     */
-    protected $cache;
-    /**
      * @var null|Client
      */
     protected $client;
@@ -103,17 +97,21 @@ class Generator {
      * @var Attributes
      */
     protected $attributesFetcher;
+    /**
+     * @var OrphansPurger
+     */
+    protected $orphansPurger;
 
     /**
      * @param $tempDirectory
-     * @param Cache $cache
+     * @param OrphansPurger $orphansPurger
      * @param ExcludedProductRepository $excludedProductRepository
      * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
      * @param ExportStatus $exportStatus
      */
     function __construct(
         $tempDirectory,
-        Cache $cache,
+        OrphansPurger $orphansPurger,
         ExcludedProductRepository $excludedProductRepository,
         AttributeGroupMappingRepository $attributeGroupMappingRepository,
         ExportStatus $exportStatus
@@ -124,8 +122,8 @@ class Generator {
         $this->excludedProductRepository = $excludedProductRepository;
         $this->attributeGroupMappingRepository = $attributeGroupMappingRepository;
 
-        $this->cache = $cache;
         $this->exportStatus = $exportStatus;
+        $this->orphansPurger = $orphansPurger;
     }
 
     /**
@@ -245,8 +243,7 @@ class Generator {
      */
     protected function fetchProducts(ShopInterface $shop){
 
-        // todo: 100 is hardcoded
-        $fetcher = new Products(100, $this->cache);
+        $fetcher = new Products();
         $fetcher->init($this->client, $shop);
 
         $products = $fetcher->getWithoutExcluded(
@@ -365,10 +362,10 @@ class Generator {
             $this->stopwatch->lap('export');
         }
 
-        $categoryPath = $this->getCategoryPath($row->category_id, $shop);
+        $categoryPath = $this->getCategoryPath($row->category_id);
 
-        $images = $this->getProductImages($row->ProductImage, $shop);
-        $attributes = $this->getAttributes($row->attributes, $shop);
+        $images = $this->getProductImages($row->ProductImage);
+        $attributes = $this->getAttributes($row->attributes);
 
         $w = $writer;
         $w->startElement('o');
@@ -377,7 +374,7 @@ class Generator {
             $w->writeAttribute('stock', $row->stock->stock);
             $w->writeAttribute('url', $row->translations->pl_PL->permalink);
             $w->writeAttribute('weight', $row->stock->weight);
-            $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id, $shop));
+            $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id));
             $w->writeAttribute('set', 0);
 
             $w->startElement('name');
@@ -424,19 +421,19 @@ class Generator {
     }
 
     protected function initializeFetchers(ShopInterface $shop){
-        $this->categoriesFetcher = new Categories(100, $this->cache);
+        $this->categoriesFetcher = new Categories();
         $this->categoriesFetcher->init($this->client, $shop);
 
-        $this->productImagesFetcher = new ProductImages(100, $this->cache);
+        $this->productImagesFetcher = new ProductImages();
         $this->productImagesFetcher->init($this->client, $shop);
 
-        $this->deliveriesFetcher = new Deliveries(100, $this->cache);
+        $this->deliveriesFetcher = new Deliveries();
         $this->deliveriesFetcher->init($this->client, $shop);
 
-        $this->attributesFetcher = new Attributes(100, $this->cache);
+        $this->attributesFetcher = new Attributes();
         $this->attributesFetcher->init($this->client, $shop);
         $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
-        $this->attributesFetcher->init($this->client, $shop);
+
 
     }
 

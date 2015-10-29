@@ -4,6 +4,7 @@
 namespace CeneoBundle\Services\Fetchers;
 
 
+use CeneoBundle\Services\OrphansPurger;
 use Doctrine\Common\Cache\Cache;
 use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
@@ -20,21 +21,15 @@ abstract class FetcherAbstract
      * @var ShopInterface
      */
     protected $shop;
-
     /**
-     * @var Cache
+     * @var OrphansPurger
      */
-    protected $cache;
-    protected $ttl;
+    protected $orphansPurger;
 
-    public function __construct($ttl, Cache $cache)
+
+    public function __construct(OrphansPurger $orphansPurger = null)
     {
-        $this->cache = $cache;
-        $this->ttl = $ttl;
-    }
-
-    protected function getCacheKey($key){
-        return sprintf('%s_%s', $this->shop->getName(), $key);
+        $this->orphansPurger = $orphansPurger;
     }
 
     /**

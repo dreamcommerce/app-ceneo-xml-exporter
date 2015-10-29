@@ -75,4 +75,16 @@ class AttributeGroupMappingManager {
 
     }
 
+    public function deleteByAttributeGroupId($id, ShopInterface $shop){
+        $id = (array)$id;
+        $q = $this->em->createQueryBuilder();
+        $q->delete('CeneoBundle:AttributeGroupMapping', 'agm')
+            ->where('agm.shop_attribute_group_id in(:attribute_group_id)')
+            ->andWhere('ep.shop = :shop')
+            ->setParameter('attribute_group_id', $id)
+            ->setParameter('shop', $shop);
+
+        $q->getQuery()->execute();
+    }
+
 }
