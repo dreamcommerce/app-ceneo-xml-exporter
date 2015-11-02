@@ -4,6 +4,7 @@ namespace CeneoBundle\Command;
 
 use CeneoBundle\Manager\ExportManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -16,6 +17,7 @@ class EnqueueCommand extends ContainerAwareCommand
     {
         $this
             ->setName('ceneo:enqueue')
+            ->addArgument('id', InputArgument::OPTIONAL, 'Desired shop identifier')
             ->setDescription('Enqueues shop processing');
     }
 
@@ -24,6 +26,11 @@ class EnqueueCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+
+        $id = $input->getArgument('id');
+        if($id){
+            return $this->executeSingle($input, $output, $id);
+        }
 
         $output->writeln('Getting idle shop identifiers');
 
@@ -54,5 +61,22 @@ class EnqueueCommand extends ContainerAwareCommand
             sprintf('Scheduling finished, used %d bytes of peak memory', memory_get_peak_usage(true))
         );
 
+    }
+
+    protected function executeSingle(InputInterface $input, OutputInterface $output, $id){
+
+        $output->writeln(sprintf('Shop #%d - enqueueing', $id));
+
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $shop = $em->getRepository('BillingBundle:Shop')->find($id);
+        if(!$shop){
+            $output->writeln('Shop not found');
+            return;
+        }
+
+        $queueManager = $this->getContainer()->get('ceneo.queue_manager');
+        $queueManager->enqueue($shop);
+
+        $output->writeln('Shop export scheduled');
     }
 }
