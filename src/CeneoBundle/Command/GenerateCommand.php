@@ -54,7 +54,7 @@ class GenerateCommand extends ContainerAwareCommand
 
                 $generator = new Generator(
                     $this->getContainer()->getParameter('kernel.cache_dir'),
-                    $this->getContainer()->get('cache'),
+                    $this->getContainer()->get('ceneo.orphans_purger'),
                     $epManager->getRepository(),
                     $attributeGroupMappingManager->getRepository(),
                     $this->getContainer()->get('ceneo.export_status')
