@@ -95,7 +95,7 @@ class OrphansPurger
         $resource = new Attribute($client);
 
         return $this->purgeResource($found, $resource, 'attribute_id', function($idsToDelete) use ($shop){
-            $this->attributeMappingManager->deleteByAttributeId($idsToDelete);
+            $this->attributeMappingManager->deleteByAttributeId($idsToDelete, $shop);
         });
     }
 

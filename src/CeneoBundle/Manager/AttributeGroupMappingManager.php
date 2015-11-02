@@ -79,8 +79,8 @@ class AttributeGroupMappingManager {
         $id = (array)$id;
         $q = $this->em->createQueryBuilder();
         $q->delete('CeneoBundle:AttributeGroupMapping', 'agm')
-            ->where('agm.shop_attribute_group_id in(:attribute_group_id)')
-            ->andWhere('ep.shop = :shop')
+            ->where('agm.shopAttributeGroupId in(:attribute_group_id)')
+            ->andWhere('agm.shop = :shop')
             ->setParameter('attribute_group_id', $id)
             ->setParameter('shop', $shop);
 

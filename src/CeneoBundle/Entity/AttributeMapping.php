@@ -17,6 +17,7 @@ class AttributeMapping {
     protected $shopAttributeId;
     protected $attributeGroup;
     protected $ceneoField;
+    protected $shop;
 
     /**
      * @return mixed
@@ -72,6 +73,22 @@ class AttributeMapping {
     public function setAttributeGroup($attributeGroup)
     {
         $this->attributeGroup = $attributeGroup;
+    }
+
+    /**
+     * @return ShopInterface
+     */
+    public function getShop()
+    {
+        return $this->shop;
+    }
+
+    /**
+     * @param ShopInterface $shop
+     */
+    public function setShop($shop)
+    {
+        $this->shop = $shop;
     }
 
 

@@ -45,7 +45,7 @@ services:
 
     ceneo.generator:
         class: CeneoBundle\Services\Generator
-        arguments: [%xml_dir%, @cache, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository, @ceneo.export_status]
+        arguments: [%xml_dir%, @ceneo.orphans_purger, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository, @ceneo.export_status]
         calls:
             - [setStopwatch, [@debug.stopwatch]]
 

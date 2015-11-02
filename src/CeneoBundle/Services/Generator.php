@@ -243,7 +243,7 @@ class Generator {
      */
     protected function fetchProducts(ShopInterface $shop){
 
-        $fetcher = new Products();
+        $fetcher = new Products($this->orphansPurger);
         $fetcher->init($this->client, $shop);
 
         $products = $fetcher->getWithoutExcluded(
@@ -430,7 +430,7 @@ class Generator {
         $this->deliveriesFetcher = new Deliveries();
         $this->deliveriesFetcher->init($this->client, $shop);
 
-        $this->attributesFetcher = new Attributes();
+        $this->attributesFetcher = new Attributes($this->orphansPurger);
         $this->attributesFetcher->init($this->client, $shop);
         $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
 
