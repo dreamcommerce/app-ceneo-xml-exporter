@@ -189,7 +189,7 @@ class Generator {
 
         $dst = fopen($output, 'w');
 
-        fwrite($dst, '<'.'?xml version="1.0" encoding="UTF-8"?'.'><offers>');
+        fwrite($dst, '<'.'?xml version="1.0" encoding="UTF-8"?'.'><offers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1">');
 
         foreach($this->paths as $group=>$path){
 
