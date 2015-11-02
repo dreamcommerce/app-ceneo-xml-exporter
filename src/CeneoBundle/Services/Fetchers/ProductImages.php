@@ -6,22 +6,23 @@ namespace CeneoBundle\Services\Fetchers;
 class ProductImages extends FetcherAbstract
 {
 
+    protected $shopUrlBase = null;
+
     /**
      * fetching data
      * @return mixed
      */
     protected function fetch()
     {
-
+        $this->shopUrlBase = null;
     }
 
     public function getImages($images){
-        static $shopUrlBase;
 
-        if(!$shopUrlBase){
-            $shopUrlBase = $this->shop->getShopUrl();
-            if(substr($shopUrlBase, -1)!='/'){
-                $shopUrlBase .= '/';
+        if(!$this->shopUrlBase){
+            $this->shopUrlBase = $this->shop->getShopUrl();
+            if(substr($this->shopUrlBase, -1)!='/'){
+                $this->shopUrlBase .= '/';
             }
         }
 
@@ -33,7 +34,7 @@ class ProductImages extends FetcherAbstract
         foreach($images as $i){
             $count++;
 
-            $url = $shopUrlBase.'userdata/gfx/'.$i->unic_name.'.jpg';
+            $url = $this->shopUrlBase.'userdata/gfx/'.$i->unic_name.'.jpg';
 
             if($i->main){
                 $result['main'] = $url;
