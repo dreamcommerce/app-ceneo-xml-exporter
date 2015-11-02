@@ -5,7 +5,6 @@ namespace CeneoBundle\Services\Fetchers;
 
 
 use CeneoBundle\Services\OrphansPurger;
-use Doctrine\Common\Cache\Cache;
 use DreamCommerce\Client;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 

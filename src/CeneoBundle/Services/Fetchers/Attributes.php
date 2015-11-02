@@ -32,9 +32,19 @@ class Attributes extends FetcherAbstract
 
         $this->orphansPurger->purgeAttributeGroups($ids, $this->client, $this->shop);
 
+        $mappedAttributes = [];
         foreach($mappings as $m){
             $this->mappings[$m->getShopAttributeGroupId()] = $m;
+            $attributes = $m->getAttributes();
+            /**
+             * @var $a AttributeMapping
+             */
+            foreach($attributes as $a){
+                $mappedAttributes[] = $a->getShopAttributeId();
+            }
         }
+
+        $this->orphansPurger->purgeAttributes($mappedAttributes, $this->client, $this->shop);
     }
 
     /**
@@ -53,8 +63,6 @@ class Attributes extends FetcherAbstract
         $attributes = $wrapper->getArray('attribute_id');
 
         $this->attributes = $attributes;
-
-        $this->orphansPurger->purgeAttributes($attributes, $this->client, $this->shop);
 
     }
 

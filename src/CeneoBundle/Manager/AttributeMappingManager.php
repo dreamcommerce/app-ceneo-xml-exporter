@@ -41,7 +41,7 @@ class AttributeMappingManager {
         return $this->repository;
     }
 
-    public function saveMapping(AttributeGroupMapping $groupMapping, $mappings){
+    public function saveMapping(AttributeGroupMapping $groupMapping, $mappings, ShopInterface $shop){
         $attributes = $this->repository->findAllByAttributeGroupMapping($groupMapping);
 
         /**
@@ -69,6 +69,7 @@ class AttributeMappingManager {
             $attribute->setAttributeGroup($groupMapping);
             $attribute->setCeneoField($k);
             $attribute->setShopAttributeId($v);
+            $attribute->setShop($shop);
 
             $this->em->persist($attribute);
         }
@@ -80,9 +81,9 @@ class AttributeMappingManager {
     {
         $id = (array)$id;
         $q = $this->em->createQueryBuilder();
-        $q->delete('CeneoBundle:AttributeMapping', 'agm')
-            ->where('agm.shop_attribute_id in(:attribute_id)')
-            ->andWhere('ep.shop = :shop')
+        $q->delete('CeneoBundle:AttributeMapping', 'am')
+            ->where('am.shopAttributeId in(:attribute_id)')
+            ->andWhere('am.shop = :shop')
             ->setParameter('attribute_id', $id)
             ->setParameter('shop', $shop);
 

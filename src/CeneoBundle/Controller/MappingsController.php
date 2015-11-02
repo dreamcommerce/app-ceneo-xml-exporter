@@ -16,6 +16,7 @@ use CeneoBundle\Form\Type\CeneoType;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Model\CeneoGroup;
+use CeneoBundle\Services\OrphansPurger;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\AttributeGroup;
 use DreamCommerce\Resource\Category;
@@ -29,7 +30,6 @@ class MappingsController extends ControllerAbstract{
 
     public function indexAction(Request $request){
 
-        //todo:purging
         //todo:refactor
 
         $attributeGroupsResource = new AttributeGroup($this->client);
@@ -38,6 +38,10 @@ class MappingsController extends ControllerAbstract{
         $fetcher = new Fetcher($attributeGroupsResource);
         $wrapper = new CollectionWrapper($fetcher->fetchAll());
         $list = $wrapper->getArray('attribute_group_id');
+
+        // purge old ones
+        $orphansPurger = $this->get('ceneo.orphans_purger');
+        $orphansPurger->purgeAttributeGroups(array_keys($list), $this->client, $this->shop);
 
         $groups = CeneoGroup::$groups;
 
@@ -99,6 +103,11 @@ class MappingsController extends ControllerAbstract{
         $attributeResource = new Attribute($this->client);
         $attributes = $attributeResource->filters(array('attribute_group_id'=>$attributeGroup->getShopAttributeGroupId()))->order('name')->get();
 
+        $wrapper = new CollectionWrapper($attributes);
+        $list = $wrapper->getListOfField('attribute_id');
+
+        $this->get('ceneo.orphans_purger')->purgeAttributes($list, $this->client, $this->shop);
+
         $attributeGroupResource = new AttributeGroup($this->client);
         $result = $attributeGroupResource->get($attributeGroup->getShopAttributeGroupId());
 
@@ -113,7 +122,7 @@ class MappingsController extends ControllerAbstract{
         if($form->isValid()){
             $mappings = $form->getData();
 
-            $attributeMappingManager->saveMapping($attributeGroup, $mappings);
+            $attributeMappingManager->saveMapping($attributeGroup, $mappings, $this->shop);
 
             $this->addNotice('Mapowanie atrybutów zostało zapisane');
 

@@ -13,5 +13,10 @@
         <many-to-one target-entity="CeneoBundle\Entity\AttributeGroupMapping" field="attributeGroup" inversed-by="attributes">
             <join-column name="attribute_group_id" referenced-column-name="id" on-delete="CASCADE"/>
         </many-to-one>
+
+        <many-to-one target-entity="DreamCommerce\ShopAppstoreBundle\Model\ShopInterface" field="shop">
+            <cascade/>
+        </many-to-one>
+
     </entity>
 </doctrine-mapping>
