@@ -192,7 +192,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $client = $this->application->getClient($shop);
 
         $this->output->writeln(
-            sprintf('Shop: %s', $shop->getShopUrl())
+            sprintf('Shop: %s, date: %s', $shop->getShopUrl(), date('Y-m-d H:i:s'))
         );
 
         $path = sprintf('%s/%s.xml', $this->xmlDir, $shop->getName());
