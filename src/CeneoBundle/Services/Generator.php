@@ -387,7 +387,7 @@ class Generator {
             if($images){
 
                 $w->startElement('imgs');
-                if($images['main']){
+                if(!empty($images['main'])){
                     $w->startElement('main');
                         $w->writeAttribute('url', $images['main']);
                     $w->endElement();
