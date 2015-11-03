@@ -21,3 +21,5 @@ parameters:
 
     categories_ttl:    600
     status_check_ttl:  100
+
+    xml_dir: %kernel.root_dir%/../web/ceneo/xml
