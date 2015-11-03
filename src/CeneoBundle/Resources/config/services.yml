@@ -45,6 +45,7 @@ services:
         arguments: [%xml_dir%, @ceneo.orphans_purger, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository, @ceneo.export_status]
         calls:
             - [setStopwatch, [@debug.stopwatch]]
+            - [setFileCompressor, ["@=container.hasParameter('gzip_files') ? service('ceneo.file_compressor') : null"]]
 
     ceneo.generator_worker:
         class: CeneoBundle\Worker\GeneratorWorker
@@ -73,3 +74,7 @@ services:
             - @ceneo.excluded_product_manager
             - @ceneo.attribute_mapping_manager
             - @ceneo.attribute_group_mapping_manager
+
+    ceneo.file_compressor:
+        class: CeneoBundle\Services\FileCompressor
+
