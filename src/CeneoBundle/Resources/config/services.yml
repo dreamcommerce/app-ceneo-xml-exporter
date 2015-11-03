@@ -1,6 +1,3 @@
-parameters:
-    xml_dir: %kernel.root_dir%/../web/ceneo/xml
-
 services:
     cache:
         class: Doctrine\Common\Cache\FilesystemCache
