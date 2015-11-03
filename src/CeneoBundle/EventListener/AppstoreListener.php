@@ -87,7 +87,9 @@ class AppstoreListener {
     protected function removeGeneratedXml($shopHash)
     {
         $path = sprintf('%s/%s.xml', $this->xmlDir, basename($shopHash));
+        $gzPath = $path.'.gz';
         file_exists($path) && unlink($path);
+        file_exists($gzPath) && unlink($gzPath);
     }
 
 }

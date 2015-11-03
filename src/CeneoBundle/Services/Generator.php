@@ -101,6 +101,10 @@ class Generator {
      * @var OrphansPurger
      */
     protected $orphansPurger;
+    /**
+     * @var FileCompressor
+     */
+    protected $fileCompressor;
 
     /**
      * @param $tempDirectory
@@ -124,6 +128,11 @@ class Generator {
 
         $this->exportStatus = $exportStatus;
         $this->orphansPurger = $orphansPurger;
+    }
+
+    public function setFileCompressor(FileCompressor $compressor = null)
+    {
+        $this->fileCompressor = $compressor;
     }
 
     /**
@@ -316,6 +325,10 @@ class Generator {
 
         if($success) {
             $this->mergeFiles($output);
+
+            if($this->fileCompressor){
+                $this->fileCompressor->compressAsync($output);
+            }
         }
 
         // clear what's should not mess up
