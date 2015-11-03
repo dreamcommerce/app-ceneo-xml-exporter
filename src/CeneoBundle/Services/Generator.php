@@ -161,7 +161,7 @@ class Generator {
         $uniq = uniqid('', true);
 
         foreach($groups as $g){
-            $path = sprintf('%s/%s_%s', $this->tempDirectory, $uniq, $g);
+            $path = sprintf('%s/%s_%s.tmp', $this->tempDirectory, $uniq, $g);
 
             $writer = new \XMLWriter();
             $writer->openUri($path);

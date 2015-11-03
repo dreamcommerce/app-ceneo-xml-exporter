@@ -24,3 +24,6 @@ parameters:
 
     xml_dir: %kernel.root_dir%/../web/ceneo/xml
     gzip_files: true
+
+    # temporary files lifetime
+    temporary_ttl:     86400
