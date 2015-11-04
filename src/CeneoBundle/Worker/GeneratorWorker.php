@@ -128,6 +128,8 @@ class GeneratorWorker implements GearmanOutputAwareInterface
 
         try {
 
+            $this->em->getConnection()->refresh();
+
             $shop = $this->shopManager->findById($data);
             if (!$shop) {
                 throw new \RuntimeException(sprintf('Shop #%d doesn\'t exist', $data));
