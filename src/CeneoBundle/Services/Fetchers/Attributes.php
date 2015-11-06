@@ -84,9 +84,11 @@ class Attributes extends FetcherAbstract
         return 'other';
     }
 
-    public function getAttributes($productAttributes){
+    public function getAttributes($product){
 
         $result = array();
+
+        $productAttributes = $product->attributes;
 
         $counter = 0;
         foreach($productAttributes as $id=>$group){
@@ -125,7 +127,29 @@ class Attributes extends FetcherAbstract
             }
         }
 
+        $result = $this->injectDefaultAttributes($product, $result);
+
         return $result;
 
+    }
+
+    protected function injectDefaultAttributes($product, $result){
+        if(empty($result['Producent'])){
+            if(isset($product->Producer) && isset($product->Producer[0])){
+                $result['Producent'] = $product->Producer[0]->name;
+            }
+        }
+
+        if(empty($result['Kod_producenta'])){
+            $result['Kod_producenta'] = $product->code;
+        }
+
+        if(empty($result['EAN'])){
+            if(!empty($product->ean)) {
+                $result['EAN'] = $product->ean;
+            }
+        }
+
+        return $result;
     }
 }
