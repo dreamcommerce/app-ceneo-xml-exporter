@@ -55,6 +55,7 @@ services:
             - @ceneo.generator
             - @ceneo.export_status
             - @doctrine.orm.entity_manager
+            - %minimal_version%
 
     ceneo.excluded_product_manager:
         class: CeneoBundle\Manager\ExcludedProductManager

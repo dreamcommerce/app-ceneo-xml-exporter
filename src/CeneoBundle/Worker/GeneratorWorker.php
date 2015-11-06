@@ -78,6 +78,10 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @var ExportStatus
      */
     private $exportStatus;
+    /**
+     * @var
+     */
+    private $minimalVersion;
 
     /**
      * @param string $xmlDir xml output directory
@@ -85,13 +89,15 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @param Generator $generator
      * @param ExportStatus $exportStatus
      * @param EntityManager $em
+     * @param $minimalVersion
      */
     public function __construct(
         $xmlDir,
         Application $application,
         Generator $generator,
         ExportStatus $exportStatus,
-        EntityManager $em
+        EntityManager $em,
+        $minimalVersion = null
     )
     {
         $this->em = $em;
@@ -102,6 +108,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $this->xmlDir = $xmlDir;
 
         $this->init();
+        $this->minimalVersion = $minimalVersion;
     }
 
     /**
@@ -128,11 +135,20 @@ class GeneratorWorker implements GearmanOutputAwareInterface
 
         try {
 
+            // take care of refreshing connection
             $this->em->getConnection()->refresh();
 
             $shop = $this->shopManager->findById($data);
+            // in case entity is parsed second time by worker
+            $this->em->refresh($shop);
             if (!$shop) {
                 throw new \RuntimeException(sprintf('Shop #%d doesn\'t exist', $data));
+            }
+
+            if($this->minimalVersion && $shop->getVersion()<$this->minimalVersion){
+                $this->output->writeln(sprintf('Shop %s did not upgrade application', $shop->getShopUrl()));
+                $job->sendComplete('unactual');
+                return;
             }
 
             $this->output->writeln('Shop found, starting export...');

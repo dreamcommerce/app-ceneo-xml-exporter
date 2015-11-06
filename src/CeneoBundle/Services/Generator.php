@@ -378,7 +378,7 @@ class Generator {
         $categoryPath = $this->getCategoryPath($row->category_id);
 
         $images = $this->getProductImages($row->ProductImage);
-        $attributes = $this->getAttributes($row->attributes);
+        $attributes = $this->getAttributes($row);
 
         $w = $writer;
         $w->startElement('o');
@@ -472,8 +472,8 @@ class Generator {
         return $this->deliveriesFetcher->getDaysForDeliveryId($deliveryId);
     }
 
-    public function getAttributes($attributes){
-        return $this->attributesFetcher->getAttributes($attributes);
+    public function getAttributes($product){
+        return $this->attributesFetcher->getAttributes($product);
     }
 
     /**

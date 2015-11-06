@@ -5,6 +5,7 @@ namespace CeneoBundle\Services\Fetchers;
 
 
 use CeneoBundle\Entity\ExcludedProductRepository;
+use DreamCommerce\Resource\Producer;
 use DreamCommerce\Resource\Product;
 use DreamCommerce\Resource\ProductImage;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
@@ -63,6 +64,12 @@ class Products extends FetcherAbstract
         $fetcher->connect(
             $image, 'product_id'
         );
+
+        $producer = new Producer($this->client);
+        $fetcher->connect(
+            $producer, 'producer_id'
+        );
+
         return $fetcher->fetchAll();
     }
 
