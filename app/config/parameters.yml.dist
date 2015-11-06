@@ -27,3 +27,5 @@ parameters:
 
     # temporary files lifetime
     temporary_ttl:     86400
+
+    minimal_version:   ~
