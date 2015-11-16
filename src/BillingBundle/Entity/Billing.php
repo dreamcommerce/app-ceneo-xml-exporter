@@ -1,14 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-03-27
- * Time: 15:47
- */
-
 namespace BillingBundle\Entity;
 
-use DreamCommerce\ShopAppstoreBundle\Model\Billing as BillingBase;
+use DreamCommerce\ShopAppstoreBundle\Doctrine\Billing as BillingBase;
 
 class Billing extends BillingBase
 {
