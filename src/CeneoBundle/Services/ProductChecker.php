@@ -81,6 +81,20 @@ class ProductChecker {
 
         $result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
 
+        if(!count($result)){
+            return new \ArrayObject();
+        }
+
+        $res = new Product($this->client);
+        $res->filters([
+            'product_id'=>[
+                'in'=>$result
+            ]
+        ]);
+
+        $fetcher = new Fetcher($res);
+        $result = $fetcher->fetchAll();
+
         return $result;
 
     }
