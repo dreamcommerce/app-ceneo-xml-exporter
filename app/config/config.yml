@@ -91,9 +91,9 @@ dream_commerce_shop_appstore:
         #reinstall: ~ #dream_commerce_shop_appstore.reinstall
     applications:
         ceneo:
-            app_id:     "***REMOVED***"
-            app_secret: "***REMOVED***"
-            appstore_secret: "***REMOVED***"
+            app_id:     "f273cb6cc14b67700b44b77b97f7b61c"
+            app_secret: "9e02ea09f0ee39e6323125fb6c6523dd8e3a3d50"
+            appstore_secret: "7f2c9be9f03f724fbb23237ae7092e96a961c94d"
 
 doctrine_cache:
     providers:
