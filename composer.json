@@ -23,8 +23,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "doctrine/doctrine-cache-bundle": "~1.0",
         "mmoreram/gearman-bundle": "~3.0",
-        "dreamcommerce/shop-appstore-bundle": "dev-master",
         "doctrine/doctrine-migrations-bundle": "^1.0",
+        "dreamcommerce/shop-appstore-lib": "0.2.*",
         "facile-it/doctrine-mysql-come-back": "~1.5"
     },
     "require-dev": {
