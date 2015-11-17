@@ -18,6 +18,7 @@ use CeneoBundle\Services\Fetchers\Deliveries;
 use CeneoBundle\Services\Fetchers\ProductImages;
 use CeneoBundle\Services\Fetchers\Products;
 use DreamCommerce\Client;
+use DreamCommerce\ClientInterface;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -269,7 +270,7 @@ class Generator {
      * @param $output
      * @return int
      */
-    public function export(Client $client, ShopInterface $shop, $output){
+    public function export(ClientInterface $client, ShopInterface $shop, $output){
 
         if($this->stopwatch){
             $this->stopwatch->start('shop');

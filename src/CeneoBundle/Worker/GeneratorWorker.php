@@ -8,9 +8,11 @@ use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ExportStatus;
 use Doctrine\ORM\EntityManager;
-use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
+use DreamCommerce\ShopAppstoreBundle\Doctrine\ObjectManager;
 use DreamCommerce\ShopAppstoreBundle\Handler\Application;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
+use DreamCommerce\ShopAppstoreBundle\Model\ShopRepositoryInterface;
+use Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Connection;
 use Mmoreram\GearmanBundle\Command\Util\GearmanOutputAwareInterface;
 use Mmoreram\GearmanBundle\Driver\Gearman;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -46,9 +48,9 @@ class GeneratorWorker implements GearmanOutputAwareInterface
     private $em;
 
     /**
-     * @var ShopManager
+     * @var ShopRepositoryInterface
      */
-    protected $shopManager;
+    protected $shopRepository;
 
     /**
      * processed shops count
@@ -82,6 +84,10 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @var
      */
     private $minimalVersion;
+    /**
+     * @var ObjectManager
+     */
+    private $objectManager;
 
     /**
      * @param string $xmlDir xml output directory
@@ -89,6 +95,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @param Generator $generator
      * @param ExportStatus $exportStatus
      * @param EntityManager $em
+     * @param ObjectManager $objectManager
      * @param $minimalVersion
      */
     public function __construct(
@@ -97,6 +104,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         Generator $generator,
         ExportStatus $exportStatus,
         EntityManager $em,
+        ObjectManager $objectManager,
         $minimalVersion = null
     )
     {
@@ -107,15 +115,17 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $this->exportStatus = $exportStatus;
         $this->xmlDir = $xmlDir;
 
-        $this->init();
         $this->minimalVersion = $minimalVersion;
+        $this->objectManager = $objectManager;
+
+        $this->init();
     }
 
     /**
      * initialize some internal stuff
      */
     protected function init(){
-        $this->shopManager = new ShopManager($this->em, 'BillingBundle\Entity\Shop');
+        $this->shopRepository = $this->objectManager->getRepository('DreamCommerce\ShopAppstoreBundle\Model\ShopInterface');
         $this->epManager = new ExcludedProductManager($this->em);
         $this->attributeGroupMappingManager = new AttributeGroupMappingManager($this->em);
     }
@@ -136,9 +146,13 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         try {
 
             // take care of refreshing connection
-            $this->em->getConnection()->refresh();
+            /**
+             * @var $conn Connection
+             */
+            $conn = $this->em->getConnection();
+            $conn->refresh();
 
-            $shop = $this->shopManager->findById($data);
+            $shop = $this->shopRepository->findById($data);
             // in case entity is parsed second time by worker
             $this->em->refresh($shop);
             if (!$shop) {
@@ -173,7 +187,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $this->summary();
 
         $this->attributeGroupMappingManager = null;
-        $this->shopManager = null;
+        $this->shopRepository = null;
         $this->epManager = null;
         $this->em = null;
     }

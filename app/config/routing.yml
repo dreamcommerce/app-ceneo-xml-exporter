@@ -1,5 +1,6 @@
 root:
-    resource: "@DreamCommerceShopAppstoreBundle/Resources/config/routing.yml"
+    #resource: "@DreamCommerceShopAppstoreBundle/Resources/config/routing.yml"
+    resource: "@DreamCommerceShopAppstoreBundle/Resources/config/routing.xml"
 
 ceneo:
     resource: "@CeneoBundle/Resources/config/routing.yml"
