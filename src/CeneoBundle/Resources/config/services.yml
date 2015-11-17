@@ -18,21 +18,15 @@ services:
         class: CeneoBundle\Services\Fetchers\Categories
         arguments: [%categories_ttl%, @cache]
 
-    ceneo.test_worker:
-        class: CeneoBundle\Worker\TestWorker
-        arguments: [@logger]
-
     ceneo.attribute_group_mapping_repository:
         class: CeneoBundle\Entity\AttributeGroupMappingRepository
-        factory_service: doctrine.orm.default_entity_manager
-        factory_method: getRepository
+        factory: [@doctrine.orm.default_entity_manager, "getRepository"]
         arguments:
             - CeneoBundle\Entity\AttributeGroupMapping
 
     ceneo.excluded_product_repository:
         class: CeneoBundle\Entity\ExcludedProductRepository
-        factory_service: doctrine.orm.default_entity_manager
-        factory_method: getRepository
+        factory: [@doctrine.orm.default_entity_manager, "getRepository"]
         arguments:
             - CeneoBundle\Entity\ExcludedProduct
 
@@ -51,10 +45,11 @@ services:
         class: CeneoBundle\Worker\GeneratorWorker
         arguments:
             - %xml_dir%
-            - @dream_commerce_shop_appstore.ceneo
+            - @dream_commerce_shop_appstore.app.ceneo
             - @ceneo.generator
             - @ceneo.export_status
             - @doctrine.orm.entity_manager
+            - @dream_commerce_shop_appstore.object_manager
             - %minimal_version%
 
     ceneo.excluded_product_manager:

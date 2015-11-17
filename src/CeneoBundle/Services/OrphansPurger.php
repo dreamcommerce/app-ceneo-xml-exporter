@@ -8,6 +8,7 @@ use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use DreamCommerce\Client;
+use DreamCommerce\ClientInterface;
 use DreamCommerce\Resource;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\AttributeGroup;
@@ -70,7 +71,7 @@ class OrphansPurger
         return $foundIds;
     }
 
-    public function purgeExcluded($found, Client $client, ShopInterface $shop)
+    public function purgeExcluded($found, ClientInterface $client, ShopInterface $shop)
     {
         $resource = new Product($client);
         $resource->order('translation.pl_PL.name ASC');
@@ -80,7 +81,7 @@ class OrphansPurger
         });
     }
 
-    public function purgeAttributeGroups($found, Client $client, ShopInterface $shop)
+    public function purgeAttributeGroups($found, ClientInterface $client, ShopInterface $shop)
     {
         $resource = new AttributeGroup($client);
 
@@ -89,7 +90,7 @@ class OrphansPurger
         });
     }
 
-    public function purgeAttributes($found, Client $client, ShopInterface $shop)
+    public function purgeAttributes($found, ClientInterface $client, ShopInterface $shop)
     {
 
         $resource = new Attribute($client);

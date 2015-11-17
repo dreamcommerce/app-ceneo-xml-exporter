@@ -14,7 +14,7 @@ use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
-use DreamCommerce\ShopAppstoreBundle\Utils\InvalidRequestException;
+use DreamCommerce\ShopAppstoreBundle\Utils\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 class ExclusionsController extends ControllerAbstract{
@@ -70,7 +70,7 @@ class ExclusionsController extends ControllerAbstract{
 
         $ids = (array)$request->query->get('id');
         if(empty($ids) or !is_array($ids)){
-            throw new InvalidRequestException();
+            throw new Exception();
         }
 
         $em = new ExcludedProductManager($this->getDoctrine()->getManager());
