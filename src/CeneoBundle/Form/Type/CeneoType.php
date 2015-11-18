@@ -5,7 +5,7 @@ namespace CeneoBundle\Form\Type;
 
 
 use CeneoBundle\Model\CeneoGroup;
-use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
+use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
@@ -35,7 +35,7 @@ class CeneoType extends AbstractType{
         foreach($items as $i){
             $builder->add($i, 'choice', array(
                 'empty_value'=>'',
-                'choice_list'=>new CollectionChoiceList($this->attributes, $keyResolver, $valueResolver),
+                'choice_loader'=>new CollectionChoiceListLoader($this->attributes, $keyResolver, $valueResolver),
                 'required'=>false
             ));
         }
