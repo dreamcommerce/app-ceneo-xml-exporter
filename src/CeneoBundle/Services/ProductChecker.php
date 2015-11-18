@@ -10,6 +10,7 @@ namespace CeneoBundle\Services;
 
 
 use CeneoBundle\Manager\ExcludedProductManager;
+use CeneoBundle\Services\Fetchers\Products;
 use DreamCommerce\Client;
 use DreamCommerce\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
@@ -81,7 +82,7 @@ class ProductChecker {
 
         $result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
 
-        if(!count($result)){
+        if(count($result)==0){
             return new \ArrayObject();
         }
 
