@@ -12,9 +12,7 @@ namespace CeneoBundle\Manager;
 use CeneoBundle\Entity\AttributeGroupMapping;
 use CeneoBundle\Entity\AttributeGroupMappingRepository;
 use CeneoBundle\Entity\AttributeMapping;
-use CeneoBundle\Entity\ExcludedProduct;
-use CeneoBundle\Entity\ExcludedProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use CeneoBundle\Entity\AttributeMappingRepository;
 use Doctrine\ORM\EntityManager;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
@@ -35,7 +33,7 @@ class AttributeMappingManager {
     }
 
     /**
-     * @return AttributeGroupMappingRepository
+     * @return AttributeMappingRepository
      */
     public function getRepository(){
         return $this->repository;

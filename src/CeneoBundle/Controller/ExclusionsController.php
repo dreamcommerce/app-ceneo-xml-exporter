@@ -1,20 +1,12 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-03-31
- * Time: 13:33
- */
-
 namespace CeneoBundle\Controller;
 
 
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
-use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceList;
+use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
-use DreamCommerce\ShopAppstoreBundle\Utils\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 class ExclusionsController extends ControllerAbstract{
@@ -38,7 +30,7 @@ class ExclusionsController extends ControllerAbstract{
 
         $form = $this->createFormBuilder()
             ->add('products', 'choice', array(
-                'choice_list'=>new CollectionChoiceList($products, $keyResolver, $valueResolver),
+                'choice_loader'=>new CollectionChoiceListLoader($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
@@ -70,7 +62,7 @@ class ExclusionsController extends ControllerAbstract{
 
         $ids = (array)$request->query->get('id');
         if(empty($ids) or !is_array($ids)){
-            throw new Exception();
+            throw new \Exception();
         }
 
         $em = new ExcludedProductManager($this->getDoctrine()->getManager());
@@ -102,7 +94,7 @@ class ExclusionsController extends ControllerAbstract{
 
         $form = $this->createFormBuilder($data)
             ->add('products', 'choice', array(
-                'choice_list'=>new CollectionChoiceList($products, $keyResolver, $valueResolver),
+                'choice_loader'=>new CollectionChoiceListLoader($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))

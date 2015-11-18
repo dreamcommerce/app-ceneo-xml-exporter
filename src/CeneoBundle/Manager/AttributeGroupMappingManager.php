@@ -1,19 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-03-31
- * Time: 17:32
- */
-
 namespace CeneoBundle\Manager;
 
 
 use CeneoBundle\Entity\AttributeGroupMapping;
 use CeneoBundle\Entity\AttributeGroupMappingRepository;
-use CeneoBundle\Entity\ExcludedProduct;
-use CeneoBundle\Entity\ExcludedProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 

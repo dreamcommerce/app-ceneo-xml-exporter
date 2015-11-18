@@ -1,30 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-04-09
- * Time: 13:07
- */
-
 namespace CeneoBundle\Controller;
 
 
 use CeneoBundle\Entity\AttributeGroupMapping;
-use CeneoBundle\Entity\AttributeGroupMappingRepository;
 use CeneoBundle\Form\Type\AttributeGroupMappingType;
 use CeneoBundle\Form\Type\CeneoType;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Model\CeneoGroup;
-use CeneoBundle\Services\OrphansPurger;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\AttributeGroup;
-use DreamCommerce\Resource\Category;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class MappingsController extends ControllerAbstract{
 

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-04-03
- * Time: 19:06
- */
-
 namespace CeneoBundle\Entity;
 
 
