@@ -42,7 +42,7 @@ class AppKernel extends Kernel
     public function getCacheDir()
     {
         if(file_exists('/tmp/.')) {
-            return '/tmp/symfony/ceneo-' . $this->environment . '/cache';
+            return '/tmp/ceneo-' . $this->environment . '/cache';
         }else{
             return parent::getCacheDir();
         }
