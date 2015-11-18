@@ -1,5 +1,5 @@
 {
-    "name": "eRIZ/ceneo",
+    "name": "dreamcommerce/ceneo",
     "license": "proprietary",
     "type": "project",
     "autoload": {
@@ -24,7 +24,7 @@
         "doctrine/doctrine-cache-bundle": "~1.0",
         "mmoreram/gearman-bundle": "~3.0",
         "doctrine/doctrine-migrations-bundle": "^1.0",
-        "dreamcommerce/shop-appstore-lib": "0.2.*",
+        "dreamcommerce/appstore-bundle": "dev#06f577900576f1c08090359a8771b10ac19899c5",
         "facile-it/doctrine-mysql-come-back": "~1.5"
     },
     "require-dev": {
