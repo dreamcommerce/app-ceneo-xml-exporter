@@ -10,9 +10,10 @@ namespace CeneoBundle\Services;
 
 
 use CeneoBundle\Manager\ExcludedProductManager;
-use CeneoBundle\Services\Fetchers\Products;
 use DreamCommerce\Client;
+use DreamCommerce\ClientInterface;
 use DreamCommerce\Resource\Product;
+use DreamCommerce\ResourceList;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
@@ -32,7 +33,7 @@ class ProductChecker {
      */
     protected $orphansPurger;
 
-    public function __construct(ExcludedProductManager $excludedProductManager, Client $client, OrphansPurger $orphansPurger){
+    public function __construct(ExcludedProductManager $excludedProductManager, ClientInterface $client, OrphansPurger $orphansPurger){
         $this->excludedProductManager = $excludedProductManager;
         $this->client = $client;
         $this->orphansPurger = $orphansPurger;
@@ -41,7 +42,7 @@ class ProductChecker {
     public function getNotExcluded($ids, ShopInterface $shop){
 
         if(empty($ids)){
-            return new \ArrayObject();
+            return new ResourceList();
         }
 
         $resource = new Product($this->client);
@@ -71,7 +72,7 @@ class ProductChecker {
             $result[$p->product_id] = $p;
         }
 
-        return new \ArrayObject($result, \ArrayObject::ARRAY_AS_PROPS);
+        return new ResourceList($result, \ArrayObject::ARRAY_AS_PROPS);
 
 
     }
@@ -83,7 +84,7 @@ class ProductChecker {
         $result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
 
         if(count($result)==0){
-            return new \ArrayObject();
+            return new ResourceList();
         }
 
         $res = new Product($this->client);
