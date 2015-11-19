@@ -8,6 +8,7 @@ use CeneoBundle\Form\Type\CeneoType;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Model\CeneoGroup;
+use CeneoBundle\Services\OrphansPurger;
 use DreamCommerce\Resource\Attribute;
 use DreamCommerce\Resource\AttributeGroup;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
