@@ -29,3 +29,7 @@ parameters:
     temporary_ttl:     86400
 
     minimal_version:   ~
+
+    app_id:            ~
+    app_secret:        ~
+    appstore_secret:   ~
