@@ -300,6 +300,11 @@ class Generator {
 
                 $counter++;
 
+                // we support only pl_PL locale for export (intentionally)
+                if(!isset($product->translations->pl_PL)){
+                    continue;
+                }
+
                 $group = $this->determineGroupForProduct($product, $shop);
                 $this->counters[$group]++;
                 $this->appendProduct($this->writers[$group], $product, $shop);
