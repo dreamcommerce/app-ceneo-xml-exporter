@@ -50,6 +50,10 @@
 
             {{ form_end(form) }}
 
+            {% if count is defined %}
+            {{ include('CeneoBundle::paginator.html.twig') }}
+            {% endif %}
+
         </section>
     </main>
 

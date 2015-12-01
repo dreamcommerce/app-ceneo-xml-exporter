@@ -1,0 +1,29 @@
+<nav class="nav-for-table">
+
+    <div class="nav-group nav-group-pages">
+        <ul class="nav pages">
+
+            {% if page==1 %}
+                <li><span class="button button-inactive icon-left"></span></li>
+            {% else %}
+                {% set prev = page-1 %}
+                <li><a href="{{ app_path('ceneo_exclusions', {page: prev}) }}" class="button icon-left"></a></li>
+            {% endif %}
+
+            {% for i in 1..pages %}
+                <li><a href="{{ app_path('ceneo_exclusions', {page: i}) }}" class="button{% if i==page %} button-bg{% endif %}">{{ i }}</a></li>
+            {% endfor %}
+
+
+            {#<li>...</li>#}
+
+            {% if page==pages %}
+                <li><span class="button button-inactive icon-left"></span></li>
+            {% else %}
+                {% set next = page+1 %}
+                <li><a href="{{ app_path('ceneo_exclusions', {page: next}) }}" class="button icon-right"></a></li>
+            {% endif %}
+
+        </ul>
+    </div>
+</nav>

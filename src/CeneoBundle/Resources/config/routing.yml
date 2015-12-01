@@ -10,13 +10,13 @@ ceneo_xml:
     path:     /xml/{shopId}.xml
     defaults: { _controller: CeneoBundle:Generator:dummy }
 
-ceneo_exclusions:
-    path:     /exclusions
-    defaults: { _controller: CeneoBundle:Exclusions:index }
-
 ceneo_exclusions_add:
     path:     /exclusions/add
     defaults: { _controller: CeneoBundle:Exclusions:add }
+
+ceneo_exclusions:
+    path:     /exclusions/{page}
+    defaults: { _controller: CeneoBundle:Exclusions:index, page: 1 }
 
 ceneo_mappings:
     path:     /mappings

@@ -100,5 +100,10 @@ class ExcludedProduct {
         $this->title = $title;
     }
 
+    public function __toString()
+    {
+        return $this->getTitle();
+    }
+
 
 }

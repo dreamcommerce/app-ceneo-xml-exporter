@@ -20,6 +20,8 @@ use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 
 class ProductChecker {
 
+    const REQUEST_MAX_LENGTH = 8192;
+
     /**
      * @var ExcludedProductManager
      */
@@ -81,23 +83,56 @@ class ProductChecker {
 
         $ids = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
-        $result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
+        //$result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
+        $result = $ids;
 
         if(count($result)==0){
             return new ResourceList();
         }
 
         $res = new Product($this->client);
-        $res->filters([
-            'product_id'=>[
-                'in'=>$result
-            ]
-        ]);
 
-        $fetcher = new Fetcher($res);
-        $result = $fetcher->fetchAll();
+        $wrapper = new CollectionWrapper(new \ArrayObject());
+        $partitions = $this->partitionFilterArguments($result, self::REQUEST_MAX_LENGTH-512);
 
-        return $result;
+        foreach($partitions as $p) {
+            $res->filters([
+                'product_id'=>[
+                    'in'=>$p
+                ]
+            ]);
+
+            $fetcher = new Fetcher($res);
+            $result = $fetcher->fetchAll();
+            $wrapper->appendCollection($result);
+        }
+
+        return $wrapper->getCollection();
+
+    }
+
+    protected function partitionFilterArguments($arguments, $maxLength){
+
+        $partitions = [];
+        $bufferLength = 0;
+
+        $buffer = [];
+        while($element = array_shift($arguments)){
+            // "",
+            $length = strlen($element)+3;
+            if($bufferLength+$length<$maxLength){
+                $buffer[] = $element;
+                $bufferLength += $length;
+            }else{
+                $partitions[] = $buffer;
+                $buffer = [$element];
+                $bufferLength = $length;
+            }
+        }
+
+        $partitions[] = $buffer;
+
+        return $partitions;
 
     }
 

@@ -4,6 +4,7 @@
 namespace CeneoBundle\Services;
 
 
+use DreamCommerce\Resource\Product;
 use DreamCommerce\Resource\ProductStock;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
@@ -29,6 +30,27 @@ class ProductResolver {
         $toReturn = $wrapper->getListOfField('product_id');
 
         return $toReturn;
+    }
+
+    public function getProductListForExclusion($ids, $translations = 'pl_PL')
+    {
+        $result = [];
+
+        $res = new Product($this->client);
+        $res->filters([
+            'product_id'=>[
+                'in'=>$ids
+            ]
+        ]);
+
+        $fetcher = new Fetcher($res);
+        $items = $fetcher->fetchAll();
+
+        foreach($items as $i){
+            $result[$i->product_id] = $i->translations->$translations->name;
+        }
+
+        return $result;
     }
 
 }

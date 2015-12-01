@@ -2,9 +2,12 @@
 namespace CeneoBundle\Controller;
 
 
+use CeneoBundle\Entity\ExcludedProduct;
+use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
+use DreamCommerce\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,8 +20,30 @@ class ExclusionsController extends ControllerAbstract{
             $this->getDoctrine()->getManager()
         );
 
-        $checker = new ProductChecker($em, $this->client, $this->get('ceneo.orphans_purger'));
-        $products = $checker->getExcluded($this->shop);
+        $page = $request->attributes->get('page');
+
+        $repo = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
+        $count = $repo->countAllByShop($this->shop);
+        $productsIds = $repo->findAllByShopPaged($this->shop, $page);
+
+        $perPage = ExcludedProductRepository::RECORDS_PER_PAGE;
+
+        $ids = [];
+        /**
+         * @var $productsIds ExcludedProduct[]
+         */
+        foreach($productsIds as $i){
+            $ids[] = $i->getProductId();
+        }
+
+        $resource = new Product($this->client);
+        $resource->filters([
+            'product_id'=>[
+                'in'=>$ids
+            ]
+        ]);
+
+        $products = $resource->get();
 
         $valueResolver = function(\ArrayObject $row){
             return $row->translations->pl_PL->name;
@@ -52,9 +77,15 @@ class ExclusionsController extends ControllerAbstract{
             );
         }
 
+        $pages = ceil($count/$perPage);
+
         return $this->render('CeneoBundle::exclusions/index.html.twig', array(
             'products'=>$products,
-            'form'=>$form->createView()
+            'form'=>$form->createView(),
+            'page'=>$page,
+            'count'=>$count,
+            'perPage'=>$perPage,
+            'pages'=>$pages
         ));
     }
 
@@ -64,6 +95,8 @@ class ExclusionsController extends ControllerAbstract{
         if(empty($ids) or !is_array($ids)){
             throw new \Exception();
         }
+
+        $translations = $request->query->get('translations', 'pl_PL');
 
         $em = new ExcludedProductManager($this->getDoctrine()->getManager());
 
@@ -84,8 +117,8 @@ class ExclusionsController extends ControllerAbstract{
             'products'=>$wrapper->getListOfField('product_id')
         );
 
-        $valueResolver = function(\ArrayObject $row){
-            return $row->translations->pl_PL->name;
+        $valueResolver = function(\ArrayObject $row) use ($translations){
+            return $row->translations->$translations->name;
         };
 
         $keyResolver = function(\ArrayObject $row){
@@ -105,7 +138,9 @@ class ExclusionsController extends ControllerAbstract{
         $form->handleRequest($request);
 
         if($form->isValid()){
-            $em->addByProductId($form->getData()['products'], $this->shop);
+            $productsList = $productResolver->getProductListForExclusion($form->getData()['products']);
+
+            $em->addProducts($productsList, $this->shop);
             $this->addNotice('Produkty zostały dodane do ignorowanych');
             return $this->redirect(
                 $this->generateAppUrl('ceneo_options')

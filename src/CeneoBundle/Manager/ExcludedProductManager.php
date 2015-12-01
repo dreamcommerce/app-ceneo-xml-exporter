@@ -39,15 +39,13 @@ class ExcludedProductManager {
         $this->em->flush();
     }
 
-    public function addByProductId($id, ShopInterface $shop){
+    public function addProducts($products, ShopInterface $shop){
 
-        $ids = (array)$id;
-
-        foreach($ids as $product){
+        foreach($products as $id=>$title){
             $obj = new ExcludedProduct();
             $obj->setShop($shop);
-            $obj->setProductId($product);
-            $obj->setTitle($product);
+            $obj->setProductId($id);
+            $obj->setTitle($title);
             $obj->setLink('http://example.org');
             $this->em->persist($obj);
         }

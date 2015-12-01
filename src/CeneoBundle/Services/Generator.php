@@ -106,6 +106,10 @@ class Generator {
      * @var FileCompressor
      */
     protected $fileCompressor;
+    /**
+     * @var Products
+     */
+    protected $productsFetcher;
 
     /**
      * @param $tempDirectory
@@ -253,7 +257,7 @@ class Generator {
      */
     protected function fetchProducts(ShopInterface $shop){
 
-        $fetcher = new Products($this->orphansPurger);
+        $this->productsFetcher = $fetcher = new Products($this->orphansPurger);
         $fetcher->init($this->client, $shop);
 
         $products = $fetcher->getWithoutExcluded(
@@ -265,7 +269,7 @@ class Generator {
 
     /**
      * do proper export
-     * @param Client $client
+     * @param ClientInterface $client
      * @param ShopInterface $shop
      * @param $output
      * @return int
@@ -305,9 +309,11 @@ class Generator {
                     continue;
                 }
 
-                $group = $this->determineGroupForProduct($product, $shop);
-                $this->counters[$group]++;
-                $this->appendProduct($this->writers[$group], $product, $shop);
+                if(!$this->productsFetcher->isIgnored($product->product_id)) {
+                    $group = $this->determineGroupForProduct($product, $shop);
+                    $this->counters[$group]++;
+                    $this->appendProduct($this->writers[$group], $product, $shop);
+                }
 
                 if ($counter % self::PROGRESS_RESOLUTION == 0) {
                     if ($this->stopwatch) {
@@ -335,6 +341,10 @@ class Generator {
             if($this->fileCompressor){
                 $this->fileCompressor->compressAsync($output);
             }
+
+            $orphans = $this->productsFetcher->getNotExistingIgnores();
+            $this->orphansPurger->purgeExcludedIds($orphans, $shop);
+
         }
 
         // clear what's should not mess up

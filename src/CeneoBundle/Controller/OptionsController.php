@@ -36,9 +36,6 @@ class OptionsController extends ControllerAbstract
          */
         $excludedProducts = $this->getDoctrine()->getRepository('CeneoBundle:ExcludedProduct');
 
-        $ids = $excludedProducts->findIdsByShop($this->shop);
-        $this->get('ceneo.orphans_purger')->purgeExcluded($ids, $this->client, $this->shop);
-
         $count = $excludedProducts->getProductsCountByShop($this->shop);
 
         $stockLink = $this->shop->getShopUrl().'/admin/stock';

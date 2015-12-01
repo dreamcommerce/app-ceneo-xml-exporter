@@ -51,16 +51,20 @@ class OrphansPurger
 
         $fetcher = new Fetcher($resource);
 
-        $resource
-            ->filters(array(
-                $field=>array(
-                    'in'=>$found
-                )
-            ));
+        $wrapper = new CollectionWrapper(new \ArrayObject());
+        $partitions = $this->partitionFilterArguments($found, 8192-512);
 
-        $result = $fetcher->fetchAll();
+        foreach($partitions as $p) {
+            $resource->filters([
+                'product_id'=>[
+                    'in'=>$p
+                ]
+            ]);
 
-        $wrapper = new CollectionWrapper($result);
+            $result = $fetcher->fetchAll();
+            $wrapper->appendCollection($result);
+        }
+
         $foundIds = $wrapper->getListOfField($field);
 
         $idsToDelete = array_diff($found, $foundIds);
@@ -81,6 +85,13 @@ class OrphansPurger
         });
     }
 
+    public function purgeExcludedIds($ids, ShopInterface $shop)
+    {
+        if(isset($ids[0])) {
+            $this->excludedProductManager->deleteByProductId($ids, $shop);
+        }
+    }
+
     public function purgeAttributeGroups($found, ClientInterface $client, ShopInterface $shop)
     {
         $resource = new AttributeGroup($client);
@@ -98,6 +109,31 @@ class OrphansPurger
         return $this->purgeResource($found, $resource, 'attribute_id', function($idsToDelete) use ($shop){
             $this->attributeMappingManager->deleteByAttributeId($idsToDelete, $shop);
         });
+    }
+
+    protected function partitionFilterArguments($arguments, $maxLength){
+
+        $partitions = [];
+        $bufferLength = 0;
+
+        $buffer = [];
+        while($element = array_shift($arguments)){
+            // "",
+            $length = strlen($element)+3;
+            if($bufferLength+$length<$maxLength){
+                $buffer[] = $element;
+                $bufferLength += $length;
+            }else{
+                $partitions[] = $buffer;
+                $buffer = [$element];
+                $bufferLength = $length;
+            }
+        }
+
+        $partitions[] = $buffer;
+
+        return $partitions;
+
     }
 
 }

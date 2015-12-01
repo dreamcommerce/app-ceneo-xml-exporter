@@ -6,6 +6,8 @@ use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
 class ExcludedProductRepository extends RepositoryAbstract{
 
+    const RECORDS_PER_PAGE = 50;
+
     public function getProductsCountByShop(ShopInterface $shop){
         $q = $this->createQueryBuilder('ep');
         $q->select('count(ep.product_id)')
@@ -19,6 +21,34 @@ class ExcludedProductRepository extends RepositoryAbstract{
         return $this->findBy(array(
             'shop'=>$shop
         ));
+    }
+
+    public function countAllByShop(ShopInterface $shop)
+    {
+        $q = $this->createQueryBuilder('ep')
+            ->select('count(ep.id)')
+            ->where('ep.shop=:shop')
+            ->setParameter('shop', $shop);
+
+        $count = $q->getQuery()->getSingleScalarResult();
+        return $count;
+    }
+
+    public function findAllByShopPaged(ShopInterface $shop, $page = 1)
+    {
+        $count = $this->countAllByShop($shop);
+
+        $start = ($page-1)*self::RECORDS_PER_PAGE;
+
+        if($start>=$count){
+            throw new \Exception('Page not found');
+        }
+
+        return $this->findBy([
+            'shop'=>$shop
+        ], [
+            'title'=>'ASC'
+        ], self::RECORDS_PER_PAGE, $start);
     }
 
     /**

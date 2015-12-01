@@ -15,6 +15,12 @@ class Products extends FetcherAbstract
 {
 
     /**
+     * ignored products hits
+     * @var array
+     */
+    protected $ignored = [];
+
+    /**
      * fetching data
      * @return mixed
      */
@@ -39,6 +45,33 @@ class Products extends FetcherAbstract
     }
 
     /**
+     * check if product is ignored
+     * @param $id
+     * @param bool|true $hitMark update counter adequately
+     * @return bool
+     */
+    public function isIgnored($id, $hitMark = true)
+    {
+        $result = isset($this->ignored[$id]);
+        if($result && $hitMark){
+            $this->ignored[$id]++;
+        }
+
+        return $result;
+    }
+
+    /**
+     * return identifiers of non-existing ignored products
+     * @return array
+     */
+    public function getNotExistingIgnores()
+    {
+        return array_keys(array_filter($this->ignored, function($val){
+            return !$val;
+        }));
+    }
+
+    /**
      * get products, if manager regarding exclusions
      * @param ShopInterface|null $shop
      * @param ExcludedProductRepository $repository
@@ -53,8 +86,7 @@ class Products extends FetcherAbstract
             $excluded = $repository->findIdsByShop($shop);
 
             if ($excluded) {
-                $this->orphansPurger->purgeExcluded($excluded, $this->client, $this->shop);
-                $productResource->filters(array('product_id' => array('not in' => $excluded)));
+                $this->ignored = array_combine($excluded, array_fill(0, count($excluded), 0));
             }
         }
 
