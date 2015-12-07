@@ -4,11 +4,12 @@ namespace CeneoBundle\Controller;
 
 use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Services\ExportStatus;
+use Symfony\Component\HttpFoundation\Request;
 
 class OptionsController extends ControllerAbstract
 {
 
-    public function indexAction(){
+    public function indexAction(Request $request){
 
 
         $shopId = $this->shop->getName();
@@ -39,6 +40,9 @@ class OptionsController extends ControllerAbstract
         $count = $excludedProducts->getProductsCountByShop($this->shop);
 
         $stockLink = $this->shop->getShopUrl().'/admin/stock';
+
+        // add current IP for whitelist
+        $request->getSession()->set('ip', $_SERVER['REMOTE_ADDR']);
 
         return $this->render('CeneoBundle::options/index.html.twig', array(
             'xml_link'=>$xmlLink,

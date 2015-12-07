@@ -22,7 +22,7 @@ parameters:
     categories_ttl:    600
     status_check_ttl:  100
 
-    xml_dir: %kernel.root_dir%/../web/ceneo/xml
+    xml_dir: %kernel.root_dir%/xml
     gzip_files: true
 
     # temporary files lifetime
@@ -33,3 +33,5 @@ parameters:
     app_id:            ~
     app_secret:        ~
     appstore_secret:   ~
+
+    ip_whitelist:      ~

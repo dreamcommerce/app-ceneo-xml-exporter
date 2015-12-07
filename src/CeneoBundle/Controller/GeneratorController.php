@@ -65,10 +65,4 @@ class GeneratorController extends ControllerAbstract{
 
     }
 
-    public function dummyAction(){
-        throw new NotFoundHttpException();
-    }
-
-
-
 }

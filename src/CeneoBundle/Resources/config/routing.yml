@@ -8,7 +8,7 @@ ceneo_options:
 
 ceneo_xml:
     path:     /xml/{shopId}.xml
-    defaults: { _controller: CeneoBundle:Generator:dummy }
+    defaults: { _controller: CeneoBundle:Download:download }
 
 ceneo_exclusions_add:
     path:     /exclusions/add
