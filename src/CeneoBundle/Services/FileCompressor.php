@@ -13,6 +13,8 @@ class FileCompressor
             $target = $path.'.gz';
         }
 
+        $tmpTarget = $target.'_';
+
         $cmd = [
             escapeshellcmd('gzip'),
         ];
@@ -22,7 +24,11 @@ class FileCompressor
         }
 
         $cmd[] = '>';
-        $cmd[] = escapeshellarg($target);
+        $cmd[] = escapeshellarg($tmpTarget);
+
+        $cmd[] = '&& mv';
+        $cmd[] = $tmpTarget;
+        $cmd[] = $target;
 
         return $cmd;
     }
