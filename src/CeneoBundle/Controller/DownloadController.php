@@ -13,7 +13,9 @@ class DownloadController extends Controller
 
     public function downloadAction(Request $req, $shopId){
 
-        $file = sprintf('%s/%s.xml', $this->container->getParameter('xml_dir'), basename($shopId));
+        $pattern = '%s/%s.xml';
+
+        $file = sprintf($pattern, $this->container->getParameter('xml_dir'), basename($shopId));
 
         if(!$this->isIpAllowed($req, $_SERVER['REMOTE_ADDR'])){
             throw new NotFoundHttpException();
@@ -23,9 +25,19 @@ class DownloadController extends Controller
             throw new NotFoundHttpException();
         }
 
+        $accept = $req->getEncodings();
+        $headers = [
+            'Content-Type'=>'application/xml'
+        ];
+
+        if(in_array('gzip', $accept) && file_exists($file.'.gz')){
+            $file .= '.gz';
+            $headers['Content-Encoding'] = 'gzip';
+        }
+
         // x-sendfile
         return new BinaryFileResponse(
-            new \SplFileInfo($file)
+            new \SplFileInfo($file), 200, $headers
         );
 
     }
