@@ -383,9 +383,9 @@ class Generator {
      * append particular product to specified writer
      * @param \XmlWriter $writer
      * @param $row
-     * @param ShopInterface $shop
+     * @param bool $appendAdditionalFields
      */
-    protected function appendProduct(\XmlWriter $writer, $row, ShopInterface $shop){
+    protected function appendProduct(\XmlWriter $writer, $row, $appendAdditionalFields = false){
 
         if($this->stopwatch){
             $this->stopwatch->lap('export');
@@ -394,7 +394,14 @@ class Generator {
         $categoryPath = $this->getCategoryPath($row->category_id);
 
         $images = $this->getProductImages($row->ProductImage);
-        $attributes = $this->getAttributes($row);
+
+        if($appendAdditionalFields) {
+            $attributes = $this->getAdditionalAttributes($row);
+        }else{
+            $attributes = [];
+        }
+
+        $attributes = array_merge($attributes, $this->getAttributes($row));
 
         $w = $writer;
         $w->startElement('o');
@@ -431,11 +438,18 @@ class Generator {
 
             if($attributes){
                 $w->startElement('attrs');
+                    $counter = 0;
                     foreach($attributes as $k=>$v){
+                        // ceneo limits attributes count to 10
+                        if($counter>=10){
+                            break;
+                        }
+
                         $w->startElement('a');
                             $w->writeAttribute('name', $k);
                             $w->writeCdata($v);
                         $w->endElement();
+                        $counter++;
                     }
                 $w->endElement();
             }
@@ -506,6 +520,31 @@ class Generator {
         }
 
 
+    }
+
+    /**
+     * @param $row
+     * @return array
+     */
+    protected function getAdditionalAttributes($row)
+    {
+        $attributes = [];
+
+        foreach (['isbn', 'bloz7', 'bloz12', 'code', 'kgo', 'producer'] as $name) {
+            $key = 'additional_' . $name;
+            if (isset($row->$key) && !empty($row->$key)) {
+                if ($name == 'bloz7') {
+                    $attributeKey = 'bloz_7';
+                } else if ($name == 'bloz12') {
+                    $attributeKey = 'bloz_12';
+                } else {
+                    $attributeKey = $name;
+                }
+                $attributes[strtoupper($attributeKey)] = $row->$key;
+            }
+        }
+
+        return $attributes;
     }
 
 }
