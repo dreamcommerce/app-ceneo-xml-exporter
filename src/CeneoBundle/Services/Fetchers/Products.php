@@ -90,6 +90,13 @@ class Products extends FetcherAbstract
             }
         }
 
+        $productResource->filters([
+            'producer_id'=>[
+                '!='=>null
+            ],
+            'translations.pl_PL.active'=>true
+        ]);
+
         $fetcher = new Fetcher($productResource);
 
         $image = new ProductImage($this->client);
