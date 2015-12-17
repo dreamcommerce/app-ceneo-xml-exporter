@@ -24,7 +24,7 @@
         "doctrine/doctrine-cache-bundle": "~1.0",
         "mmoreram/gearman-bundle": "~3.0",
         "doctrine/doctrine-migrations-bundle": "^1.0",
-        
+        "dreamcommerce/shop-appstore-bundle": "dev-master",
         "facile-it/doctrine-mysql-come-back": "~1.5",
         "white-october/pagerfanta-bundle": "~1.0"
     },
@@ -63,10 +63,10 @@
             "file": "app/config/parameters.yml"
         }
     },
-  "repositories": [
-      {
-          "type":"vcs",
-          "url": "https://github.com/dreamcommerce/appstore-bundle"
-      }
-  ]
+    "repositories": [
+        {
+            "type":"vcs",
+            "url": "https://github.com/dreamcommerce/appstore-bundle"
+        }
+    ]
 }
