@@ -25,8 +25,8 @@
         "mmoreram/gearman-bundle": "~3.0",
         "doctrine/doctrine-migrations-bundle": "^1.0",
         "dreamcommerce/shop-appstore-bundle": "dev-master",
-        "facile-it/doctrine-mysql-come-back": "~1.5",
-        "white-october/pagerfanta-bundle": "~1.0"
+        "dreamcommerce/gearman-bundle": "0.1.*",
+        "facile-it/doctrine-mysql-come-back": "~1.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3"
