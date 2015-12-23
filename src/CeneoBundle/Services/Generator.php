@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-04-03
- * Time: 11:21
- */
-
 namespace CeneoBundle\Services;
 
 
@@ -110,6 +103,12 @@ class Generator {
      * @var Products
      */
     protected $productsFetcher;
+
+    /**
+     * currently processed shop handler
+     * @var ShopInterface
+     */
+    protected $shop;
 
     /**
      * @param $tempDirectory
@@ -268,6 +267,15 @@ class Generator {
     }
 
     /**
+     * handle worker termination
+     */
+    public function terminate()
+    {
+        $this->exportStatus->revert($this->shop);
+        $this->clearTemporary();
+    }
+
+    /**
      * do proper export
      * @param ClientInterface $client
      * @param ShopInterface $shop
@@ -284,9 +292,9 @@ class Generator {
         $this->initializeWriters();
 
         $this->client = $client;
+        $this->shop = $shop;
 
         $this->initializeFetchers($shop);
-
 
         $success = false;
         $counter = 0;
@@ -324,7 +332,6 @@ class Generator {
                     $this->exportStatus->markInProgress($shop, $counter, $this->productsCount, $eta);
                 }
             }
-
 
             $success = true;
 
@@ -478,6 +485,14 @@ class Generator {
         $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
 
 
+    }
+
+    protected function cleanUpFetchers()
+    {
+        $this->categoriesFetcher = null;
+        $this->productImagesFetcher = null;
+        $this->deliveriesFetcher = null;
+        $this->attributesFetcher = null;
     }
 
     /**

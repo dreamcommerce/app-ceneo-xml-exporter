@@ -125,9 +125,21 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * initialize some internal stuff
      */
     protected function init(){
+        $this->registerSignalHandler();
         $this->shopRepository = $this->objectManager->getRepository('DreamCommerce\ShopAppstoreBundle\Model\ShopInterface');
         $this->epManager = new ExcludedProductManager($this->em);
         $this->attributeGroupMappingManager = new AttributeGroupMappingManager($this->em);
+    }
+
+    /**
+     * binds cleaning-up routines on SIGINT
+     */
+    protected function registerSignalHandler(){
+        pcntl_signal(SIGINT, function(){
+            $this->output->writeln('SIGNAL RECEIVED, terminating');
+            $this->terminate();
+            die;
+        });
     }
 
     /**
@@ -199,7 +211,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $stopwatch = $this->generator->getStopwatch();
         $stats = $this->exportStatus->getExportStats($stopwatch);
 
-        foreach($stats as $group=>$stat){
+        foreach ($stats as $group => $stat) {
             $this->output->writeln(
                 sprintf('%s: %s', $group, $stat)
             );
@@ -231,11 +243,18 @@ class GeneratorWorker implements GearmanOutputAwareInterface
 
         $count = $this->generator->export($client, $shop, $path);
 
+        $this->processedProducts += $count;
+
         $this->output->writeln(
             sprintf('Shop done, exported products: %d', $count)
         );
         $stats = $this->exportStatus->getLastExportStats($stopwatch);
         $this->output->writeln(sprintf('export stats: %s', $stats));
+    }
+
+    public function terminate()
+    {
+        $this->generator->terminate();
     }
 
     /**

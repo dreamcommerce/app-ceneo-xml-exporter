@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: eRIZ
- * Date: 2015-04-03
- * Time: 14:30
- */
-
 namespace CeneoBundle\Services;
 
 
@@ -26,6 +19,12 @@ class ExportStatus {
      * @var string
      */
     protected $xmlDir;
+
+    /**
+     * cache with previous export status states
+     * @var Export[]
+     */
+    protected $statusCache = [];
 
     /**
      * @param string $xmlDir
@@ -73,6 +72,11 @@ class ExportStatus {
     public function markInProgress(ShopInterface $shop, $exported = null, $count = null, $eta = 0){
         $status = $this->getStatus($shop);
 
+        // if first progress step
+        if(!$exported){
+            $this->statusCache[$shop->getName()] = clone $status;
+        }
+
         $status->setInProgress(true);
         if($exported!==null) {
             $status->setExported($exported);
@@ -84,6 +88,33 @@ class ExportStatus {
 
         $this->em->persist($status);
         $this->em->flush();
+    }
+
+    /**
+     * revert latest export state
+     * @param ShopInterface $shop
+     */
+    public function revert(ShopInterface $shop)
+    {
+        if(!isset($this->statusCache[$shop->getName()])){
+            return;
+        }
+
+        $status = $this->getStatus($shop);
+
+        $obj = $this->statusCache[$shop->getName()];
+
+        $status->setDate($obj->getDate());
+        $status->setInProgress(false);
+        $status->setEta($obj->getEta());
+        $status->setExported($obj->getExported());
+        $status->setProductsCount($obj->getProductsCount());
+        $status->setSeconds($obj->getSeconds());
+
+        $this->em->persist($status);
+        $this->em->flush();
+
+        unset($this->statusCache[$shop->getName()]);
     }
 
     /**
@@ -103,6 +134,8 @@ class ExportStatus {
         $this->em->persist($status);
         $this->em->flush();
 
+        unset($this->statusCache[$shop->getName()]);
+
         return $status;
     }
 
@@ -112,13 +145,20 @@ class ExportStatus {
      * @return array
      */
     public function getExportStats(Stopwatch $stopwatch){
-        $shops = $stopwatch->getEvent('shop');
-        $exports = $stopwatch->getEvent('export');
+        try{
+            $shops = $stopwatch->getEvent('shop');
+            $exports = $stopwatch->getEvent('export');
 
-        return [
-            'shop'=>$this->formatStatsSection($shops),
-            'export'=>$this->formatStatsSection($exports)
-        ];
+            return [
+                'shop'=>$this->formatStatsSection($shops),
+                'export'=>$this->formatStatsSection($exports)
+            ];
+        }catch (\LogicException $ex){
+            return [
+                'shop'=>0,
+                'export'=>0
+            ];
+        }
     }
 
     public function getLastExportStats(Stopwatch $stopwatch){

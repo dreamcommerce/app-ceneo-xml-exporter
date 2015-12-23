@@ -34,6 +34,7 @@ class WorkerCommand extends ContainerAwareCommand
 
         $input = new ArrayInput($arguments);
 
+        declare(ticks=1);
         $command->run($input, $output);
     }
 }
