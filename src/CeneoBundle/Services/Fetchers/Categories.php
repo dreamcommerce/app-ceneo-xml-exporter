@@ -4,8 +4,8 @@
 namespace CeneoBundle\Services\Fetchers;
 
 
-use DreamCommerce\Resource\CategoriesTree;
-use DreamCommerce\Resource\Category;
+use DreamCommerce\ShopAppstoreLib\Resource\CategoriesTree;
+use DreamCommerce\ShopAppstoreLib\Resource\Category;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 

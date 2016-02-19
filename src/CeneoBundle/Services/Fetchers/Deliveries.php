@@ -4,7 +4,7 @@
 namespace CeneoBundle\Services\Fetchers;
 
 
-use DreamCommerce\Resource\Delivery;
+use DreamCommerce\ShopAppstoreLib\Resource\Delivery;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 
 class Deliveries extends FetcherAbstract

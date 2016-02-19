@@ -8,14 +8,12 @@ use CeneoBundle\Form\Type\CeneoType;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Model\CeneoGroup;
-use DreamCommerce\Resource\Attribute;
-use DreamCommerce\Resource\AttributeGroup;
+use DreamCommerce\ShopAppstoreLib\Resource\Attribute;
+use DreamCommerce\ShopAppstoreLib\Resource\AttributeGroup;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class MappingsController extends ControllerAbstract{
 
@@ -88,7 +86,7 @@ class MappingsController extends ControllerAbstract{
         $attributeGroup = $attributeGroupManager->getRepository()->findOneBy(array('id'=>$group));
 
         if(!$attributeGroup){
-            throw new NotFoundHttpException();
+            throw new \HttpInvalidParamException();
         }
 
         $attributeResource = new Attribute($this->client);

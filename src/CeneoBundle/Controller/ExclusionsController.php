@@ -7,7 +7,7 @@ use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
-use DreamCommerce\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use Symfony\Component\HttpFoundation\Request;

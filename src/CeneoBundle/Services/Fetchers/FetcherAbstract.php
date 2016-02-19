@@ -5,7 +5,7 @@ namespace CeneoBundle\Services\Fetchers;
 
 
 use CeneoBundle\Services\OrphansPurger;
-use DreamCommerce\Client;
+use DreamCommerce\ShopAppstoreLib\Client;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
 abstract class FetcherAbstract

@@ -10,10 +10,10 @@ namespace CeneoBundle\Services;
 
 
 use CeneoBundle\Manager\ExcludedProductManager;
-use DreamCommerce\Client;
-use DreamCommerce\ClientInterface;
-use DreamCommerce\Resource\Product;
-use DreamCommerce\ResourceList;
+use DreamCommerce\ShopAppstoreLib\Client;
+use DreamCommerce\ShopAppstoreLib\ClientInterface;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\ResourceList;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;

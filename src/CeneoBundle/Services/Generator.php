@@ -17,10 +17,12 @@ use CeneoBundle\Services\Fetchers\Categories;
 use CeneoBundle\Services\Fetchers\Deliveries;
 use CeneoBundle\Services\Fetchers\ProductImages;
 use CeneoBundle\Services\Fetchers\Products;
-use DreamCommerce\Client;
-use DreamCommerce\ClientInterface;
+use DreamCommerce\ShopAppstoreLib\Client;
+use DreamCommerce\ShopAppstoreLib\ClientInterface;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\CommunicationException;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\ResourceException;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Stopwatch\StopwatchPeriod;
 
@@ -305,11 +307,11 @@ class Generator {
                 $counter++;
 
                 // we support only pl_PL locale for export (intentionally)
-                if(!isset($product->translations->pl_PL)){
+                if (!isset($product->translations->pl_PL)) {
                     continue;
                 }
 
-                if(!$this->productsFetcher->isIgnored($product->product_id)) {
+                if (!$this->productsFetcher->isIgnored($product->product_id)) {
                     $group = $this->determineGroupForProduct($product, $shop);
                     $this->counters[$group]++;
                     $this->appendProduct($this->writers[$group], $product, $shop);
@@ -359,6 +361,10 @@ class Generator {
         }
 
         $this->exportStatus->markDone($shop, $seconds);
+
+        if(!empty($ex) && $ex instanceof CommunicationException){
+            throw $ex;
+        }
 
         // may something go wrong, so not directly from collection
         return $counter;
