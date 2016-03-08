@@ -56,7 +56,7 @@ class OrphansPurger
 
         foreach($partitions as $p) {
             $resource->filters([
-                'product_id'=>[
+                $field=>[
                     'in'=>$p
                 ]
             ]);
