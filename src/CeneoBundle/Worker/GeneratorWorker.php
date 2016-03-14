@@ -17,11 +17,8 @@ use DreamCommerce\ShopAppstoreLib\Resource\Exception\ResourceException;
 use Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Connection;
 use Mmoreram\GearmanBundle\Command\Util\GearmanOutputAwareInterface;
 use Mmoreram\GearmanBundle\Driver\Gearman;
-use Symfony\Component\Console\Event\ConsoleExceptionEvent;
 use Symfony\Component\Console\Output\OutputInterface;
 use CeneoBundle\Services\Generator;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 
 /**
  * product export worker
@@ -149,7 +146,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * binds cleaning-up routines on SIGINT
      */
     protected function registerSignalHandler(){
-        pcntl_signal(SIGINT, function(){
+        pcntl_signal(SIGTERM, function(){
             $this->output->writeln('SIGNAL RECEIVED, terminating');
             $this->terminate();
             die;
