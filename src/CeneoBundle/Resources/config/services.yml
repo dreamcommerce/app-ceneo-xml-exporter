@@ -43,7 +43,7 @@ services:
             - "@ceneo.attribute_group_mapping_repository"
             - "@ceneo.export_status"
         calls:
-            - [setStopwatch, [@debug.stopwatch]]
+            - [setStopwatch, ["@debug.stopwatch"]]
             - [setFileCompressor, ["@=container.hasParameter('gzip_files') ? service('ceneo.file_compressor') : null"]]
 
     ceneo.generator_worker:
