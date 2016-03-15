@@ -29,7 +29,8 @@ class CeneoType extends AbstractType{
 
         foreach($items as $i){
             $builder->add($i, ChoiceType::class, array(
-                'empty_value'=>'',
+                'placeholder'=>'',
+                'choices_as_values'=>true,
                 'choice_loader'=>new CollectionChoiceListLoader($options['attributes'], $keyResolver, $valueResolver),
                 'required'=>false
             ));

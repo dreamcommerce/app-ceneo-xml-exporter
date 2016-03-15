@@ -5,7 +5,6 @@ namespace CeneoBundle\Command;
 use CeneoBundle\Entity\ExcludedProduct;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
 use DreamCommerce\ShopAppstoreLib\Client;
 use DreamCommerce\ShopAppstoreLib\Resource\Product;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;

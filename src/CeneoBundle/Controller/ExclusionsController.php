@@ -60,13 +60,14 @@ class ExclusionsController extends ControllerAbstract{
 
         $form = $this->createFormBuilder()
             ->add('products', ChoiceType::class, array(
+                'choices_as_values'=>true,
                 'choice_loader'=>new CollectionChoiceListLoader($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
             ->add('submit', SubmitType::class, array(
                 'label'=>'Skasuj'
-            ))->add('back', 'submit', array('label'=>'Powrót'))
+            ))->add('back', SubmitType::class, array('label'=>'Powrót'))
             ->getForm();
 
         $form->handleRequest($request);

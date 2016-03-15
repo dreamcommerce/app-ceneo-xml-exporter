@@ -5,7 +5,6 @@ namespace CeneoBundle\Controller;
 use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Services\ExportStatus;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OptionsController extends ControllerAbstract

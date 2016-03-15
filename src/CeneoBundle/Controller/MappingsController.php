@@ -42,7 +42,7 @@ class MappingsController extends ControllerAbstract{
         foreach($list as $l){
             $groupId = $l->attribute_group_id;
             $data = isset($groupsList[$groupId]) ? $groupsList[$groupId] : array();
-            $forms[$groupId] = $this->createForm(new AttributeGroupMappingType($groupId), $data);
+            $forms[$groupId] = $this->createForm(AttributeGroupMappingType::class, $data, ['group'=>$groupId]);
         }
 
         /**
@@ -61,6 +61,9 @@ class MappingsController extends ControllerAbstract{
                     );
                 }else{
                     $this->addNotice('Grupa została przypisana');
+                    return $this->redirect(
+                        $this->generateAppUrl('ceneo_mappings')
+                    );
                 }
             }
         }
@@ -105,7 +108,10 @@ class MappingsController extends ControllerAbstract{
         $attributeMappingManager = new AttributeMappingManager($this->getDoctrine()->getManager());
         $data = $attributeMappingManager->getRepository()->findForForm($attributeGroup);
 
-        $form = $this->createForm(new CeneoType($attributes, $attributeGroup->getCeneoGroup()), $data);
+        $form = $this->createForm(CeneoType::class, $data, [
+            'attributes'=>$attributes,
+            'group'=>$attributeGroup->getCeneoGroup()
+        ]);
         $form->handleRequest($request);
 
         if($form->isValid()){
