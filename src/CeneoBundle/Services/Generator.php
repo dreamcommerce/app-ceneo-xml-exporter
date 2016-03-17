@@ -462,7 +462,10 @@ class Generator {
 
             if($row->translations->pl_PL->description){
                 $w->startElement('desc');
-                    $w->writeCdata($row->translations->pl_PL->description);
+                    //sometimes, someone put an old-fashioned JS with CDATA onto description...
+                    $description = $row->translations->pl_PL->description;
+                    $description = str_replace(']]>', ']]]]><![CDATA[>', $description);
+                    $w->writeCdata($description);
                 $w->endElement();
             }
 
