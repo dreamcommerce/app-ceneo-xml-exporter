@@ -35,7 +35,7 @@ class MappingsController extends ControllerAbstract{
 
         $mapper = new AttributeGroupMappingManager($this->getDoctrine()->getManager());
 
-        $groupsList = $mapper->getRepository()->findFormGroups();
+        $groupsList = $mapper->getRepository()->findFormGroups($this->shop);
 
         $forms = $this->createFormBuilder($groupsList);
         foreach($list as $l){
