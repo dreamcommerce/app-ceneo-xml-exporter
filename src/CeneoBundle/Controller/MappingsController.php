@@ -12,7 +12,6 @@ use DreamCommerce\ShopAppstoreLib\Resource\Attribute;
 use DreamCommerce\ShopAppstoreLib\Resource\AttributeGroup;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
-use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 
 class MappingsController extends ControllerAbstract{
@@ -38,43 +37,47 @@ class MappingsController extends ControllerAbstract{
 
         $groupsList = $mapper->getRepository()->findFormGroups();
 
-        $forms = array();
+        $forms = $this->createFormBuilder($groupsList);
         foreach($list as $l){
             $groupId = $l->attribute_group_id;
-            $data = isset($groupsList[$groupId]) ? $groupsList[$groupId] : array();
-            $forms[$groupId] = $this->createForm(AttributeGroupMappingType::class, $data, ['group'=>$groupId]);
-        }
 
-        /**
-         * @var $f Form
-         */
-        foreach($forms as $groupId=>$f){
-
-            $f->handleRequest($request);
-
-            if($f->isValid()){
-                $mapping = $mapper->saveMapping($this->shop, $groupId, $f->getData()['group']);
-
-                if($mapping){
-                    return $this->redirect(
-                        $this->generateAppUrl('ceneo_mappings_group', array('group'=>$mapping))
-                    );
-                }else{
-                    $this->addNotice('Grupa została przypisana');
-                    return $this->redirect(
-                        $this->generateAppUrl('ceneo_mappings')
-                    );
-                }
+            if(!isset($groupsList[$groupId])){
+                $data = $forms->getData();
+                $data[$groupId] = ['group'=>'other'];
+                $forms->setData($data);
             }
+
+            $options = ['group' => $groupId, 'label' => false];
+
+            $forms->add($groupId, AttributeGroupMappingType::class, $options);
         }
 
-        foreach($forms as $k=>$f){
-            $forms[$k] = $f->createView();
+        $form = $forms->getForm();
+        $form->handleRequest($request);
+
+        $button = $form->getClickedButton();
+        if($button){
+            $form = $button->getParent();
+            $data = $form->getData();
+            $group = $form->getConfig()->getOptions()['group'];
+
+            $mapping = $mapper->saveMapping($this->shop, $group, $data['group']);
+
+            if($mapping){
+                return $this->redirect(
+                    $this->generateAppUrl('ceneo_mappings_group', array('group'=>$mapping))
+                );
+            }else{
+                $this->addNotice('Grupa została przypisana');
+                return $this->redirect(
+                    $this->generateAppUrl('ceneo_mappings')
+                );
+            }
         }
 
         return $this->render('CeneoBundle:mappings:index.html.twig', array(
             'groups'=>$list,
-            'forms'=>$forms,
+            'forms'=>$form->createView(),
             'ceneo_groups'=>$groups
         ));
     }
