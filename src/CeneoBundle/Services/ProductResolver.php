@@ -4,8 +4,8 @@
 namespace CeneoBundle\Services;
 
 
-use DreamCommerce\Resource\Product;
-use DreamCommerce\Resource\ProductStock;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\Resource\ProductStock;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 

@@ -99,6 +99,7 @@ dream_commerce_shop_appstore:
             app_id:     "%app_id%"
             app_secret: "%app_secret%"
             appstore_secret: "%appstore_secret%"
+            minimal_version: "%minimal_version%"
 
 doctrine_cache:
     providers:

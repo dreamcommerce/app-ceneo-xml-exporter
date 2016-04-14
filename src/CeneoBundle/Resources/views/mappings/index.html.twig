@@ -8,19 +8,25 @@
             <fieldset>
                 <header>Mapowanie grup atrybutów</header>
 
-                {% for k,g in forms %}
-                <div class="edition-form-line">
-                    <div class="edition-form-line-label">
-                        {{ groups[k].name }}:
-                    </div>
-                    <div class="edition-form-line-field">
-                        {{ form_start(g) }}
-                        {{ form_widget(g.group) }}
-                        {{ form_widget(g.save, {'attr': {'class': 'button button-bg button-small button-important save-button confirm'}}) }}
-                        {{ form_end(g) }}
-                    </div>
-                </div>
+                {{ form_start(forms) }}
+
+                {% for k,f in forms %}
+                    {% if f.children %}
+                        <div class="edition-form-line">
+                            <div class="edition-form-line-label">
+                                {{ groups[k].name }}:
+                            </div>
+                            <div class="edition-form-line-field">
+                                {{ form_widget(f.group) }}
+                                {{ form_widget(f.save, {'attr': {'class': 'button button-bg button-small button-important save-button confirm'}}) }}
+                            </div>
+                        </div>
+                    {% else %}
+                        {{ form_widget(f) }}
+                    {% endif %}
                 {% endfor %}
+
+                {{ form_end(forms) }}
 
             </fieldset>
 

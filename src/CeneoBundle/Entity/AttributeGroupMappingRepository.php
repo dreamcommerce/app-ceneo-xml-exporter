@@ -22,9 +22,9 @@ class AttributeGroupMappingRepository extends RepositoryAbstract{
 
     }
 
-    public function findFormGroups(){
+    public function findFormGroups(ShopInterface $shop){
 
-        $data = $this->findAll();
+        $data = $this->findAllByShop($shop);
 
         $result = array();
 

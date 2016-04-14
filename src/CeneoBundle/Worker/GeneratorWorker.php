@@ -9,9 +9,11 @@ use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ExportStatus;
 use Doctrine\ORM\EntityManager;
 use DreamCommerce\ShopAppstoreBundle\Doctrine\ObjectManager;
+use DreamCommerce\ShopAppstoreBundle\EventListener\ResourceExceptionListener;
 use DreamCommerce\ShopAppstoreBundle\Handler\Application;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopRepositoryInterface;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\ResourceException;
 use Facile\DoctrineMySQLComeBack\Doctrine\DBAL\Connection;
 use Mmoreram\GearmanBundle\Command\Util\GearmanOutputAwareInterface;
 use Mmoreram\GearmanBundle\Driver\Gearman;
@@ -88,6 +90,11 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @var ObjectManager
      */
     private $objectManager;
+    /**
+     * @var ResourceExceptionListener
+     */
+    private $handler;
+
 
     /**
      * @param string $xmlDir xml output directory
@@ -97,6 +104,8 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * @param EntityManager $em
      * @param ObjectManager $objectManager
      * @param $minimalVersion
+     * @param ResourceExceptionListener $handler
+     * @internal param EventDispatcher $dispatcher
      */
     public function __construct(
         $xmlDir,
@@ -105,7 +114,8 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         ExportStatus $exportStatus,
         EntityManager $em,
         ObjectManager $objectManager,
-        $minimalVersion = null
+        $minimalVersion = null,
+        ResourceExceptionListener $handler
     )
     {
         $this->em = $em;
@@ -119,6 +129,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
         $this->objectManager = $objectManager;
 
         $this->init();
+        $this->handler = $handler;
     }
 
     /**
@@ -135,7 +146,7 @@ class GeneratorWorker implements GearmanOutputAwareInterface
      * binds cleaning-up routines on SIGINT
      */
     protected function registerSignalHandler(){
-        pcntl_signal(SIGINT, function(){
+        pcntl_signal(SIGTERM, function(){
             $this->output->writeln('SIGNAL RECEIVED, terminating');
             $this->terminate();
             die;
@@ -241,15 +252,21 @@ class GeneratorWorker implements GearmanOutputAwareInterface
 
         $path = sprintf('%s/%s.xml', $this->xmlDir, $shop->getName());
 
-        $count = $this->generator->export($client, $shop, $path);
+        try {
+            $count = $this->generator->export($client, $shop, $path);
+            $this->processedProducts += $count;
 
-        $this->processedProducts += $count;
+            $this->output->writeln(
+                sprintf('Shop done, exported products: %d', $count)
+            );
 
-        $this->output->writeln(
-            sprintf('Shop done, exported products: %d', $count)
-        );
-        $stats = $this->exportStatus->getLastExportStats($stopwatch);
-        $this->output->writeln(sprintf('export stats: %s', $stats));
+            $stats = $this->exportStatus->getLastExportStats($stopwatch);
+            $this->output->writeln(sprintf('export stats: %s', $stats));
+        }catch(ResourceException $ex){
+            $this->output->writeln('Shop export failed');
+            $this->handler->handleException($ex);
+        }
+
     }
 
     public function terminate()

@@ -5,9 +5,9 @@ namespace CeneoBundle\Services\Fetchers;
 
 
 use CeneoBundle\Entity\ExcludedProductRepository;
-use DreamCommerce\Resource\Producer;
-use DreamCommerce\Resource\Product;
-use DreamCommerce\Resource\ProductImage;
+use DreamCommerce\ShopAppstoreLib\Resource\Producer;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\Resource\ProductImage;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 
@@ -76,7 +76,7 @@ class Products extends FetcherAbstract
      * @param ShopInterface|null $shop
      * @param ExcludedProductRepository $repository
      * @return Fetcher\ResourceListIterator
-     * @throws \DreamCommerce\Exception\ResourceException
+     * @throws \DreamCommerce\ShopAppstoreLib\Resource\Exception\ResourceException
      */
     protected function fetchProducts(ShopInterface $shop = null, ExcludedProductRepository $repository = null){
         $productResource = new Product($this->client);

@@ -7,7 +7,7 @@ namespace CeneoBundle\Services\Fetchers;
 use CeneoBundle\Entity\AttributeGroupMapping;
 use CeneoBundle\Entity\AttributeGroupMappingRepository;
 use CeneoBundle\Entity\AttributeMapping;
-use DreamCommerce\Resource\Attribute;
+use DreamCommerce\ShopAppstoreLib\Resource\Attribute;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;

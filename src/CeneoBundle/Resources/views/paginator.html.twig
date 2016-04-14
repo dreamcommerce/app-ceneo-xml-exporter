@@ -18,7 +18,7 @@
             {#<li>...</li>#}
 
             {% if page==pages %}
-                <li><span class="button button-inactive icon-left"></span></li>
+                <li><span class="button button-inactive icon-right"></span></li>
             {% else %}
                 {% set next = page+1 %}
                 <li><a href="{{ app_path('ceneo_exclusions', {page: next}) }}" class="button icon-right"></a></li>

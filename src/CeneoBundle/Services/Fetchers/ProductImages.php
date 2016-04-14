@@ -3,6 +3,8 @@
 
 namespace CeneoBundle\Services\Fetchers;
 
+use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
+
 class ProductImages extends FetcherAbstract
 {
 
@@ -17,13 +19,24 @@ class ProductImages extends FetcherAbstract
         $this->shopUrlBase = null;
     }
 
+    public function init($client, ShopInterface $shop, $hasSsl = true)
+    {
+        parent::init($client, $shop);
+        $urlBase = $shop->getShopUrl();
+        $urlBase = strtr($urlBase, ['https://'=>'', 'http://'=>'']);
+        $urlBase = ($hasSsl ? 'https://' : 'http://').$urlBase;
+
+        $this->shopUrlBase = $urlBase;
+    }
+
     public function getImages($images){
 
         if(!$this->shopUrlBase){
             $this->shopUrlBase = $this->shop->getShopUrl();
-            if(substr($this->shopUrlBase, -1)!='/'){
-                $this->shopUrlBase .= '/';
-            }
+        }
+
+        if(substr($this->shopUrlBase, -1)!='/'){
+            $this->shopUrlBase .= '/';
         }
 
         $result = [

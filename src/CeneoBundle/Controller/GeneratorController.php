@@ -6,6 +6,7 @@ use BillingBundle\Entity\Shop;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GeneratorController extends ControllerAbstract{
 
@@ -58,7 +59,7 @@ class GeneratorController extends ControllerAbstract{
         if(!$status) {
             $response['url'] = $this->get('router')->generate('ceneo_xml', array(
                 'shopId' => $this->shop->getName()
-            ), true);
+            ), UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         return new JsonResponse($response);

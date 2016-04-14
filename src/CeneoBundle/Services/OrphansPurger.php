@@ -7,12 +7,12 @@ namespace CeneoBundle\Services;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\AttributeMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
-use DreamCommerce\Client;
-use DreamCommerce\ClientInterface;
-use DreamCommerce\Resource;
-use DreamCommerce\Resource\Attribute;
-use DreamCommerce\Resource\AttributeGroup;
-use DreamCommerce\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\Client;
+use DreamCommerce\ShopAppstoreLib\ClientInterface;
+use DreamCommerce\ShopAppstoreLib\Resource;
+use DreamCommerce\ShopAppstoreLib\Resource\Attribute;
+use DreamCommerce\ShopAppstoreLib\Resource\AttributeGroup;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
@@ -52,11 +52,11 @@ class OrphansPurger
         $fetcher = new Fetcher($resource);
 
         $wrapper = new CollectionWrapper(new \ArrayObject());
-        $partitions = $this->partitionFilterArguments($found, 8192-512);
+        $partitions = Fetcher::partitionFilterArguments($found, 8192-512);
 
         foreach($partitions as $p) {
             $resource->filters([
-                'product_id'=>[
+                $field=>[
                     'in'=>$p
                 ]
             ]);
@@ -109,31 +109,6 @@ class OrphansPurger
         return $this->purgeResource($found, $resource, 'attribute_id', function($idsToDelete) use ($shop){
             $this->attributeMappingManager->deleteByAttributeId($idsToDelete, $shop);
         });
-    }
-
-    protected function partitionFilterArguments($arguments, $maxLength){
-
-        $partitions = [];
-        $bufferLength = 0;
-
-        $buffer = [];
-        while($element = array_shift($arguments)){
-            // "",
-            $length = strlen($element)+3;
-            if($bufferLength+$length<$maxLength){
-                $buffer[] = $element;
-                $bufferLength += $length;
-            }else{
-                $partitions[] = $buffer;
-                $buffer = [$element];
-                $bufferLength = $length;
-            }
-        }
-
-        $partitions[] = $buffer;
-
-        return $partitions;
-
     }
 
 }

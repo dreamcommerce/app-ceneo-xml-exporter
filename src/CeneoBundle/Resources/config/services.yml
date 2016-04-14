@@ -5,71 +5,78 @@ services:
 
     ceneo.export_status:
         class: CeneoBundle\Services\ExportStatus
-        arguments: [%xml_dir%, @doctrine.orm.entity_manager]
+        arguments: [%xml_dir%, "@doctrine.orm.entity_manager"]
 
     ceneo.appstore_listener:
         class: CeneoBundle\EventListener\AppstoreListener
-        arguments: [%xml_dir%, @doctrine.orm.entity_manager, @ceneo.export_status]
+        arguments: [%xml_dir%, "@doctrine.orm.entity_manager", "@ceneo.export_status"]
         tags:
             - { name: kernel.event_listener, event: dream_commerce_shop_appstore.event.uninstall, method: onUninstall, priority: 1 }
             - { name: kernel.event_listener, event: dream_commerce_shop_appstore.event.install, method: onInstall, priority: -1 }
 
     ceneo.fetchers_categories:
         class: CeneoBundle\Services\Fetchers\Categories
-        arguments: [%categories_ttl%, @cache]
+        arguments: ["%categories_ttl%", "@cache"]
 
     ceneo.attribute_group_mapping_repository:
         class: CeneoBundle\Entity\AttributeGroupMappingRepository
-        factory: [@doctrine.orm.default_entity_manager, "getRepository"]
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
         arguments:
             - CeneoBundle\Entity\AttributeGroupMapping
 
     ceneo.excluded_product_repository:
         class: CeneoBundle\Entity\ExcludedProductRepository
-        factory: [@doctrine.orm.default_entity_manager, "getRepository"]
+        factory: ["@doctrine.orm.default_entity_manager", "getRepository"]
         arguments:
             - CeneoBundle\Entity\ExcludedProduct
 
     ceneo.queue_manager:
         class: CeneoBundle\Services\QueueManager
-        arguments: [@gearman]
+        arguments: ["@gearman"]
 
     ceneo.generator:
         class: CeneoBundle\Services\Generator
-        arguments: [%xml_dir%, @ceneo.orphans_purger, @ceneo.excluded_product_repository, @ceneo.attribute_group_mapping_repository, @ceneo.export_status]
+        arguments:
+            - "%xml_dir%"
+            - "@ceneo.orphans_purger"
+            - "@ceneo.excluded_product_repository"
+            - "@ceneo.attribute_group_mapping_repository"
+            - "@ceneo.export_status"
+            - "@dream_commerce_shop_appstore.token_refresher"
         calls:
-            - [setStopwatch, [@debug.stopwatch]]
+            - [setStopwatch, ["@debug.stopwatch"]]
             - [setFileCompressor, ["@=container.hasParameter('gzip_files') ? service('ceneo.file_compressor') : null"]]
 
     ceneo.generator_worker:
         class: CeneoBundle\Worker\GeneratorWorker
         arguments:
             - %xml_dir%
-            - @dream_commerce_shop_appstore.app.ceneo
-            - @ceneo.generator
-            - @ceneo.export_status
-            - @doctrine.orm.entity_manager
-            - @dream_commerce_shop_appstore.object_manager
-            - %minimal_version%
+            - "@dream_commerce_shop_appstore.app.ceneo"
+            - "@ceneo.generator"
+            - "@ceneo.export_status"
+            - "@doctrine.orm.entity_manager"
+            - "@dream_commerce_shop_appstore.object_manager"
+            - "%minimal_version%"
+            - "@dream_commerce_shop_appstore.exception_handler"
 
     ceneo.excluded_product_manager:
         class: CeneoBundle\Manager\ExcludedProductManager
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: ["@doctrine.orm.entity_manager"]
 
     ceneo.attribute_group_mapping_manager:
         class: CeneoBundle\Manager\AttributeGroupMappingManager
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: ["@doctrine.orm.entity_manager"]
 
     ceneo.attribute_mapping_manager:
         class: CeneoBundle\Manager\AttributeMappingManager
-        arguments: [@doctrine.orm.entity_manager]
+        arguments: ["@doctrine.orm.entity_manager"]
 
     ceneo.orphans_purger:
         class: CeneoBundle\Services\OrphansPurger
         arguments:
-            - @ceneo.excluded_product_manager
-            - @ceneo.attribute_mapping_manager
-            - @ceneo.attribute_group_mapping_manager
+            - "@ceneo.excluded_product_manager"
+            - "@ceneo.attribute_mapping_manager"
+            - "@ceneo.attribute_group_mapping_manager"
 
     ceneo.file_compressor:
         class: CeneoBundle\Services\FileCompressor

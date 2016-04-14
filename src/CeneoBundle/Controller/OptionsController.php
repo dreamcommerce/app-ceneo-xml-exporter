@@ -5,6 +5,7 @@ namespace CeneoBundle\Controller;
 use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Services\ExportStatus;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OptionsController extends ControllerAbstract
 {
@@ -22,7 +23,7 @@ class OptionsController extends ControllerAbstract
         if($exportStatus->exportExists($this->shop)) {
             $xmlLink = $this->get('router')->generate('ceneo_xml', array(
                 'shopId' => $shopId
-            ), true);
+            ), UrlGeneratorInterface::ABSOLUTE_URL);
         }else{
             $xmlLink = false;
         }

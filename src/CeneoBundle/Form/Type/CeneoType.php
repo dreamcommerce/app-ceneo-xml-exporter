@@ -7,22 +7,17 @@ namespace CeneoBundle\Form\Type;
 use CeneoBundle\Model\CeneoGroup;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CeneoType extends AbstractType{
-
-    protected $attributes;
-    protected $group;
-
-    public function __construct(\ArrayObject $attributes, $group){
-        $this->attributes = $attributes;
-        $this->group = $group;
-    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 
-        $items = CeneoGroup::$groups[$this->group][1];
+        $items = CeneoGroup::$groups[$options['group']][1];
 
         $keyResolver = function($record){
             return $record->attribute_id;
@@ -33,20 +28,24 @@ class CeneoType extends AbstractType{
         };
 
         foreach($items as $i){
-            $builder->add($i, 'choice', array(
-                'empty_value'=>'',
-                'choice_loader'=>new CollectionChoiceListLoader($this->attributes, $keyResolver, $valueResolver),
+            $builder->add($i, ChoiceType::class, array(
+                'placeholder'=>'',
+                'choices_as_values'=>true,
+                'choice_loader'=>new CollectionChoiceListLoader($options['attributes'], $keyResolver, $valueResolver),
                 'required'=>false
             ));
         }
 
-        $builder->add('save', 'submit', array(
+        $builder->add('save', SubmitType::class, array(
             'label'=>'action.save'
         ));
     }
 
-    public function getName()
+    public function configureOptions(OptionsResolver $resolver)
     {
-        return 'ceneo_'.$this->group;
+        parent::configureOptions($resolver);
+        $resolver->setDefault('attributes', []);
+        $resolver->setDefault('group', null);
     }
+
 }

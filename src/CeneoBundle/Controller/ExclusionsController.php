@@ -7,9 +7,11 @@ use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
-use DreamCommerce\Resource\Product;
+use DreamCommerce\ShopAppstoreLib\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 
 class ExclusionsController extends ControllerAbstract{
@@ -46,6 +48,9 @@ class ExclusionsController extends ControllerAbstract{
         $products = $resource->get();
 
         $valueResolver = function(\ArrayObject $row){
+            if(empty($row->translations->pl_PL)){
+                return false;
+            }
             return $row->translations->pl_PL->name;
         };
 
@@ -54,14 +59,15 @@ class ExclusionsController extends ControllerAbstract{
         };
 
         $form = $this->createFormBuilder()
-            ->add('products', 'choice', array(
+            ->add('products', ChoiceType::class, array(
+                'choices_as_values'=>true,
                 'choice_loader'=>new CollectionChoiceListLoader($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
-            ->add('submit', 'submit', array(
+            ->add('submit', SubmitType::class, array(
                 'label'=>'Skasuj'
-            ))->add('back', 'submit', array('label'=>'Powrót'))
+            ))->add('back', SubmitType::class, array('label'=>'Powrót'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -118,6 +124,9 @@ class ExclusionsController extends ControllerAbstract{
         );
 
         $valueResolver = function(\ArrayObject $row) use ($translations){
+            if(empty($row->translations->$translations)){
+                return false;
+            }
             return $row->translations->$translations->name;
         };
 
@@ -126,12 +135,12 @@ class ExclusionsController extends ControllerAbstract{
         };
 
         $form = $this->createFormBuilder($data)
-            ->add('products', 'choice', array(
+            ->add('products', ChoiceType::class, array(
                 'choice_loader'=>new CollectionChoiceListLoader($products, $keyResolver, $valueResolver),
                 'multiple'=>true,
                 'expanded'=>true
             ))
-            ->add('submit', 'submit', array(
+            ->add('submit', SubmitType::class, array(
                 'label'=>'action.exclude'
             ))
             ->getForm();

@@ -1,4 +1,11 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: eRIZ
+ * Date: 2015-04-03
+ * Time: 11:21
+ */
+
 namespace CeneoBundle\Services;
 
 
@@ -10,10 +17,15 @@ use CeneoBundle\Services\Fetchers\Categories;
 use CeneoBundle\Services\Fetchers\Deliveries;
 use CeneoBundle\Services\Fetchers\ProductImages;
 use CeneoBundle\Services\Fetchers\Products;
-use DreamCommerce\Client;
-use DreamCommerce\ClientInterface;
+use DreamCommerce\ShopAppstoreBundle\Utils\ShopChecker;
+use DreamCommerce\ShopAppstoreBundle\Utils\TokenRefresher;
+use DreamCommerce\ShopAppstoreLib\Client;
+use DreamCommerce\ShopAppstoreLib\ClientInterface;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\CommunicationException;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\PermissionsException;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\ResourceException;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Stopwatch\StopwatchPeriod;
 
@@ -60,7 +72,7 @@ class Generator {
      */
     protected $attributeGroupMappingRepository;
     /**
-     * @var null|Client
+     * @var null|ClientInterface
      */
     protected $client;
     /**
@@ -103,12 +115,15 @@ class Generator {
      * @var Products
      */
     protected $productsFetcher;
-
     /**
-     * currently processed shop handler
-     * @var ShopInterface
+     * @var TokenRefresher
      */
-    protected $shop;
+    protected $tokenRefresher;
+    /**
+     * has shop a valid SSL support
+     * @var boolean
+     */
+    protected $hasSsl;
 
     /**
      * @param $tempDirectory
@@ -116,13 +131,15 @@ class Generator {
      * @param ExcludedProductRepository $excludedProductRepository
      * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
      * @param ExportStatus $exportStatus
+     * @param TokenRefresher $tokenRefresher
      */
     function __construct(
         $tempDirectory,
         OrphansPurger $orphansPurger,
         ExcludedProductRepository $excludedProductRepository,
         AttributeGroupMappingRepository $attributeGroupMappingRepository,
-        ExportStatus $exportStatus
+        ExportStatus $exportStatus,
+        TokenRefresher $tokenRefresher
     )
     {
         $this->tempDirectory = $tempDirectory;
@@ -132,6 +149,7 @@ class Generator {
 
         $this->exportStatus = $exportStatus;
         $this->orphansPurger = $orphansPurger;
+        $this->tokenRefresher = $tokenRefresher;
     }
 
     public function setFileCompressor(FileCompressor $compressor = null)
@@ -267,15 +285,6 @@ class Generator {
     }
 
     /**
-     * handle worker termination
-     */
-    public function terminate()
-    {
-        $this->exportStatus->revert($this->shop);
-        $this->clearTemporary();
-    }
-
-    /**
      * do proper export
      * @param ClientInterface $client
      * @param ShopInterface $shop
@@ -289,12 +298,24 @@ class Generator {
             $this->stopwatch->start('export');
         }
 
+        $shopChecker = new ShopChecker();
+        $this->hasSsl = $shopChecker->verifySsl($shop);
+
         $this->initializeWriters();
 
         $this->client = $client;
-        $this->shop = $shop;
 
-        $this->initializeFetchers($shop);
+        // initialize fetchers and make sure we exchange application tokens if it's necessary
+        try {
+            $this->initializeFetchers($shop);
+        }catch(PermissionsException $ex){
+            $this->tokenRefresher->setClient($this->client);
+            $token = $this->tokenRefresher->refresh($shop);
+            $shop->setToken($token);
+            $this->initializeFetchers($shop);
+        }catch(\Exception $ex){
+            $this->clearTemporary();
+        }
 
         $success = false;
         $counter = 0;
@@ -313,11 +334,11 @@ class Generator {
                 $counter++;
 
                 // we support only pl_PL locale for export (intentionally)
-                if(!isset($product->translations->pl_PL)){
+                if (!isset($product->translations->pl_PL)) {
                     continue;
                 }
 
-                if(!$this->productsFetcher->isIgnored($product->product_id)) {
+                if (!$this->productsFetcher->isIgnored($product->product_id)) {
                     $group = $this->determineGroupForProduct($product, $shop);
                     $this->counters[$group]++;
                     $this->appendProduct($this->writers[$group], $product, $shop);
@@ -332,6 +353,7 @@ class Generator {
                     $this->exportStatus->markInProgress($shop, $counter, $this->productsCount, $eta);
                 }
             }
+
 
             $success = true;
 
@@ -366,6 +388,10 @@ class Generator {
         }
 
         $this->exportStatus->markDone($shop, $seconds);
+
+        if(!empty($ex) && $ex instanceof CommunicationException){
+            throw $ex;
+        }
 
         // may something go wrong, so not directly from collection
         return $counter;
@@ -410,12 +436,17 @@ class Generator {
 
         $attributes = array_merge($attributes, $this->getAttributes($row));
 
+        $permalink = $row->translations->pl_PL->permalink;
+        $permalink = strtr($permalink, ['http://'=>'', 'https://'=>'']);
+
+        $permalink = ($this->hasSsl ? 'https://' : 'http://').$permalink;
+
         $w = $writer;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
             $w->writeAttribute('price', $row->stock->comp_promo_price);
             $w->writeAttribute('stock', $row->stock->stock);
-            $w->writeAttribute('url', $row->translations->pl_PL->permalink);
+            $w->writeAttribute('url', $permalink);
             $w->writeAttribute('weight', $row->stock->weight);
             $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id));
             $w->writeAttribute('set', 0);
@@ -463,7 +494,10 @@ class Generator {
 
             if($row->translations->pl_PL->description){
                 $w->startElement('desc');
-                    $w->writeCdata($row->translations->pl_PL->description);
+                    //sometimes, someone put an old-fashioned JS with CDATA onto description...
+                    $description = $row->translations->pl_PL->description;
+                    $description = str_replace(']]>', ']]]]><![CDATA[>', $description);
+                    $w->writeCdata($description);
                 $w->endElement();
             }
 
@@ -475,7 +509,7 @@ class Generator {
         $this->categoriesFetcher->init($this->client, $shop);
 
         $this->productImagesFetcher = new ProductImages();
-        $this->productImagesFetcher->init($this->client, $shop);
+        $this->productImagesFetcher->init($this->client, $shop, $this->hasSsl);
 
         $this->deliveriesFetcher = new Deliveries();
         $this->deliveriesFetcher->init($this->client, $shop);
@@ -483,16 +517,6 @@ class Generator {
         $this->attributesFetcher = new Attributes($this->orphansPurger);
         $this->attributesFetcher->init($this->client, $shop);
         $this->attributesFetcher->setMappings($this->attributeGroupMappingRepository, $shop);
-
-
-    }
-
-    protected function cleanUpFetchers()
-    {
-        $this->categoriesFetcher = null;
-        $this->productImagesFetcher = null;
-        $this->deliveriesFetcher = null;
-        $this->attributesFetcher = null;
     }
 
     /**

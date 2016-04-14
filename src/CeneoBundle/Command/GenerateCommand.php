@@ -2,11 +2,12 @@
 
 namespace CeneoBundle\Command;
 
+use CeneoBundle\Entity\ShopManager;
 use CeneoBundle\Manager\AttributeGroupMappingManager;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\Generator;
-use DreamCommerce\ShopAppstoreBundle\EntityManager\ShopManager;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
+use DreamCommerce\ShopAppstoreLib\Resource\Exception\CommunicationException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
