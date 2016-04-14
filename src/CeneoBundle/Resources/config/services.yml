@@ -16,7 +16,7 @@ services:
 
     ceneo.fetchers_categories:
         class: CeneoBundle\Services\Fetchers\Categories
-        arguments: [%categories_ttl%, "@cache"]
+        arguments: ["%categories_ttl%", "@cache"]
 
     ceneo.attribute_group_mapping_repository:
         class: CeneoBundle\Entity\AttributeGroupMappingRepository
@@ -37,11 +37,12 @@ services:
     ceneo.generator:
         class: CeneoBundle\Services\Generator
         arguments:
-            - %xml_dir%
+            - "%xml_dir%"
             - "@ceneo.orphans_purger"
             - "@ceneo.excluded_product_repository"
             - "@ceneo.attribute_group_mapping_repository"
             - "@ceneo.export_status"
+            - "@dream_commerce_shop_appstore.token_refresher"
         calls:
             - [setStopwatch, ["@debug.stopwatch"]]
             - [setFileCompressor, ["@=container.hasParameter('gzip_files') ? service('ceneo.file_compressor') : null"]]
@@ -55,7 +56,7 @@ services:
             - "@ceneo.export_status"
             - "@doctrine.orm.entity_manager"
             - "@dream_commerce_shop_appstore.object_manager"
-            - %minimal_version%
+            - "%minimal_version%"
             - "@dream_commerce_shop_appstore.exception_handler"
 
     ceneo.excluded_product_manager:
