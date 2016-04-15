@@ -439,7 +439,7 @@ class Generator {
         $permalink = $row->translations->pl_PL->permalink;
         $permalink = strtr($permalink, ['http://'=>'', 'https://'=>'']);
 
-        $permalink = ($this->hasSsl ? 'https://' : 'http://').$permalink;
+        $permalink = 'http://'.$permalink;
 
         $w = $writer;
         $w->startElement('o');
