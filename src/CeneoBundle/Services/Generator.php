@@ -441,11 +441,13 @@ class Generator {
 
         $permalink = 'http://'.$permalink;
 
+        $stock = round($row->stock->stock);
+
         $w = $writer;
         $w->startElement('o');
             $w->writeAttribute('id', $row->product_id);
             $w->writeAttribute('price', $row->stock->comp_promo_price);
-            $w->writeAttribute('stock', $row->stock->stock);
+            $w->writeAttribute('stock', $stock);
             $w->writeAttribute('url', $permalink);
             $w->writeAttribute('weight', $row->stock->weight);
             $w->writeAttribute('avail', $this->getDaysForDeliveryId($row->stock->delivery_id));
