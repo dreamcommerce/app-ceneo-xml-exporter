@@ -24,7 +24,7 @@ class ProductImages extends FetcherAbstract
         parent::init($client, $shop);
         $urlBase = $shop->getShopUrl();
         $urlBase = strtr($urlBase, ['https://'=>'', 'http://'=>'']);
-        $urlBase = ($hasSsl ? 'https://' : 'http://').$urlBase;
+        $urlBase = 'http://'.$urlBase;
 
         $this->shopUrlBase = $urlBase;
     }
