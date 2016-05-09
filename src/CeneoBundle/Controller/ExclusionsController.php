@@ -39,6 +39,7 @@ class ExclusionsController extends ControllerAbstract{
         }
 
         $resource = new Product($this->client);
+        $resource->limit($perPage);
         $resource->filters([
             'product_id'=>[
                 'in'=>$ids

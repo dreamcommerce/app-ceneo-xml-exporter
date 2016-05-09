@@ -6,7 +6,7 @@ use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
 class ExcludedProductRepository extends RepositoryAbstract{
 
-    const RECORDS_PER_PAGE = 50;
+    const RECORDS_PER_PAGE = 40;
 
     public function getProductsCountByShop(ShopInterface $shop){
         $q = $this->createQueryBuilder('ep');
