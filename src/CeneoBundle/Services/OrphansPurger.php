@@ -87,8 +87,8 @@ class OrphansPurger
 
     public function purgeExcludedIds($ids, ShopInterface $shop)
     {
-        if(isset($ids[0])) {
-            $this->excludedProductManager->deleteByProductId($ids, $shop);
+        if(!empty($ids)) {
+            $this->excludedProductManager->deleteByProductId(array_values($ids), $shop);
         }
     }
 
