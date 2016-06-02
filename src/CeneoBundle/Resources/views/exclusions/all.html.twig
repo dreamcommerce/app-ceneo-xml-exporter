@@ -1,0 +1,27 @@
+{% extends 'DreamCommerceShopAppstoreBundle::base.html.twig' %}
+
+{% block body %}
+
+    <main class="rwd-layout-width rwd-layout-container">
+        <section class="rwd-layout-col-12">
+            <fieldset>
+                <header>{{ 'excluded.products'|trans }}</header>
+
+                <p>{{ 'exclusions.all.tip'|trans({'%count%':products_count}) }}</p>
+
+            </fieldset>
+
+            <fieldset>
+                <div class="edition-form-buttons">
+                    {{ form_start(form) }}
+                    {{ form_widget(form.back, {'attr': {'class': 'button button-bg button-larger save-button confirm'}}) }}
+                    {{ form_widget(form.exclude, {'attr': {'class': 'button button-bg button-larger button-important save-button confirm'}}) }}
+                    {{ form_end(form) }}
+                </div>
+            </fieldset>
+
+
+        </section>
+    </main>
+
+{% endblock %}

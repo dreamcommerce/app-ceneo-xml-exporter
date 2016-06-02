@@ -7,11 +7,13 @@ use CeneoBundle\Entity\ExcludedProductRepository;
 use CeneoBundle\Manager\ExcludedProductManager;
 use CeneoBundle\Services\ProductChecker;
 use CeneoBundle\Services\ProductResolver;
+use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 use DreamCommerce\ShopAppstoreLib\Resource\Product;
 use DreamCommerce\ShopAppstoreBundle\Form\CollectionChoiceListLoader;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ExclusionsController extends ControllerAbstract{
@@ -67,8 +69,8 @@ class ExclusionsController extends ControllerAbstract{
                 'expanded'=>true
             ))
             ->add('submit', SubmitType::class, array(
-                'label'=>'Skasuj'
-            ))->add('back', SubmitType::class, array('label'=>'Powrót'))
+                'label'=>'button.delete'
+            ))->add('back', SubmitType::class, array('label'=>'button.back'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -163,6 +165,54 @@ class ExclusionsController extends ControllerAbstract{
             'products'=>$viewProducts,
             'form'=>$form->createView()
         ));
+
+    }
+
+    public function excludeAllAction(Request $request)
+    {
+
+        $resource = new Product($this->client);
+
+        $form = $this->createFormBuilder()
+            ->add('back', SubmitType::class, ['label'=>'button.back'])
+            ->add('exclude', SubmitType::class, ['label'=>'button.exclude'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()){
+
+            if($form->get('back')->isClicked()){
+                return new RedirectResponse(
+                    $this->generateAppUrl('ceneo_options')
+                );
+            }
+
+            $em = new ExcludedProductManager($this->get('doctrine')->getManager());
+            $em->clearByShop($this->shop);
+
+            $fetcher = new Fetcher($resource);
+            $data = $fetcher->fetchAll();
+
+            $wrapper = new CollectionWrapper($data);
+            $ids = $wrapper->getListOfField('product_id');
+            $em->addProductsByIdentifiers($ids, $this->shop);
+
+            $this->get('session')->getFlashBag()->add('notice', $this->get('translator')->trans('excluded.done'));
+
+            return new RedirectResponse(
+                $this->generateAppUrl('ceneo_options')
+            );
+
+        }else{
+            $collection = $resource->get();
+            $count = $collection->count;
+
+            return $this->render('CeneoBundle:exclusions:all.html.twig', [
+                'products_count'=>$count,
+                'form'=>$form->createView()
+            ]);
+        }
 
     }
 }

@@ -54,6 +54,36 @@ class ExcludedProductManager {
 
     }
 
+    public function clearByShop(ShopInterface $shop)
+    {
+        $b = $this->em->createQuery('DELETE CeneoBundle\Entity\ExcludedProduct e WHERE e.shop=:shop');
+        $b->setParameter('shop', $shop);
+        $b->execute();
+        $this->em->flush();
+    }
+
+    public function addProductsByIdentifiers($ids, ShopInterface $shop)
+    {
+
+        $counter = 0;
+
+        foreach($ids as $id){
+            $ep = new ExcludedProduct();
+            $ep->setProductId($id);
+            $ep->setShop($shop);
+            $ep->setLink('http://example.org');
+            $ep->setTitle('');
+            $this->em->persist($ep);
+
+            if($counter++ % 50 == 0){
+                $this->em->flush();
+            }
+        }
+
+        $this->em->flush();
+
+    }
+
     public function purgeNonExistingProducts($existing, $found, ShopInterface $shop){
         $idsToDelete = array_diff($existing, $found);
         $q = $this->em->createQueryBuilder();

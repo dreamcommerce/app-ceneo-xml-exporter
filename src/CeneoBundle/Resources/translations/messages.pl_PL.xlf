@@ -44,7 +44,7 @@
             </trans-unit>
             <trans-unit id="11">
                 <source>excluded.products.tip</source>
-                <target>Na %link% możesz zdefiniować produkty których NIE chcesz eksportować do Ceneo</target>
+                <target>Na %link% możesz zdefiniować produkty których NIE chcesz eksportować do Ceneo. Możesz również %exclude_all%</target>
             </trans-unit>
             <trans-unit id="12">
                 <source>stock.link</source>
@@ -126,6 +126,32 @@
                 <source>action.exclude</source>
                 <target>Wyklucz</target>
             </trans-unit>
+            <trans-unit id="32">
+                <source>exclude.all</source>
+                <target>wykluczyć wszystkie</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>exclusions.all.tip</source>
+                <target>Wyklucz wszystkie %count% produktów z eksportu do XML Ceneo (żadne nie bedą eksportowane)</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>button.delete</source>
+                <target>Skasuj</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>button.back</source>
+                <target>Powrót</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>button.exclude</source>
+                <target>Wyklucz</target>
+            </trans-unit>
+
+            <trans-unit id="37">
+                <source>excluded.done</source>
+                <target>Produkty zostały wykluczone</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

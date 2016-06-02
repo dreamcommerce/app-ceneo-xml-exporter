@@ -32,6 +32,7 @@ class OptionsController extends ControllerAbstract
 
         $enqueueLink = $this->generateAppUrl('ceneo_enqueue');
         $statusLink = $this->generateAppUrl('ceneo_status_check');
+        $excludeAllLink = $this->generateAppUrl('ceneo_exclude_all');
 
         /**
          * @var $excludedProducts ExcludedProductRepository
@@ -51,7 +52,8 @@ class OptionsController extends ControllerAbstract
             'status_link'=>$statusLink,
             'excluded_count'=>$count,
             'stock_link'=> $stockLink,
-            'export_status'=>$status
+            'export_status'=>$status,
+            'exclude_all_link'=>$excludeAllLink
         ));
     }
 

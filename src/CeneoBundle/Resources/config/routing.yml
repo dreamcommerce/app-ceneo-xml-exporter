@@ -14,6 +14,10 @@ ceneo_exclusions_add:
     path:     /exclusions/add
     defaults: { _controller: CeneoBundle:Exclusions:add }
 
+ceneo_exclude_all:
+    path:     /exclusions/all
+    defaults: { _controller: CeneoBundle:Exclusions:excludeAll }
+
 ceneo_exclusions:
     path:     /exclusions/{page}
     defaults: { _controller: CeneoBundle:Exclusions:index, page: 1 }

@@ -57,7 +57,11 @@
                     <p>{{ 'excluded.products.empty'|trans }}</p>
                 {% endif %}
 
-                <p>{{ 'excluded.products.tip'|trans({'%link%': '<a href="' ~ stock_link ~ '" target="_top">' ~ ('stock.link'|trans) ~ '</a>'})|raw }}
+                <p>{{ 'excluded.products.tip'|trans({
+                        '%link%': '<a href="' ~ stock_link ~ '" target="_top">' ~ ('stock.link'|trans) ~ '</a>',
+                        '%exclude_all%': '<a href="' ~ exclude_all_link ~ '">' ~ ('exclude.all'|trans) ~ '</a>'
+                    })|raw }}
+
                     </p>
 
             </fieldset>
