@@ -52,8 +52,8 @@ class ProductChecker {
         $fetcher = new Fetcher($resource);
 
         $resource
-            ->order('translation.pl_PL.name ASC')
-            ->filters(array(
+            ->order('translation.pl_PL.name ASC');
+        $resource->filters(array(
                 'product_id'=>array(
                     'in'=>$ids
                 )
