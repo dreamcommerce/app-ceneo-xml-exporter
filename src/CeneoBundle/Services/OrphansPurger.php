@@ -46,7 +46,7 @@ class OrphansPurger
 
     protected function purgeResource($found, Resource $resource, $field, Callable $callbackDelete){
         if(empty($found)){
-            return new \ArrayObject();
+            return [];
         }
 
         $fetcher = new Fetcher($resource);
