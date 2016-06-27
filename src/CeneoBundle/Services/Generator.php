@@ -323,15 +323,13 @@ class Generator {
         try {
 
             $products = $this->fetchProducts($shop);
-            $this->productsCount = count($products);
+            $this->productsCount = count($products)-$this->productsFetcher->getIgnoredCount();
 
             $this->exportStatus->markInProgress($shop, 0, $this->productsCount);
 
             $calculator = new EtaCalculator(100);
 
             foreach ($products as $product) {
-
-                $counter++;
 
                 // we support only pl_PL locale for export (intentionally)
                 if (!isset($product->translations->pl_PL)) {
@@ -342,6 +340,7 @@ class Generator {
                     $group = $this->determineGroupForProduct($product, $shop);
                     $this->counters[$group]++;
                     $this->appendProduct($this->writers[$group], $product, $shop);
+                    $counter++;
                 }
 
                 if ($counter % self::PROGRESS_RESOLUTION == 0) {

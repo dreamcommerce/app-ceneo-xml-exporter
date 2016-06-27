@@ -44,6 +44,11 @@ class Products extends FetcherAbstract
         return $this->fetchProducts($shop, $repository);
     }
 
+    public function getIgnoredCount()
+    {
+        return count($this->ignored);
+    }
+
     /**
      * check if product is ignored
      * @param $id
