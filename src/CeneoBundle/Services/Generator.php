@@ -454,10 +454,11 @@ class Generator {
             $w->writeAttribute('set', 0);
 
             $w->startElement('name');
-                $w->writeCdata($row->translations->pl_PL->name);
+                $name = $this->utf8ify($row->translations->pl_PL->name);
+                $w->writeCdata($name);
             $w->endElement();
             $w->startElement('cat');
-                $w->writeCdata($categoryPath);
+                $w->writeCdata($this->utf8ify($categoryPath));
             $w->endElement();
 
             if($images){
@@ -485,6 +486,9 @@ class Generator {
                             break;
                         }
 
+                        $k = $this->utf8ify($k);
+                        $v = $this->utf8ify($v);
+
                         $w->startElement('a');
                             $w->writeAttribute('name', $k);
                             $w->writeCdata($v);
@@ -498,6 +502,9 @@ class Generator {
                 $w->startElement('desc');
                     //sometimes, someone put an old-fashioned JS with CDATA onto description...
                     $description = $row->translations->pl_PL->description;
+
+                    $description = $this->utf8ify($description);
+
                     $description = str_replace(']]>', ']]]]><![CDATA[>', $description);
                     $w->writeCdata($description);
                 $w->endElement();
@@ -586,6 +593,11 @@ class Generator {
         }
 
         return $attributes;
+    }
+
+    protected function utf8ify($str)
+    {
+        return iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
     }
 
 }
