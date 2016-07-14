@@ -96,7 +96,8 @@ class MappingsController extends ControllerAbstract{
         }
 
         $attributeResource = new Attribute($this->client);
-        $attributes = $attributeResource->filters(array('attribute_group_id'=>$attributeGroup->getShopAttributeGroupId()))->order('name')->get();
+        $attributeResource->filters(array('attribute_group_id'=>$attributeGroup->getShopAttributeGroupId()))->order('name');
+        $attributes = $attributeResource->get();
 
         $wrapper = new CollectionWrapper($attributes);
         $list = $wrapper->getListOfField('attribute_id');
