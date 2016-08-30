@@ -60,6 +60,11 @@ class ProductImages extends FetcherAbstract
             return array();
         }
 
+        if(empty($result['main']) && isset($result['images'][0])){
+            $result['main'] = $result['images'][0];
+            unset($result['images'][0]);
+        }
+
         return $result;
     }
 }
