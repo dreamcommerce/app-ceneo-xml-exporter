@@ -124,6 +124,10 @@ class Generator {
      * @var boolean
      */
     protected $hasSsl;
+    /**
+     * @var ShopVersionChecker
+     */
+    protected $shopVersionChecker;
 
     /**
      * @param $tempDirectory
@@ -132,6 +136,7 @@ class Generator {
      * @param AttributeGroupMappingRepository $attributeGroupMappingRepository
      * @param ExportStatus $exportStatus
      * @param TokenRefresher $tokenRefresher
+     * @param ShopVersionChecker $shopVersionChecker
      */
     function __construct(
         $tempDirectory,
@@ -139,7 +144,8 @@ class Generator {
         ExcludedProductRepository $excludedProductRepository,
         AttributeGroupMappingRepository $attributeGroupMappingRepository,
         ExportStatus $exportStatus,
-        TokenRefresher $tokenRefresher
+        TokenRefresher $tokenRefresher,
+        ShopVersionChecker $shopVersionChecker
     )
     {
         $this->tempDirectory = $tempDirectory;
@@ -150,6 +156,7 @@ class Generator {
         $this->exportStatus = $exportStatus;
         $this->orphansPurger = $orphansPurger;
         $this->tokenRefresher = $tokenRefresher;
+        $this->shopVersionChecker = $shopVersionChecker;
     }
 
     public function setFileCompressor(FileCompressor $compressor = null)
@@ -518,6 +525,7 @@ class Generator {
 
         $this->productImagesFetcher = new ProductImages();
         $this->productImagesFetcher->init($this->client, $shop, $this->hasSsl);
+        $this->productImagesFetcher->setVersionChecker($this->shopVersionChecker);
 
         $this->deliveriesFetcher = new Deliveries();
         $this->deliveriesFetcher->init($this->client, $shop);

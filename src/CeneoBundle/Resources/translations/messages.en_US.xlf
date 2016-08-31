@@ -145,6 +145,11 @@
                 <source>excluded.done</source>
                 <target>Products have been excluded</target>
             </trans-unit>
+
+            <trans-unit id="38">
+                <source>shop.upgrade</source>
+                <target>An application requires the shop version to be at least 5.7.9</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

@@ -43,6 +43,7 @@ services:
             - "@ceneo.attribute_group_mapping_repository"
             - "@ceneo.export_status"
             - "@dream_commerce_shop_appstore.token_refresher"
+            - "@ceneo.shop_version_checker"
         calls:
             - [setStopwatch, ["@debug.stopwatch"]]
             - [setFileCompressor, ["@=container.hasParameter('gzip_files') ? service('ceneo.file_compressor') : null"]]
@@ -81,3 +82,8 @@ services:
     ceneo.file_compressor:
         class: CeneoBundle\Services\FileCompressor
 
+    ceneo.shop_version_checker:
+        class: CeneoBundle\Services\ShopVersionChecker
+        arguments:
+            - "@cache"
+            - "@dream_commerce_shop_appstore.app.ceneo"

@@ -152,6 +152,11 @@
                 <target>Produkty zostały wykluczone</target>
             </trans-unit>
 
+            <trans-unit id="38">
+                <source>shop.upgrade</source>
+                <target>Eksport Ceneo wymaga oprogramowania sklepowego w wersji przynajmniej 5.7.7 do poprawnego działania</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

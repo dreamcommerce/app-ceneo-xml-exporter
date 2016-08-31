@@ -8,6 +8,19 @@
             <fieldset>
                 <header>{{ 'app.title'|trans }}</header>
 
+                {%- if upgrade_needed is not empty  -%}
+                    <div class="edition-form-line">
+                        <div class="edition-form-line-label">
+                            &nbsp;
+                        </div>
+                        <div class="edition-form-line-field">
+                            <ul class="error-list">
+                                <li><label class="aicon-exclamation error">{{ 'shop.upgrade'|trans }}</label></li>
+                            </ul>
+                        </div>
+                    </div>
+                {%- endif -%}
+
                 <div class="edition-form-line">
                     <div class="edition-form-line-label">
                         {{ 'export.status'|trans }}:

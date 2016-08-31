@@ -43,6 +43,9 @@ class OptionsController extends ControllerAbstract
 
         $stockLink = $this->shop->getShopUrl().'/admin/stock';
 
+        $services = $this->get('ceneo.shop_version_checker');
+        $upgradeNeeded = !$services->arePicturesSupported($this->shop);
+
         // add current IP for whitelist
         $request->getSession()->set('ip', $_SERVER['REMOTE_ADDR']);
 
@@ -53,7 +56,8 @@ class OptionsController extends ControllerAbstract
             'excluded_count'=>$count,
             'stock_link'=> $stockLink,
             'export_status'=>$status,
-            'exclude_all_link'=>$excludeAllLink
+            'exclude_all_link'=>$excludeAllLink,
+            'upgrade_needed'=>$upgradeNeeded
         ));
     }
 

@@ -3,12 +3,17 @@
 
 namespace CeneoBundle\Services\Fetchers;
 
+use CeneoBundle\Services\ShopVersionChecker;
 use DreamCommerce\ShopAppstoreBundle\Model\ShopInterface;
 
 class ProductImages extends FetcherAbstract
 {
 
     protected $shopUrlBase = null;
+    /**
+     * @var ShopVersionChecker
+     */
+    protected $shopVersionChecker;
 
     /**
      * fetching data
@@ -29,7 +34,16 @@ class ProductImages extends FetcherAbstract
         $this->shopUrlBase = $urlBase;
     }
 
+    public function setVersionChecker(ShopVersionChecker $shopVersionChecker)
+    {
+        $this->shopVersionChecker = $shopVersionChecker;
+    }
+
     public function getImages($images){
+
+        if($this->shopVersionChecker && !$this->shopVersionChecker->arePicturesSupported($this->shop)){
+            return [];
+        }
 
         if(!$this->shopUrlBase){
             $this->shopUrlBase = $this->shop->getShopUrl();
