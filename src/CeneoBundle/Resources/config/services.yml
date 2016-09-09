@@ -87,3 +87,11 @@ services:
         arguments:
             - "@cache"
             - "@dream_commerce_shop_appstore.app.ceneo"
+
+#    ceneo.webhook.product_delete_listener:
+#        class: CeneoBundle\EventListener\ProductDeleteListener
+#        arguments:
+#            - "@dream_commerce_shop_appstore.entity_manager"
+#            - "@ceneo.excluded_product_manager"
+#        tags:
+#            - { name: kernel.event_listener, event: dream_commerce_shop_appstore.webhook.product.delete, method: onProductDelete }

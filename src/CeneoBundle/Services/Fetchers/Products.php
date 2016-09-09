@@ -66,17 +66,6 @@ class Products extends FetcherAbstract
     }
 
     /**
-     * return identifiers of non-existing ignored products
-     * @return array
-     */
-    public function getNotExistingIgnores()
-    {
-        return array_keys(array_filter($this->ignored, function($val){
-            return !$val;
-        }));
-    }
-
-    /**
      * get products, if manager regarding exclusions
      * @param ShopInterface|null $shop
      * @param ExcludedProductRepository $repository

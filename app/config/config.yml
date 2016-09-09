@@ -68,20 +68,6 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
-#        resolve_target_entities:
-#            DreamCommerce\ShopAppstoreBundle\Model\ShopInterface: BillingBundle\Entity\Shop
-#            DreamCommerce\ShopAppstoreBundle\Model\BillingInterface: BillingBundle\Entity\Billing
-#            DreamCommerce\ShopAppstoreBundle\Model\TokenInterface: BillingBundle\Entity\Token
-#            DreamCommerce\ShopAppstoreBundle\Model\SubscriptionInterface: BillingBundle\Entity\Subscription
-
-# Swiftmailer Configuration
-swiftmailer:
-    transport: "%mailer_transport%"
-    host:      "%mailer_host%"
-    username:  "%mailer_user%"
-    password:  "%mailer_password%"
-    spool:     { type: memory }
-
 
 dream_commerce_shop_appstore:
     objects:

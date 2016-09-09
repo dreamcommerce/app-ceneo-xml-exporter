@@ -377,9 +377,6 @@ class Generator {
                 $this->fileCompressor->compressAsync($output);
             }
 
-            $orphans = $this->productsFetcher->getNotExistingIgnores();
-            $this->orphansPurger->purgeExcludedIds($orphans, $shop);
-
         }
 
         // clear what's should not mess up

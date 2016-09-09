@@ -83,7 +83,6 @@ class ProductChecker {
 
         $ids = $this->excludedProductManager->getRepository()->findIdsByShop($shop);
 
-        //$result = $this->orphansPurger->purgeExcluded($ids, $this->client, $shop);
         $result = $ids;
 
         if(count($result)==0){

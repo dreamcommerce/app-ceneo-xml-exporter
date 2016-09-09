@@ -49,7 +49,7 @@ class GenerateCommand extends ContainerAwareCommand
         foreach($shops as $shop){
 
             try {
-                $client = $this->getContainer()->get('dream_commerce_shop_appstore.ceneo')->getClient($shop);
+                $client = $this->getContainer()->get('dream_commerce_shop_appstore.app.ceneo')->getClient($shop);
 
                 $path = sprintf('%s/%s.xml', $this->getContainer()->getParameter('xml_dir'), $shop->getName());
 
@@ -58,7 +58,9 @@ class GenerateCommand extends ContainerAwareCommand
                     $this->getContainer()->get('ceneo.orphans_purger'),
                     $epManager->getRepository(),
                     $attributeGroupMappingManager->getRepository(),
-                    $this->getContainer()->get('ceneo.export_status')
+                    $this->getContainer()->get('ceneo.export_status'),
+                    $this->getContainer()->get('dream_commerce_shop_appstore.token_refresher'),
+                    $this->getContainer()->get('ceneo.shop_version_checker')
                 );
                 $generator->setStopwatch($timer);
                 $count = $generator->export($client, $shop, $path);
