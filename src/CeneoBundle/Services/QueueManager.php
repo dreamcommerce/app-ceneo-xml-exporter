@@ -4,7 +4,7 @@
 namespace CeneoBundle\Services;
 
 
-use BillingBundle\Entity\Shop;
+use CeneoBundle\Entity\Shop;
 use Mmoreram\GearmanBundle\Service\GearmanClient;
 
 class QueueManager

@@ -32,7 +32,7 @@ class VerifyExcludedCommand extends ContainerAwareCommand
          */
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $shops = $em->getRepository('BillingBundle:Shop')->findAll();
+        $shops = $em->getRepository('CeneoBundle:Shop')->findAll();
 
         $shopsCount = count($shops);
         $output->writeln(sprintf('Found %d shops', $shopsCount));

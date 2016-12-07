@@ -42,7 +42,7 @@ class AppstoreListener {
         /**
          * @var $shop ShopInterface
          */
-        $shop = $this->manager->getRepository('BillingBundle:Shop')->findOneBy(['name'=>$shopHash]);
+        $shop = $this->manager->getRepository('CeneoBundle:Shop')->findOneBy(['name'=>$shopHash]);
 
         $this->exportStatus->initialize($shop);
     }

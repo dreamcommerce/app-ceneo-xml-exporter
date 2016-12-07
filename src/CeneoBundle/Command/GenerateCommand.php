@@ -32,7 +32,7 @@ class GenerateCommand extends ContainerAwareCommand
     {
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $shopManager = new ShopManager($em, 'BillingBundle\Entity\Shop');
+        $shopManager = new ShopManager($em, 'CeneoBundle\Entity\Shop');
 
         $shops = $shopManager->findByApplication('ceneo');
 

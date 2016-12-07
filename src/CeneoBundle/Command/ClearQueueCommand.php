@@ -37,7 +37,7 @@ class ClearQueueCommand extends ContainerAwareCommand
 
         if($name){
 
-            $shop = $em->getRepository('BillingBundle:Shop')->findOneBy([
+            $shop = $em->getRepository('CeneoBundle:Shop')->findOneBy([
                 'name'=>$name
             ]);
             
@@ -48,7 +48,7 @@ class ClearQueueCommand extends ContainerAwareCommand
             }
 
         }else{
-            $shops = $em->getRepository('BillingBundle:Shop')->findAll();
+            $shops = $em->getRepository('CeneoBundle:Shop')->findAll();
         }
 
         $epManager->markAllInProgress($shops, false);

@@ -68,7 +68,7 @@ class EnqueueCommand extends ContainerAwareCommand
         $output->writeln(sprintf('Shop #%d - enqueueing', $id));
 
         $em = $this->getContainer()->get('doctrine')->getManager();
-        $shop = $em->getRepository('BillingBundle:Shop')->find($id);
+        $shop = $em->getRepository('CeneoBundle:Shop')->find($id);
         if(!$shop){
             $output->writeln('Shop not found');
             return;
