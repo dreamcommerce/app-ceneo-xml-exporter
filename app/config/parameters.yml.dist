@@ -32,7 +32,7 @@ parameters:
     jobs_per_worker:   50
 
     applications:
-        app:
+        ceneo:
             minimal_version: 1
             app_id: ''
             app_secret: ''
