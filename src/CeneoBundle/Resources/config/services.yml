@@ -57,7 +57,7 @@ services:
             - "@ceneo.export_status"
             - "@doctrine.orm.entity_manager"
             - "@dream_commerce_shop_appstore.object_manager"
-            - "%applications.ceneo.minimal_version%"
+            - "%minimal_version%"
             - "@dream_commerce_shop_appstore.exception_handler"
 
     ceneo.excluded_product_manager:

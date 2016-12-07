@@ -31,9 +31,11 @@ parameters:
     bundle_name:       CeneoBundle
     jobs_per_worker:   50
 
+    minimal_version: 1
+
     applications:
         ceneo:
-            minimal_version: 1
+            minimal_version: '%minimal_version%'
             app_id: ''
             app_secret: ''
             appstore_secret: ''
