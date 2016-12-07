@@ -40,6 +40,6 @@ parameters:
     workers:
         CeneoBundleWorkerGeneratorWorker~process: 5
 
-    worker_name_prefix: ''
+    worker_name_prefix: 'dev'
 
     ip_whitelist:      ~
