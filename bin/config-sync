@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+<?php
+use Symfony\Component\Yaml\Yaml;
+
+require __DIR__.'/../app/autoload.php';
+
+define('PARAMETERS_TEMPLATE', sprintf('%s/../app/config/parameters.yml.dist', __DIR__));
+define('PARAMETERS', sprintf('%s/../app/config/parameters.yml', __DIR__));
+define('DATABASE', sprintf('%s/../db.pass', __DIR__));
+define('SUPERVISORD', sprintf('%s/../.supervisord.conf', __DIR__));
+define('SUPERVISORD_TEMPLATE', sprintf('%s/../app/Resources/.supervisord.conf', __DIR__));
+
+$template = Yaml::parse(file_get_contents(PARAMETERS_TEMPLATE));
+
+// configuration present, merge what doesn't exist
+if(file_exists(PARAMETERS)){
+
+    $yaml = Yaml::parse(file_get_contents(PARAMETERS));
+
+    $yaml['parameters'] = array_replace_recursive(
+        $template['parameters'], $yaml['parameters']
+    );
+
+}else {
+
+    $yaml = $template;
+
+    // pass database if it's required
+    if (file_exists(DATABASE)) {
+        $data = Yaml::parse(file_get_contents(DATABASE));
+
+        $yaml['parameters']['database_host'] = $data['host'];
+        $yaml['parameters']['database_name'] = $data['name'];
+        $yaml['parameters']['database_user'] = $data['user'];
+        $yaml['parameters']['database_password'] = $data['pass'];
+    }
+
+    // initialize application secret
+    $yaml['parameters']['secret'] = str_shuffle(md5(uniqid().mt_rand(0,1337)));
+}
+
+// create supervisord config if needed
+if(!empty($yaml['parameters']['workers']) && !file_exists(SUPERVISORD)){
+    file_put_contents(SUPERVISORD, file_get_contents(SUPERVISORD_TEMPLATE));
+}
+
+file_put_contents(PARAMETERS, Yaml::dump($yaml, 20));

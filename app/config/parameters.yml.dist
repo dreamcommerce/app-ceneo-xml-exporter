@@ -22,16 +22,24 @@ parameters:
     categories_ttl:    600
     status_check_ttl:  100
 
-    xml_dir: %kernel.root_dir%/xml
+    xml_dir: %kernel.root_dir%/../var/xml
     gzip_files: true
 
     # temporary files lifetime
     temporary_ttl:     86400
 
-    minimal_version:   ~
+    bundle_name:       CeneoBundle
+    jobs_per_worker:   50
 
-    app_id:            ~
-    app_secret:        ~
-    appstore_secret:   ~
+    applications:
+        app:
+            minimal_version: 1
+            app_id: ''
+            app_secret: ''
+            appstore_secret: ''
+    workers:
+        CeneoBundleWorkerGeneratorWorker~process: 5
+
+    worker_name_prefix: ''
 
     ip_whitelist:      ~

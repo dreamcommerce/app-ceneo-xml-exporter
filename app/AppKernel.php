@@ -18,7 +18,8 @@ class AppKernel extends Kernel
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new \CeneoBundle\CeneoBundle(),
             new Doctrine\Bundle\DoctrineCacheBundle\DoctrineCacheBundle(),
-            new Mmoreram\GearmanBundle\GearmanBundle()
+            new Mmoreram\GearmanBundle\GearmanBundle(),
+            new \DreamCommerce\GearmanBundle\DreamCommerceGearmanBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

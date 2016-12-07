@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="SymfonyApp" default="build">
+
+    <!-- load application configuration if available; useful for database dumping -->
+    <property file="app/config/parameters.yml"/>
+
+    <!-- paths -->
+    <property value="/usr/bin/composer" name="composer_path"/>
+    <property value=".supervisord.conf" name="supervisord_config"/>
+    <property value="/usr/bin/supervisorctl" name="supervisorctl_path"/>
+    <property value="web/index.php" name="index_path"/>
+    <property value="/usr/bin/mysqldump" name="mysqldump_path"/>
+
+    <!-- timestamp for filenames -->
+    <tstamp>
+        <format pattern="%Y%m%d_%H%M%S" property="build.time"/>
+    </tstamp>
+
+
+    <!-- mask for all sources for linting -->
+    <fileset id="src" dir="./src">
+        <patternset>
+            <include name="**/*.php"/>
+        </patternset>
+    </fileset>
+
+    <target name="database:backup" description="Dump database if application has been already deployed">
+
+        <echo>Running database backup.</echo>
+
+        <adhoc-task name="database-backup"><![CDATA[
+            class DatabaseBackup extends Task{
+
+                protected $file = '';
+                protected $mysqlDump = '';
+
+                public function setFile($file){
+                    $this->file = $file;
+                }
+
+                public function setMysqlDump($mysqlDump){
+                    $this->mysqlDump = $mysqlDump;
+                }
+
+                function main() {
+                    $properties = $this->project->getProperties();
+
+                    if(!isset($properties['parameters.database_user'])){
+                        $this->log('No database to dump.');
+                        return;
+                    }
+
+                    $this->runBackup(
+                        $properties['parameters.database_host'],
+                        $properties['parameters.database_name'],
+                        $properties['parameters.database_user'],
+                        $properties['parameters.database_password']
+                    );
+
+                    $this->log('Done.');
+                }
+
+                protected function runBackup($host, $db, $user, $password){
+                    $cmd = sprintf(
+                        '%s -u%s -p%s -h %s %s | gzip > %s',
+                            escapeshellarg($this->mysqlDump),
+                            escapeshellarg($user),
+                            escapeshellarg($password),
+                            escapeshellarg($host),
+                            escapeshellarg($db),
+                            escapeshellarg($this->file)
+                    );
+                    exec($cmd);
+                }
+            }
+        ]]></adhoc-task>
+
+        <database-backup file="${build.time}.sql.gz" mysqlDump="${mysqldump_path}"/>
+    </target>
+
+    <target name="clear" description="Clear logs, caches, sessions">
+        <echo>Deleting logs, caches and sessions</echo>
+        <delete dir="var/cache" includeemptydirs="true"/>
+        <delete dir="var/logs" includeemptydirs="true"/>
+        <delete dir="var/sessions" includeemptydirs="true"/>
+    </target>
+
+    <target name="build" depends="lint" description="Build application sources">
+        <echo>Installing application dependencies</echo>
+        <composer command="update" composer="${composer_path}"/>
+        <echo>Done.</echo>
+
+        <phingcall target="tests"/>
+
+        <echo>Generating optimized autoloader...</echo>
+        <composer command="dump-autoload" composer="${composer_path}">
+            <arg value="--optimize"/>
+        </composer>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="dist" depends="build,clear" description="Create distribution stub">
+        <echo>Creating distribution stub</echo>
+        <delete file="dist.tar.gz" failonerror="false"/>
+        <tar destfile="./dist.tar.gz" compression="gzip">
+            <fileset dir=".">
+                <exclude name="dist.tar.gz"/>
+                <exclude name="app/config/parameters.yml"/>
+                <exclude name=".idea/"/>
+                <exclude name=".git/"/>
+            </fileset>
+        </tar>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="deploy" description="Perform deployment tasks on target server">
+
+        <echo>Deploying an application, stay tuned!</echo>
+
+        <!-- close app for maintenance -->
+        <phingcall target="maintenance:on"/>
+
+        <!-- sync configuration changes if any appeared -->
+        <echo>Synchronizing config...</echo>
+        <exec command="php bin/config-sync"/>
+        <echo>Done.</echo>
+
+        <!-- stop workers if any -->
+        <if>
+            <available property="has_workers" file="${supervisord_config}" value="true"/>
+            <then>
+                <echo>Stopping workers...</echo>
+                <exec command="${supervisorctl_path} -c ${supervisord_config} stop all"/>
+                <exec command="${supervisorctl_path} -c ${supervisord_config} shutdown"/>
+                <echo>Done.</echo>
+            </then>
+        </if>
+
+        <!-- database-related stuff -->
+        <if>
+            <isset property="parameters.database_host"/>
+            <then>
+                <!-- perform a database backup -->
+                <phingcall target="database:backup"/>
+            </then>
+            <else>
+                <echo>Database does not exist, initializing...</echo>
+                <exec command="php bin/console doctrine:schema:create"/>
+                <echo>Done.</echo>
+            </else>
+        </if>
+
+        <!-- clear logs, caches, sessions -->
+        <phingcall target="clear"/>
+
+        <!-- warmup caches and install assets -->
+        <echo>Warming cache and copying assets</echo>
+        <composer command="run-script" composer="${composer_path}">
+            <arg value="prepare-app"/>
+        </composer>
+        <!-- warmup production cache -->
+        <exec command="php bin/console cache:clear --env=prod"/>
+        <echo>Done</echo>
+
+        <echo>Migrating database...</echo>
+        <!-- perform database migrations -->
+        <exec command="php bin/console doctrine:migrations:execute"/>
+        <echo>Done.</echo>
+
+        <!-- do workers stuff -->
+        <if>
+            <available property="has_workers" file="${supervisord_config}" value="true"/>
+            <then>
+                <!-- generate workers config if needed - deferred for deploy: target server may have a different amounts -->
+                <phingcall target="workers:generate"/>
+                <!-- update workers configuration  -->
+                <echo>Updating workers definition...</echo>
+                <exec command="supervisord -c ${supervisord_config}"/>
+                <echo>Done.</echo>
+            </then>
+        </if>
+
+        <!-- strip off application lock -->
+        <phingcall target="maintenance:off"/>
+    </target>
+
+    <target name="autorun:init" description="Initializes .autorun file if needed">
+        <if>
+            <not>
+                <available property="autorun" file=".autorun" value="true"/>
+            </not>
+            <then>
+                <echo>.autorun does not exist, generating one</echo>
+                <echo file=".autorun">#!/bin/bash${line.separator}</echo>
+                <chmod file=".autorun" mode="0755"/>
+            </then>
+        </if>
+    </target>
+
+    <target name="maintenance:on" description="Put an application into maintenance mode">
+        <echo>Setting maintenance mode enabled...</echo>
+        <reflexive>
+            <fileset dir=".">
+                <include name="${index_path}"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="define\('MAINTENANCE', ([^\)]+)\)" replace="define('MAINTENANCE', true)"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="maintenance:off" description="Disable application maintenance mode">
+        <echo>Setting maintenance mode disabled...</echo>
+        <reflexive>
+            <fileset dir=".">
+                <include name="${index_path}"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="define\('MAINTENANCE', ([^\)]+)\)" replace="define('MAINTENANCE', false)"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="capture_responder:on" description="Enable dev-logs for responder messages">
+        <echo>Enabling appstore responder messages capture...</echo>
+        <reflexive>
+            <fileset dir=".">
+                <include name="${index_path}"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="define\('CAPTURE_RESPONDER', ([^\)]+)\)"
+                            replace="define('CAPTURE_RESPONDER', true)"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="capture_responder:off" description="Disable dev-logs for responder messages">
+        <echo>Disabling appstore responder messages capture...</echo>
+        <reflexive>
+            <fileset dir=".">
+                <include name="${index_path}"/>
+            </fileset>
+            <filterchain>
+                <replaceregexp>
+                    <regexp pattern="define\('CAPTURE_RESPONDER', ([^\)]+)\)"
+                            replace="define('CAPTURE_RESPONDER', false)"/>
+                </replaceregexp>
+            </filterchain>
+        </reflexive>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="lint" description="Check code syntax">
+        <echo>Checking code syntax...</echo>
+        <phplint haltonfailure="true" deprecatedAsError="true">
+            <fileset refid="src"/>
+        </phplint>
+        <echo>Done.</echo>
+    </target>
+
+    <target name="workers:generate" depends="autorun:init" description="Generate workers definition">
+        <echo>Generating workers definition...</echo>
+        <exec command="php bin/console dream_commerce_gearman_bundle:generate_workers_config > app/supervisord.conf"/>
+        <exec command="grep supervisord .autorun" returnProperty="append_autorun"/>
+
+        <if>
+            <not>
+                <equals arg1="${append_autorun}" arg2="0"/>
+            </not>
+            <then>
+                <echo file=".autorun" append="true">supervisord -c ~/.supervisord.conf &amp;> /dev/null &amp;${line.separator}</echo>
+            </then>
+        </if>
+
+        <echo>Done.</echo>
+    </target>
+
+    <target name="tests" description="Run project unit tests if available">
+        <echo>Running unit-tests</echo>
+        <if>
+            <available property="has_tests" file="phpunit.xml"/>
+            <then>
+                <phpunit configuration="phpunit.xml" pharlocation="../phpunit.phar"/>
+                <echo>Done.</echo>
+            </then>
+            <else>
+                <echo>No phpunit.xml file found, skipping</echo>
+            </else>
+        </if>
+    </target>
+
+</project>

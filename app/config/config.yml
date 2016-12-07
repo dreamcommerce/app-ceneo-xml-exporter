@@ -5,7 +5,7 @@ imports:
 
 framework:
     #esi:             ~
-    translator:      { fallbacks: [%locale%] }
+    translator:      { fallbacks: ['%locale%'] }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -34,7 +34,7 @@ twig:
 assetic:
     debug:          "%kernel.debug%"
     use_controller: false
-    bundles:        [CeneoBundle]
+    bundles:        ['%bundle_name%']
     #java: /usr/bin/java
     filters:
         cssrewrite: ~
@@ -70,22 +70,13 @@ doctrine:
         auto_mapping: true
 
 dream_commerce_shop_appstore:
+    skip_ssl: '%kernel.debug%'
     objects:
-        shop: CeneoBundle\Entity\Shop
-        billing: CeneoBundle\Entity\Billing
-        token: CeneoBundle\Entity\Token
-        subscription: CeneoBundle\Entity\Subscription
-    #routes:
-        #unpaid: ~ #dream_commerce_shop_appstore.unpaid
-        #unsubscribed: ~ #dream_commerce_shop_appstore.unsubscribed
-        #not_installed: ~ #dream_commerce_shop_appstore.not_installed
-        #reinstall: ~ #dream_commerce_shop_appstore.reinstall
-    applications:
-        ceneo:
-            app_id:     "%app_id%"
-            app_secret: "%app_secret%"
-            appstore_secret: "%appstore_secret%"
-            minimal_version: "%minimal_version%"
+        shop: '%bundle_name%\Entity\Shop'
+        billing: '%bundle_name%\Entity\Billing'
+        token: '%bundle_name%\Entity\Token'
+        subscription: '%bundle_name%\Entity\Subscription'
+    applications: "%applications%"
 
 doctrine_cache:
     providers:
@@ -97,10 +88,10 @@ gearman:
    # Bundles will parsed searching workers
    bundles:
       # Name of bundle
-      CeneoBundle:
+      app:
 
          # Bundle name
-         name: CeneoBundle
+         name: "%bundle_name%"
 
          # Bundle search can be enabled or disabled
          active: true
@@ -132,7 +123,7 @@ gearman:
       # Default number of executions before job dies.
       # If annotations defined, will be overwritten
       # If empty, 0 is defined by default
-      iterations: 150
+      iterations: "%jobs_per_worker%"
 
       # execute callbacks after operations using Kernel events
       callbacks: true
@@ -140,7 +131,7 @@ gearman:
       # Prefix in all jobs
       # If empty name will not be modified
       # Useful for rename jobs in different environments
-      job_prefix: null
+      job_prefix: '%worker_name_prefix%'
 
       # Autogenerate unique key in jobs/tasks if not set
       # This key is unique given a Job name and a payload serialized
@@ -160,3 +151,9 @@ gearman:
       localhost:
          host: 127.0.0.1
          port: 4730
+
+
+dream_commerce_gearman:
+    php_path: /usr/bin/php
+    workers: "%workers%"
+    name_prefix: '%worker_name_prefix%'

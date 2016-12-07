@@ -1,20 +1,18 @@
-### Symfony template
-# Email spool folder
-/app/spool/*
-
-# Cache, session files and logs (Symfony3)
 /var/cache/*
 /var/logs/*
 /var/sessions/*
+/var/supervisord/*
 /var/xml/*
 !var/cache/.gitkeep
 !var/logs/.gitkeep
 !var/sessions/.gitkeep
-!var/xml/.empty
+!var/supervisord/.gitkeep
+!var/xml/.gitkeep
+
+.idea
 
 # Parameters
 /app/config/parameters.yml
-/app/config/parameters.ini
 
 # Managed by Composer
 /app/bootstrap.php.cache
@@ -22,6 +20,7 @@
 /bin/*
 !bin/console
 !bin/symfony_requirements
+!bin/config-sync
 /vendor/
 
 # Assets and user uploads

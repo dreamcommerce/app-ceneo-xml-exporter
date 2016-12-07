@@ -14,6 +14,9 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
+        },
+        "psr-0": {
+            "Mmoreram\\GearmanBundle": "vendor/mmoreram/gearman-bundle"
         }
     },
     "require": {
@@ -26,34 +29,51 @@
         "symfony/monolog-bundle": "^2.11",
         "doctrine/orm": "^2.5",
         "facile-it/doctrine-mysql-come-back": "^1.6",
-        "dreamcommerce/appstore-bundle": "~1.4",
-        "mmoreram/gearman-bundle": "dev-master",
+        "dreamcommerce/appstore-bundle": "^1.4",
+        "dreamcommerce/gearman-bundle": "^1.0",
         "doctrine/doctrine-migrations-bundle": "~1.2"
     },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "mmoreram/gearman-bundle",
+                "version": "4.0",
+                "source": {
+                    "url": "https://github.com/er1z/GearmanBundle",
+                    "type": "git",
+                    "reference": "master"
+                }
+            }
+        }
+    ],
+
     "require-dev": {
-        "guzzlehttp/guzzle": "~6.2"
+        "guzzlehttp/guzzle": "~6.2",
+        "phing/phing": "^2.15"
     },
     "scripts": {
         "symfony-scripts": [
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap"
         ],
         "post-install-cmd": [
             "@symfony-scripts"
         ],
         "post-update-cmd": [
             "@symfony-scripts"
+        ],
+        "stock": [
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
+        ],
+        "prepare-app": [
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
+            "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets"
         ]
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/er1z/GearmanBundle.git"
-        }
-    ],
     "extra": {
         "symfony-app-dir": "app",
         "symfony-bin-dir": "bin",
