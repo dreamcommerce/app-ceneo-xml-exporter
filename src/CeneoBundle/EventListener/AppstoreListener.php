@@ -32,7 +32,6 @@ class AppstoreListener {
         $shopHash = $params['shop'];
 
         $this->removeGeneratedXml($shopHash);
-        $this->removePurgedEntities($shopHash);
 
     }
 
@@ -46,39 +45,6 @@ class AppstoreListener {
         $shop = $this->manager->getRepository('BillingBundle:Shop')->findOneBy(['name'=>$shopHash]);
 
         $this->exportStatus->initialize($shop);
-    }
-
-    protected function removePurgedEntities($hash){
-
-        /**
-         * @var $shopInstance ShopInterface
-         */
-        $shopInstance =
-            $this->manager->getRepository('BillingBundle\Entity\Shop')
-                ->findOneBy([
-                    'name'=>$hash
-                ]);
-
-        if(!$shopInstance){
-            return;
-        }
-
-        $this->removeCollectionByShop('CeneoBundle\Entity\Export', $shopInstance);
-        $this->removeCollectionByShop('CeneoBundle\Entity\ExcludedProduct', $shopInstance);
-        $this->removeCollectionByShop('CeneoBundle\Entity\AttributeGroupMapping', $shopInstance);
-
-        $this->manager->flush();
-    }
-
-    protected function removeCollectionByShop($entityPath, ShopInterface $shop){
-        $collection = $this->manager->getRepository($entityPath)
-            ->findBy([
-                'shop'=>$shop
-            ]);
-
-        foreach($collection as $entity){
-            $this->manager->remove($entity);
-        }
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace BillingBundle\Entity;
+namespace CeneoBundle\Entity;
 
 use DreamCommerce\ShopAppstoreBundle\Doctrine\Subscription as SubscriptionBase;
 

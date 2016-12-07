@@ -71,10 +71,10 @@ doctrine:
 
 dream_commerce_shop_appstore:
     objects:
-        shop: BillingBundle\Entity\Shop
-        billing: BillingBundle\Entity\Billing
-        token: BillingBundle\Entity\Token
-        subscription: BillingBundle\Entity\Subscription
+        shop: CeneoBundle\Entity\Shop
+        billing: CeneoBundle\Entity\Billing
+        token: CeneoBundle\Entity\Token
+        subscription: CeneoBundle\Entity\Subscription
     #routes:
         #unpaid: ~ #dream_commerce_shop_appstore.unpaid
         #unsubscribed: ~ #dream_commerce_shop_appstore.unsubscribed
