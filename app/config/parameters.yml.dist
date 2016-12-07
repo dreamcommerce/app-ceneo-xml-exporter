@@ -39,6 +39,11 @@ parameters:
             app_id: ''
             app_secret: ''
             appstore_secret: ''
+            webhooks:
+                purge_product:
+                    secret: ""
+                    events:
+                        - "product.delete"
     workers:
         CeneoBundleWorkerGeneratorWorker~process: 5
 
