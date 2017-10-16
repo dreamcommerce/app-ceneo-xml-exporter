@@ -6,6 +6,7 @@ namespace CeneoBundle\Services\Fetchers;
 
 use DreamCommerce\ShopAppstoreLib\Resource\Delivery;
 use DreamCommerce\ShopAppstoreBundle\Utils\CollectionWrapper;
+use DreamCommerce\ShopAppstoreBundle\Utils\Fetcher;
 
 class Deliveries extends FetcherAbstract
 {
@@ -14,8 +15,10 @@ class Deliveries extends FetcherAbstract
 
     protected function fetch(){
 
-        $deliveriesResource = new Delivery($this->client);
-        $list = $deliveriesResource->get();
+        $resource = new Delivery($this->client);
+        $fetcher = new Fetcher($resource);
+
+        $list = $fetcher->fetchAll();
 
         $wrapper = new CollectionWrapper($list);
         $deliveries = $wrapper->getArray('delivery_id');
