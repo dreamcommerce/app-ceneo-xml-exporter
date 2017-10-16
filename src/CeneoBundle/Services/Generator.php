@@ -440,7 +440,7 @@ class Generator {
             $attributes = [];
         }
 
-        $attributes = array_merge($attributes, $this->getAttributes($row));
+        $attributes = array_merge($this->getAttributes($row), $attributes);
 
         $permalink = $row->translations->pl_PL->permalink;
         $permalink = strtr($permalink, ['http://'=>'', 'https://'=>'']);
